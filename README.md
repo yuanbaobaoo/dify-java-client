@@ -2,8 +2,9 @@ dify-java-client
 ---
 
 [![Java version](https://img.shields.io/badge/Java-21-blue)]()
+
 <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-    [![maven-central](https://img.shields.io/badge/maven--central-0.0.1-green)]()
+    <img alt="maven-central" src="https://img.shields.io/badge/maven--central-0.0.1-green" />
 </a>
 
 Dify Java 客户端，适用于Dify V1 系列API
