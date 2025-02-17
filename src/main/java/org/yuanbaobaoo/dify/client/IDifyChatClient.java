@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 /**
  * 适用于对话应用的客户端
- * @example: ChatBot、Agent、ChatFlow
+ * ChatBot、Agent、ChatFlow
  */
 public interface IDifyChatClient extends IDifyClient {
     /**
@@ -36,6 +36,7 @@ public interface IDifyChatClient extends IDifyClient {
     /**
      * 获取下一轮建议问题列表
      * @param messageId 消息ID
+     * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
      */
     List<String> suggestedList(String messageId, String user);
 

@@ -2,18 +2,19 @@ dify-java-client
 ---
 
 [![Java version](https://img.shields.io/badge/Java-21-blue)]()
-[![release version](https://img.shields.io/badge/latest-0.0.1-green)]()
-
+<a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
+    [![maven-central](https://img.shields.io/badge/maven--central-0.0.1-green)]()
+</a>
 
 Dify Java 客户端，适用于Dify V1 系列API
 
 ### 快速开始
-- maven  (未发布到Maven central，请自行下载执行 mvn install )
+- maven 
 ```xml
 <dependency>
-    <groupId>github.yuanbaobaoo</groupId>
+    <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>${latest}</version>
+    <version>0.0.1</version>
 </dependency>
 ```
 
@@ -48,4 +49,15 @@ DifyChatResult result = client.sendMessages(m);
 CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
     System.out.println("ok: " + r.getPayload().toJSONString());
 });
+```
+
+### 支持的API
+目前支持的API，可以参考 ```IDifyClient```、```IDifyChatClient```这两个接口，如果接口不满足的，可以调用requestJSON、requestMultipart进行调用
+
+```java
+// requestJson内处理了数据结构、鉴权的一些逻辑
+String result = client.requestJson("/messages", HttpMethod.GET, null, null);
+// requestMultipart内处理了文件上传所需要的一些逻辑
+// 如果是单纯的文件上传，可以直接使用
+DifyFileResult result = client.uploadFile( new File("pom.xml"), "abc-123");
 ```
