@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.client.types;
 
 /**
  * dify chat-message 消息事件
+ * 来源：https://docs.dify.ai/
  */
 public class DifyChatEvent {
     public static final String message = "message";
