@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.client;
 
 import io.github.yuanbaobaoo.dify.client.impl.DifyBaseClientImpl;
 import io.github.yuanbaobaoo.dify.client.impl.DifyChatClientImpl;
+import io.github.yuanbaobaoo.dify.client.impl.DifyWorkFlowClientImpl;
 
 /**
  * Dify Client builder
@@ -59,5 +60,18 @@ public class DifyClientBuilder {
 
         return new DifyChatClientImpl(baseUrl, apiKey);
     }
+
+    /**
+     * build DifyWorkFlowClient
+     * @return IDifyWorkFlowClient
+     */
+    public IDifyWorkFlowClient buildWorkFlow() {
+        if (baseUrl == null || apiKey == null) {
+            throw new RuntimeException("Dify Client Build Error: params is not defined");
+        }
+
+        return new DifyWorkFlowClientImpl(baseUrl, apiKey);
+    }
+
 
 }

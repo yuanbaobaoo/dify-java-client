@@ -118,6 +118,18 @@ public class DifyBaseClientImpl implements IDifyClient {
     }
 
     @Override
+    public String requestJson(DifyRoute route)
+            throws DifyException, IOException, InterruptedException {
+        return requestJson(route.getUrl(), route.getMethod(), null, null);
+    }
+
+    @Override
+    public String requestJson(DifyRoute route, Map<String, Object> query)
+            throws DifyException, IOException, InterruptedException {
+        return requestJson(route.getUrl(), route.getMethod(), query, null);
+    }
+
+    @Override
     public String requestJson(DifyRoute route, Map<String, Object> query, Object params)
             throws DifyException, IOException, InterruptedException {
         return requestJson(route.getUrl(), route.getMethod(), query, params);

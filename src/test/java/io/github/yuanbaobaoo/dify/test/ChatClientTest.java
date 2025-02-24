@@ -8,13 +8,14 @@ import io.github.yuanbaobaoo.dify.client.types.DifyChatResult;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ChatClientTest {
     IDifyChatClient client = DifyClientBuilder.create()
-            .apiKey("")
+            .apiKey("app-")
             .baseUrl("http://localhost:4000/v1")
             .buildChat();
 
@@ -122,6 +123,18 @@ public class ChatClientTest {
                 "ff59f57c-d247-481f-aabc-86d012b332f3",
                 "abc-123"
         ));
+    }
+
+    @Test
+    public void audioToTextTest() {
+        try {
+            String result = client.audioToText(new File("pom.xml"), "abc-123");
+            System.out.println("ok: " + result);
+        } catch (DifyException e) {
+            System.out.println("dify error: " + e.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
