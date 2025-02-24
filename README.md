@@ -6,11 +6,11 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-0.0.1-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-0.15.3-green" /> 
     </a>
 </p>
 
-Dify Java 客户端，适用于Dify V1 系列API
+Dify Java 客户端
 
 ### 快速开始
 - 环境需求  
@@ -30,17 +30,25 @@ Maven: >= 3
 
 #### 创建客户端
 ```java
-IDifyClient client = DifyClientBuilder.create()
-        .apiKey("app-xxxx")
-        .baseUrl("http://localhost:4000/v1")
-        .build();
+/**
+ * 支持 build()、buildChat()、buildFlow() 方法，其对应返回类型也是不一致的
+ */
+IDifyClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+```
 
-// 调用公共API
+##### 1、IDifyClient: 基础Client
+封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
+```java
+// 调用预设API
 String metaInfo = client.getAppMetaInfo();
 // 调用自定义API
-String result = client.requestJson("/messages", HttpMethod.GET, null, null);
+String result = client.requestJson(DifyRoute.buildGet("/messages"));
+// 上传文件
+DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
-除了IDifyClient外，还提供了IDifyChatClient，IDifyChatClient继承自IDifyClient，提供了会话相关的API：
+
+##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型的Client
+```IDifyChatClient``` 继承自 ```IDifyClient```，提供了会话相关的API：
 ```java
 IDifyChatClient client = DifyClientBuilder.create()
         .apiKey("app-xxxx")
@@ -57,6 +65,28 @@ DifyChatResult result = client.sendMessages(m);
 
 // 发送流式消息
 CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
+    System.out.println("ok: " + r.getPayload().toJSONString());
+});
+```
+
+##### 3、IDifyWorkChatClient: 适用于 WorkFlow 类型的API Client
+```IDifyWorkChatClient``` 继承自 ```IDifyClient```，提供了工作流相关的API：
+```java
+IDifyChatClient client = DifyClientBuilder.create()
+        .apiKey("app-xxxx")
+        .baseUrl("http://localhost:4000/v1")
+        .buildChat();
+
+// 创建消息
+ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
+    put("name", "元宝宝");
+}}).build();
+
+// 阻塞式运行工作流
+DifyChatResult result = client.runBlocking(m);
+
+// 流式运行工作流
+CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
     System.out.println("ok: " + r.getPayload().toJSONString());
 });
 ```
@@ -97,11 +127,4 @@ class KnowledgeService implements IKnowledgeService {
 ```
 
 ### 支持的API
-目前支持的API，可以参考 ```IDifyClient```、```IDifyChatClient```这两个接口，如果接口不满足的，可以调用requestJSON、requestMultipart进行调用
-```java
-// requestJson内处理了数据结构、鉴权的一些逻辑
-String result = client.requestJson("/messages", HttpMethod.GET, null, null);
-// requestMultipart内处理了文件上传所需要的一些逻辑
-// 如果是单纯的文件上传，可以直接使用
-DifyFileResult result = client.uploadFile( new File("pom.xml"), "abc-123");
-```
+目前支持的API，可以参考上述三个接口文件。目前这个项目在持续更新中，如果接口不满足的，可以调用```requestJSON```、```requestMultipart```进行请求。
