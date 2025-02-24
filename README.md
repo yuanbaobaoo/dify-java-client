@@ -47,7 +47,7 @@ String result = client.requestJson(DifyRoute.buildGet("/messages"));
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
-##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型的Client
+##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
 ```IDifyChatClient``` 继承自 ```IDifyClient```，提供了会话相关的API：
 ```java
 IDifyChatClient client = DifyClientBuilder.create()
@@ -69,13 +69,13 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-##### 3、IDifyWorkChatClient: 适用于 WorkFlow 类型的API Client
+##### 3、IDifyWorkChatClient: 适用于 WorkFlow 类型应用
 ```IDifyWorkChatClient``` 继承自 ```IDifyClient```，提供了工作流相关的API：
 ```java
-IDifyChatClient client = DifyClientBuilder.create()
+IDifyWorkChatClient client = DifyClientBuilder.create()
         .apiKey("app-xxxx")
         .baseUrl("http://localhost:4000/v1")
-        .buildChat();
+        .buildWorkFlow();
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
