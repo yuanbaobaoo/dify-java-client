@@ -45,6 +45,12 @@ public class DifyRoutes {
     public static final DifyRoute CHAT_CHAT_MESSAGES = new DifyRoute("/chat-messages", HttpMethod.POST);
 
     /**
+     * Desc: Audio to Text
+     * Type: ChatFlow、Chat、Agent
+     */
+    public static final DifyRoute AUDIO_TO_TEXT = new DifyRoute("/audio-to-text", HttpMethod.POST);
+
+    /**
      * Desc: run workflow
      * Type: workflow
      */
