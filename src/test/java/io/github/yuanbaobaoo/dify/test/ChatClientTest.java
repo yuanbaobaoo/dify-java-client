@@ -14,8 +14,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ChatClientTest {
     IDifyChatClient client = DifyClientBuilder.create()
-            .apiKey("app-LhdosV7BICq72oQJBmjkv5U8")
-            .baseUrl("http://192.168.101.1:4000/v1")
+            .apiKey("")
+            .baseUrl("http://localhost:4000/v1")
             .buildChat();
 
     @Test
@@ -25,7 +25,7 @@ public class ChatClientTest {
                     .query("测试方法有哪些")
                     .user("abc-123")
                     .inputs(new HashMap<>() {{
-                put("name", "大袁");
+                put("name", "元宝宝");
             }}).build());
 
             System.out.println("ok: " + result.getPayload().toJSONString());
@@ -40,7 +40,7 @@ public class ChatClientTest {
     public void streamTest() {
         try {
             ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
-                put("name", "大袁");
+                put("name", "元宝宝");
             }}).build();
 
             CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
@@ -63,11 +63,11 @@ public class ChatClientTest {
     @Test
     public void jsonTest() {
         ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
-            put("name", "大袁");
+            put("name", "元宝宝");
         }}).conversationId("123").build();
 
         ParamMessage m1 = JSON.parseObject(
-                "{\"conversationId\":\"123\",\"inputs\":{\"name\":\"大袁\"},\"query\":\"测试方法有哪些\",\"user\":\"abc-123\"}",
+                "{\"conversationId\":\"123\",\"inputs\":{\"name\":\"元宝宝\"},\"query\":\"测试方法有哪些\",\"user\":\"abc-123\"}",
                 ParamMessage.class
         );
 
