@@ -24,7 +24,7 @@ Maven: >= 3
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>0.15.3</version>
+    <version>0.15.x.1</version>
 </dependency>
 ```
 
