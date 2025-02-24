@@ -24,7 +24,7 @@ Maven: >= 3
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -65,7 +65,15 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 #### 创建外部知识库
 当前项目并未对知识库API做实现，只声明的相关参数对象和接口   
 ```java
-KnowledgeResult retrieval(String apiKey, KnowledgeArgs args);
+public interface IDifyKonwledgeService {
+    /**
+     * 知识检索
+     * @param apiKey Dify传递的API KEY
+     * @param args KownledgeArgs
+     */
+    KnowledgeResult retrieval(String apiKey, KnowledgeArgs args);
+
+}
 ```
 如果你有需求，可以基于声明的参数与接口进行实现即可，以下为参考代码“:
 - 1、声明一个endpoint
@@ -79,7 +87,7 @@ public KnowledgeResult retrieval(@RequestBody(required = false) KnowledgeArgs ar
     return knowledgeService.retrieval(request.getHeader("Authorization"), args);
 }
 ```
-- 2、实现接口```io.github.yuanbaobaoo.dify.service```
+- 2、实现接口```io.github.yuanbaobaoo.dify.service.IKnowledgeService```
 ```java
 class KnowledgeService implements IKnowledgeService {
     @Override

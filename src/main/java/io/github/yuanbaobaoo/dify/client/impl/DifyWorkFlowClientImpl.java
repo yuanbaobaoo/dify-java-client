@@ -1,13 +1,13 @@
-package org.yuanbaobaoo.dify.client.impl;
+package io.github.yuanbaobaoo.dify.client.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
+import io.github.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
+import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;
-import org.yuanbaobaoo.dify.client.IDifyWorkFlowClient;
-import org.yuanbaobaoo.dify.client.params.ParamMessage;
-import org.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
-import org.yuanbaobaoo.dify.routes.DifyRoutes;
+import io.github.yuanbaobaoo.dify.client.IDifyWorkFlowClient;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;

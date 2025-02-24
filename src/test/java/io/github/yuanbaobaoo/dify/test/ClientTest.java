@@ -16,15 +16,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class ClientTest {
     IDifyClient client = DifyClientBuilder.create()
-            .apiKey("app-LhdosV7BICq72oQJBmjkv5U8")
-            .baseUrl("http://192.168.101.1:4000/v1")
+            .apiKey("app-")
+            .baseUrl("http://localhost:4000/v1")
             .build();
     @Test
     public void blockTest() {
         JSONObject object = JSON.parseObject("""
                 {
                    "inputs": {
-                                          "name": "大袁"
+                                          "name": "元宝宝"
                                       },
                     "user": "abc-123",
                     "query": "测试方法有哪些"
@@ -47,7 +47,7 @@ public class ClientTest {
         JSONObject object = JSON.parseObject("""
                 {
                    "inputs": {
-                                   "name":"大袁"
+                                   "name":"元宝宝"
                                       },
                     "user": "abc-123",
                     "query": "测试方法有哪些"

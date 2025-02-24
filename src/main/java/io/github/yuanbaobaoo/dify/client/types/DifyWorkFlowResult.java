@@ -1,4 +1,4 @@
-package org.yuanbaobaoo.dify.client.types;
+package io.github.yuanbaobaoo.dify.client.types;
 
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Builder;

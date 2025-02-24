@@ -1,8 +1,8 @@
-package org.yuanbaobaoo.dify.client;
+package io.github.yuanbaobaoo.dify.client;
 
 import com.alibaba.fastjson2.JSONObject;
-import org.yuanbaobaoo.dify.client.params.ParamMessage;
-import org.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
+import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
+import io.github.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
