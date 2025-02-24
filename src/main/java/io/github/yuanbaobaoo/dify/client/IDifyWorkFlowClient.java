@@ -26,7 +26,6 @@ public interface IDifyWorkFlowClient extends IDifyClient {
      */
     JSONObject runBlocking(ParamMessage message);
 
-
     /**
      * 获取工作流执行情况
      * @param workFlowId 工作流ID

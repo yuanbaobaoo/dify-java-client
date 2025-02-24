@@ -6,7 +6,7 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-0.15.3-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-0.15.x.2-green" /> 
     </a>
 </p>
 
@@ -17,6 +17,7 @@ Dify Java 客户端
 ```code
 Java : >= 17
 Maven: >= 3
+Dify Api: <= 0.15.3
 ```
 
 - maven
@@ -24,7 +25,7 @@ Maven: >= 3
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>0.15.x.1</version>
+    <version>0.15.x.2</version>
 </dependency>
 ```
 

@@ -15,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ChatClientTest {
     IDifyChatClient client = DifyClientBuilder.create()
-            .apiKey("app-LhdosV7BICq72oQJBmjkv5U8")
-            .baseUrl("http://192.168.101.1:4000/v1")
+            .apiKey("app-")
+            .baseUrl("http://localhost:4000/v1")
             .buildChat();
 
     @Test

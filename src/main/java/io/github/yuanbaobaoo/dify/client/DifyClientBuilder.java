@@ -61,7 +61,6 @@ public class DifyClientBuilder {
         return new DifyChatClientImpl(baseUrl, apiKey);
     }
 
-
     /**
      * build DifyWorkFlowClient
      * @return IDifyWorkFlowClient
