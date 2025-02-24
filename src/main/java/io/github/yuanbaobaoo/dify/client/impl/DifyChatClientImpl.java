@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.client.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;
 import io.github.yuanbaobaoo.dify.client.IDifyChatClient;
@@ -11,9 +12,12 @@ import io.github.yuanbaobaoo.dify.client.types.DifyChatResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -194,6 +198,17 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
         }
 
         return null;
+    }
+
+    @Override
+    public String audioToText(File file, String user) throws DifyException, IOException, InterruptedException {
+        Map<String, Object> data = new HashMap<>();
+        data.put("file", file);
+        data.put("user", user);
+
+        JSONObject result = JSON.parseObject(requestMultipart(DifyRoutes.AUDIO_TO_TEXT, null, data));
+        return result.getString("text");
+
     }
 
 }

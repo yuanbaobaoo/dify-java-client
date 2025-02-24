@@ -3,7 +3,10 @@ package io.github.yuanbaobaoo.dify.client;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.client.types.DifyChatResult;
+import io.github.yuanbaobaoo.dify.types.DifyException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -75,8 +78,13 @@ public interface IDifyChatClient extends IDifyClient {
      */
     JSONObject renameConversation(String conversationId, String user, String name);
 
-    // 语音转文字
-    //void audioToText();
+    /**
+     * 语音转文字
+     * @param file 语音文件。 支持格式：['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm'] 文件
+     *             大小限制：15MB
+     * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
+     */
+    String audioToText(File file, String user) throws DifyException, IOException, InterruptedException;
 
     // 文字转语音
     //void textToAudio();
