@@ -91,6 +91,27 @@ public interface IDifyClient {
      * request by application/json content-type
      *
      * @param route  DifyRoute
+     * @return String
+     */
+    String requestJson(DifyRoute route)
+            throws DifyException, IOException, InterruptedException
+    ;
+
+    /**
+     * request by application/json content-type
+     *
+     * @param route  DifyRoute
+     * @param query  Query 查询参数
+     * @return String
+     */
+    String requestJson(DifyRoute route, Map<String, Object> query)
+            throws DifyException, IOException, InterruptedException
+    ;
+
+    /**
+     * request by application/json content-type
+     *
+     * @param route  DifyRoute
      * @param query  Query 查询参数
      * @param params Body 参数
      * @return String
