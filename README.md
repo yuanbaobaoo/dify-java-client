@@ -93,7 +93,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 ```
 
 #### 创建外部知识库
-当前项目并未对知识库API做实现，只声明的相关参数对象和接口   
+当前项目并未对知识库API做实现，只声明了相关参数对象和接口   
 ```java
 public interface IDifyKonwledgeService {
     /**
@@ -102,7 +102,6 @@ public interface IDifyKonwledgeService {
      * @param args KownledgeArgs
      */
     KnowledgeResult retrieval(String apiKey, KnowledgeArgs args);
-
 }
 ```
 如果你有需求，可以基于声明的参数与接口进行实现即可，以下为参考代码“:
