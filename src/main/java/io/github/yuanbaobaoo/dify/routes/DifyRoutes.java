@@ -55,4 +55,14 @@ public class DifyRoutes {
      * Type: workflow
      */
     public static final DifyRoute WORKFLOW_RUN = new DifyRoute("/workflows/run", HttpMethod.POST);
+
+    /**
+     * Type: workflow
+     */
+    public static final DifyRoute WORKFLOW_TASK = new DifyRoute("/workflows/task", HttpMethod.POST);
+
+    /**
+     * Type: workflow
+     */
+    public static final DifyRoute WORKFLOW_LOGS = new DifyRoute("/workflows/logs", HttpMethod.GET);
 }

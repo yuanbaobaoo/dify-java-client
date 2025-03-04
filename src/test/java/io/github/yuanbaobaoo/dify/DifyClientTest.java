@@ -1,24 +1,21 @@
-package io.github.yuanbaobaoo.dify.test;
+package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.client.DifyClientBuilder;
 import io.github.yuanbaobaoo.dify.client.IDifyClient;
-import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
-import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
-public class ClientTest {
+public class DifyClientTest {
     IDifyClient client = DifyClientBuilder.create()
             .apiKey("app-")
             .baseUrl("http://localhost:4000/v1")
             .build();
+
     @Test
     public void blockTest() {
         JSONObject object = JSON.parseObject("""
@@ -70,39 +67,4 @@ public class ClientTest {
             }
         }
     }
-
-    @Test
-    public void uploadTest() {
-        try {
-            DifyFileResult result = client.uploadFile( new File("pom.xml"), "abc-123");
-            System.out.println("ok: " + JSON.toJSONString(result));
-        } catch (DifyException e) {
-            System.out.println("dify error: " + e.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void publicApiTest() {
-        try {
-            DifyRoute route = DifyRoute.builder().url("/test").method(HttpMethod.GET).build();
-
-            String a = client.getAppInfo();
-            System.out.println(a);
-
-            String a1 = client.getAppMetaInfo();
-            System.out.println(a1);
-
-            String a2 = client.getAppParameters();
-            System.out.println(a2);
-
-        } catch (DifyException e) {
-            System.out.println("dify error: " + e.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
 }
