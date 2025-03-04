@@ -26,23 +26,18 @@ public interface IDifyWorkFlowClient extends IDifyClient {
      */
     JSONObject runBlocking(ParamMessage message);
 
-    /**
-     * 获取工作流执行情况
-     * @param workFlowId 工作流ID
-     */
-    JSONObject getWorkFlowStatus(String workFlowId);
-
-    /**
-     * 停止工作流（仅限流式模式）
-     * @param taskId 任务ID（流式返回chunk中获取）
-     */
-    Boolean stopWorkFlow(String taskId);
-
 //    /**
-//     * 上传文件
+//     * 获取工作流执行情况
+//     * @param workFlowId 工作流ID
 //     */
-//    JSONObject uploadFile(String filePath, String user);
+//    JSONObject getWorkFlowStatus(String workFlowId);
 //
+//    /**
+//     * 停止工作流（仅限流式模式）
+//     * @param taskId 任务ID（流式返回chunk中获取）
+//     */
+//    Boolean stopWorkFlow(String taskId);
+
 //    /**
 //     * 获取工作流日志
 //     * @param keyword 关键字
@@ -51,15 +46,7 @@ public interface IDifyWorkFlowClient extends IDifyClient {
 //     * @param limit 每页数量
 //     */
 //    JSONObject getWorkFlowLog(String keyword, String status, Integer page, Integer limit);
-//
-//    /**
-//     * 获取应用信息
-//     */
-//    JSONObject getWorkFlowInfo();
-//
-//    /**
-//     * 获取应用参数
-//     */
-//    JSONObject getWorkFlowParameters();
+
+
 
 }
