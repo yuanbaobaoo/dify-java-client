@@ -133,23 +133,23 @@ The currently supported API, you can refer to the above three interface files.
 The project is currently being updated, and if the interface is not satisfied, 
 you can call ```requestJSON```、```requestMultipart```to request.
 
-| Method                             | Dify Api                             | Method | 描述                                     |
-|------------------------------------|--------------------------------------|--------|----------------------------------------|
-| IDifyClient.getAppInfo             | /info                                | GET    | Get Application Basic Information      |
-| IDifyClient.getAppParameters       | /parameters                          | GET    | Get Application Parameters Information |
-| IDifyClient.getAppMetaInfo         | /meta                                | GET    | Get Application Meta Information       |
-| IDifyClient.uploadFile             | /files/upload                        | POST   | File Upload                            |
-| IDifyChatClient.sendMessages       | /chat-messages                       | POST   | Send Chat Message(blocking)            |
-| IDifyChatClient.sendMessagesAsync  | /chat-messages                       | POST   | Send Chat Message(streaming)           |
-| IDifyChatClient.stopResponse       | /chat-messages/:task_id/stop         | POST   | Stop Generate                          |
-| IDifyChatClient.suggestedList      | /messages/{message_id}/suggested     | GET    | Next Suggested Questions               |
-| IDifyChatClient.history            | /messages                            | GET    | Get Conversation History Messages      |
-| IDifyChatClient.conversations      | /conversations                       | GET    | Get Conversations                      |
-| IDifyChatClient.deleteConversation | /conversations/:conversation_id      | DELETE | Delete Conversation                    |
-| IDifyChatClient.renameConversation | /conversations/:conversation_id/name | POST   | Conversation Rename                    |
-| IDifyChatClient.audioToText        | /audio-to-text                       | POST   | Speech to Text                         |
-| IDifyWorkFlowClient.runStreaming   | /workflows/run                       | POST   | Execute Workflow (streaming)           |
-| IDifyWorkFlowClient.runBlocking    | /workflows/run                       | POST   | Execute Workflow (blocking)            |
-
-[//]: # (| IDifyWorkFlowClient.getWorkFlowStatus | /workflows/logs                      | GET    | Get Workflow Logs                        |)
-[//]: # (| IDifyWorkFlowClient.stopWorkFlow      | /workflows/tasks/:task_id/stop       | POST   | Stop Generate                           |)
+| Method                                | Dify Api                             | Method | 描述                                     |
+|---------------------------------------|--------------------------------------|--------|----------------------------------------|
+| IDifyClient.getAppInfo                | /info                                | GET    | Get Application Basic Information      |
+| IDifyClient.getAppParameters          | /parameters                          | GET    | Get Application Parameters Information |
+| IDifyClient.getAppMetaInfo            | /meta                                | GET    | Get Application Meta Information       |
+| IDifyClient.uploadFile                | /files/upload                        | POST   | File Upload                            |
+| IDifyChatClient.sendMessages          | /chat-messages                       | POST   | Send Chat Message(blocking)            |
+| IDifyChatClient.sendMessagesAsync     | /chat-messages                       | POST   | Send Chat Message(streaming)           |
+| IDifyChatClient.stopResponse          | /chat-messages/:task_id/stop         | POST   | Stop Generate                          |
+| IDifyChatClient.suggestedList         | /messages/{message_id}/suggested     | GET    | Next Suggested Questions               |
+| IDifyChatClient.history               | /messages                            | GET    | Get Conversation History Messages      |
+| IDifyChatClient.conversations         | /conversations                       | GET    | Get Conversations                      |
+| IDifyChatClient.deleteConversation    | /conversations/:conversation_id      | DELETE | Delete Conversation                    |
+| IDifyChatClient.renameConversation    | /conversations/:conversation_id/name | POST   | Conversation Rename                    |
+| IDifyChatClient.audioToText           | /audio-to-text                       | POST   | Speech to Text                         |
+| IDifyWorkFlowClient.runStreaming      | /workflows/run                       | POST   | Execute Workflow (streaming)           |
+| IDifyWorkFlowClient.runBlocking       | /workflows/run                       | POST   | Execute Workflow (blocking)            |
+| IDifyWorkFlowClient.getWorkFlowStatus | /workflows/run/:workflow_id          | GET    | Get Workflow Status                    |
+| IDifyWorkFlowClient.getWorkFlowLog    | /workflows/logs                      | GET    | Get Workflow Logs                      |
+| IDifyWorkFlowClient.stopWorkFlow      | /workflows/tasks/:task_id/stop       | POST   | Stop Generate                          |

@@ -148,7 +148,6 @@ class KnowledgeService implements IKnowledgeService {
 | IDifyChatClient.audioToText           | /audio-to-text                       | POST   | 语音转文字           |
 | IDifyWorkFlowClient.runStreaming      | /workflows/run                       | POST   | 执行 workflow（流式） |
 | IDifyWorkFlowClient.runBlocking       | /workflows/run                       | POST   | 执行 workflow（阻塞） |
-
-[//]: # (| IDifyWorkFlowClient.getWorkFlowStatus | /workflows/logs                      | GET    | 获取 workflow 日志  |)
-
-[//]: # (| IDifyWorkFlowClient.stopWorkFlow      | /workflows/tasks/:task_id/stop       | POST   | 停止响应workflow    |)
+| IDifyWorkFlowClient.getWorkFlowStatus | /workflows/run/:workflow_id          | GET    | 获取 workflow执行情况 |
+| IDifyWorkFlowClient.getWorkFlowLog    | /workflows/logs                      | GET    | 获取 workflow 日志  |
+| IDifyWorkFlowClient.stopWorkFlow      | /workflows/tasks/:task_id/stop       | POST   | 停止响应workflow    |
