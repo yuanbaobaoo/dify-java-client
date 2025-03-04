@@ -1,4 +1,4 @@
 .idea/
 *.iml
 target
-/src/test/java/io/github/yuanbaobaoo/dify/test2/
+/src/test/java/io/github/yuanbaobaoo/dify/test/
