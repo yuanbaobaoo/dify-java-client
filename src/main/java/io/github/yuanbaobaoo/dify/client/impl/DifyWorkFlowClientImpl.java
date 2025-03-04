@@ -4,11 +4,14 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
+import io.github.yuanbaobaoo.dify.client.types.WorkflowStatus;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
+import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;
 import io.github.yuanbaobaoo.dify.client.IDifyWorkFlowClient;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -49,12 +52,73 @@ public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyW
 
     @Override
     public JSONObject getWorkFlowStatus(String workFlowId) {
+        try {
+            String result = requestJson(
+                    DifyRoutes.WORKFLOW_RUN.getUrl() + "/" + workFlowId,
+                    HttpMethod.GET,
+                    null,
+                    null
+            );
+
+            return JSON.parseObject(result);
+        } catch (DifyException e) {
+            log.error("getWorkFlowStatus: {}", e.getOriginal());
+        } catch (Exception e) {
+            log.error("getWorkFlowStatus", e);
+        }
+
         return null;
     }
 
     @Override
-    public Boolean stopWorkFlow(String taskId) {
-        return null;
+    public Boolean stopWorkFlow(String taskId, String user) {
+        try {
+            String result = requestJson(
+                    String.format("%s/%s/stop", DifyRoutes.WORKFLOW_TASK.getUrl(), taskId),
+                    HttpMethod.POST,
+                    null,
+                    new HashMap<>() {{
+                        put("user", user);
+                    }}
+            );
+
+            JSONObject json = JSON.parseObject(result);
+            return "success".equals(json.getString("result"));
+        } catch (DifyException e) {
+            log.error("stopWorkFlow: {}", e.getOriginal());
+        } catch (Exception e) {
+            log.error("stopWorkFlow", e);
+        }
+
+        return false;
     }
+
+    @Override
+    public JSONObject getWorkFlowLog(String keyword, WorkflowStatus status, Integer page, Integer limit) {
+        try {
+            String result = requestJson(DifyRoutes.WORKFLOW_LOGS, new HashMap<>() {{
+                put("keyword", keyword);
+                put("status", status.name());
+                put("page", page);
+                put("limit", limit);
+            }}, null);
+
+            if (result == null) {
+                return null;
+            }
+
+            return JSON.parseObject(result);
+        } catch (DifyException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("history", e);
+            throw new DifyException("获取workflow日志异常", 500);
+        }
+    }
+
+//    @Override
+//    public Boolean stopWorkFlow(String taskId) {
+//        return null;
+//    }
 
 }
