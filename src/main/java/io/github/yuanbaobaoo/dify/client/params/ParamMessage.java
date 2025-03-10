@@ -59,6 +59,7 @@ public class ParamMessage {
            put("user", user);
            put("conversation_id", conversationId);
            put("files", files);
+           put("auto_generate_name", autoGenerateName == null || autoGenerateName);
         }};
     }
 
