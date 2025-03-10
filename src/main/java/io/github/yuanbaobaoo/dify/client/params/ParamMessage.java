@@ -1,5 +1,6 @@
 package io.github.yuanbaobaoo.dify.client.params;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +40,14 @@ public class ParamMessage {
      * 文件列表，适用于传入文件结合文本理解并回答问题，仅当模型支持 Vision 能力时可用
      * 具体请看官方文档
      */
-    private List<Map<String, Object>> files;
+    private List<ParamFile> files;
+
+    /**
+     * 自动生成标题，默认 true。
+     * 若设置为 false，则可通过调用会话重命名接口并设置 auto_generate 为 true 实现异步生成标题。
+     */
+    @JSONField(name = "auto_generate_name", alternateNames = {"autoGenerateName"})
+    private Boolean autoGenerateName;
 
     /**
      * ToMap
@@ -51,7 +59,8 @@ public class ParamMessage {
            put("inputs", inputs);
            put("user", user);
            put("conversation_id", conversationId);
-           put("files", files);
+           put("files", files != null ? JSON.toJSONString(files) : null);
+           put("auto_generate_name", autoGenerateName == null || autoGenerateName);
         }};
     }
 
