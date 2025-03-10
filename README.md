@@ -52,7 +52,10 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 
 ##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
 ```IDifyChatClient``` 继承自 ```IDifyClient```，提供了会话相关的API：
+
 ```java
+import io.github.yuanbaobaoo.dify.client.params.ParamFile;
+
 IDifyChatClient client = DifyClientBuilder.create()
         .apiKey("app-xxxx")
         .baseUrl("http://localhost:4000/v1")
@@ -61,6 +64,11 @@ IDifyChatClient client = DifyClientBuilder.create()
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{
     put("test", "value");
+    put("file1", ParamFile.builder()
+            .type(ParamFile.FileType.audio)
+            .transferMethod(ParamFile.TransferMethod.remote_url)
+            .build()
+    );
 }}).build();
 
 // 发送阻塞消息
