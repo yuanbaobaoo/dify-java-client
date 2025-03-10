@@ -4,7 +4,7 @@
 
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>Dify Java 客户端</description>
     <url>https://github.com/yuanbaobaoo/dify-java-client</url>
 

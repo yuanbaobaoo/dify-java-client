@@ -65,6 +65,14 @@ public class DifyClientBuilder {
      * build DifyWorkFlowClient
      * @return IDifyWorkFlowClient
      */
+    public IDifyWorkFlowClient buildFlow() {
+        return buildWorkFlow();
+    }
+
+    /**
+     * build DifyWorkFlowClient
+     * @return IDifyWorkFlowClient
+     */
     public IDifyWorkFlowClient buildWorkFlow() {
         if (baseUrl == null || apiKey == null) {
             throw new RuntimeException("Dify Client Build Error: params is not defined");
