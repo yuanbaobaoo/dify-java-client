@@ -59,8 +59,13 @@ IDifyChatClient client = DifyClientBuilder.create()
         .buildChat();
 
 // create message
-ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{
+ParamMessage m = ParamMessage.builder().query("Who are you").user("abc-123").inputs(new HashMap<>() {{
     put("test", "value");
+    put("file1", ParamFile.builder()
+            .type(ParamFile.FileType.audio)
+            .transferMethod(ParamFile.TransferMethod.remote_url)
+            .build()
+    );
 }}).build();
 
 // send block message
