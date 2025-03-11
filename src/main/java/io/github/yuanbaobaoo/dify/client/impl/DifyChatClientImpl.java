@@ -43,7 +43,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
             throw e;
         } catch (Exception e) {
             log.error("sendMessages", e);
-            throw new DifyException("消息发送异常", 500);
+            throw new DifyException("[client] 消息发送异常", 500);
         }
     }
 
@@ -126,7 +126,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
             throw e;
         } catch (Exception e) {
             log.error("history", e);
-            throw new DifyException("获取会话历史消息异常", 500);
+            throw new DifyException("[client] 获取会话历史消息异常", 500);
         }
     }
 
@@ -149,7 +149,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
             throw e;
         } catch (Exception e) {
             log.error("conversations", e);
-            throw new DifyException("获取会话列表异常", 500);
+            throw new DifyException("[client] 获取会话列表异常", 500);
         }
     }
 

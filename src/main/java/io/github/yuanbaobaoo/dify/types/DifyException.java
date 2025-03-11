@@ -1,15 +1,42 @@
 package io.github.yuanbaobaoo.dify.types;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Dify exception type
+ */
 public class DifyException extends RuntimeException {
-    // error message {code, message, params, status}
+    /**
+     * original dify response
+     */
+    @Getter
     private String original;
-    // error code | http status
+
+    /**
+     * response status | http status
+     */
     private Integer status;
+    /**
+     * dify response -> code
+     */
+    @Getter
+    private String code;
+
+    /**
+     * dify response -> message
+     */
+    private String message;
+
+    /**
+     * dify response -> params
+     */
+    @Getter
+    private String params;
 
     /**
      * constructor
@@ -24,18 +51,34 @@ public class DifyException extends RuntimeException {
      * @param status http status
      */
     public DifyException(String response, Integer status) {
-        this.status = status;
+        try {
+            JSONObject object = JSON.parseObject(response);
+
+            this.status = object.getInteger("status");
+            this.code = object.getString("code");
+            this.message = object.getString("message");
+            this.params = object.getString("params");
+        } catch (Exception e) {
+            this.status = status;
+            this.message = response;
+        }
+
         this.original = response;
     }
 
     @Override
     public String getMessage() {
-        return original;
+        return message;
     }
 
     @Override
     public String toString() {
-        return String.format("{original='%s', status=%s}", original, status);
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        map.put("code", code);
+        map.put("message", message);
+        map.put("params", params);
+        return JSON.toJSONString(map);
     }
 
 }

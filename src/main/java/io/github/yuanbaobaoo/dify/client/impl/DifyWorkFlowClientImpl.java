@@ -9,14 +9,14 @@ import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;
-import io.github.yuanbaobaoo.dify.client.IDifyWorkFlowClient;
+import io.github.yuanbaobaoo.dify.client.IDifyFlowClient;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyWorkFlowClient {
+public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyFlowClient {
 
     /**
      * constructor
@@ -46,7 +46,7 @@ public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyW
             throw e;
         } catch (Exception e) {
             log.error("sendMessages", e);
-            throw new DifyException("消息发送异常", 500);
+            throw new DifyException("[client] 消息发送异常", 500);
         }
     }
 
@@ -112,13 +112,8 @@ public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyW
             throw e;
         } catch (Exception e) {
             log.error("history", e);
-            throw new DifyException("获取workflow日志异常", 500);
+            throw new DifyException("[client] 获取workflow日志异常", 500);
         }
     }
-
-//    @Override
-//    public Boolean stopWorkFlow(String taskId) {
-//        return null;
-//    }
 
 }
