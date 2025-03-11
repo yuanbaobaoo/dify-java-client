@@ -49,7 +49,7 @@ IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1
 // 创建一个 IDifyFlowClient 对象
 IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
 ```
-你喜欢用哪种就用那种
+你喜欢用哪种就用哪种
 
 ##### 1、IDifyBaseClient: 基础Client
 封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
