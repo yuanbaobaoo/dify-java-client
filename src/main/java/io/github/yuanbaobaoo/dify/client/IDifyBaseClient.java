@@ -16,6 +16,16 @@ import java.util.function.Consumer;
  */
 public interface IDifyBaseClient {
     /**
+     * new Dify Base Client
+     *
+     * @param baseUrl Dify Server Base URL
+     * @param apiKey  Api Key
+     */
+    static IDifyBaseClient newClient(String baseUrl, String apiKey) {
+        return DifyClientBuilder.create().baseUrl(baseUrl).apiKey(apiKey).build();
+    }
+
+    /**
      * 获取应用基础信息
      *
      * @return String
@@ -160,15 +170,5 @@ public interface IDifyBaseClient {
     String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params)
             throws DifyException, IOException, InterruptedException
     ;
-
-    /**
-     * new Dify Base Client
-     *
-     * @param baseUrl Dify Server Base URL
-     * @param apiKey  Api Key
-     */
-    static IDifyBaseClient newClient(String baseUrl, String apiKey) {
-        return DifyClientBuilder.create().baseUrl(baseUrl).apiKey(apiKey).build();
-    }
 
 }
