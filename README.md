@@ -31,7 +31,7 @@ Dify Api: <= 1.0.0
 </dependency>
 ```
 
-#### 创建客户端
+### 创建客户端
 ```java
 /**
  * 支持 build()、buildChat()、buildFlow() 方法，其对应返回类型也是不一致的
@@ -51,7 +51,7 @@ IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1
 ```
 你喜欢用哪种就用哪种
 
-##### 1、IDifyBaseClient: 基础Client
+#### 1、IDifyBaseClient: 基础Client
 封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
 ```java
 // 调用预设API
@@ -62,7 +62,7 @@ String result = client.requestJson(DifyRoute.buildGet("/messages"));
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
-##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
+#### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
 ```IDifyChatClient``` 继承自 ```IDifyBaseClient```，提供了会话相关的API：
 ```java
 IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
@@ -86,7 +86,7 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-##### 3、IDifyFlowClient: 适用于 WorkFlow 类型应用
+#### 3、IDifyFlowClient: 适用于 WorkFlow 类型应用
 ```IDifyFlowClient``` 继承自 ```IDifyBaseClient```，提供了工作流相关的API：
 ```java
 IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
@@ -106,7 +106,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 });
 ```
 
-#### 创建外部知识库
+### 创建外部知识库
 当前项目并未对知识库API做实现，只声明了相关参数对象和接口   
 ```java
 public interface IDifyKonwledgeService {
@@ -140,7 +140,7 @@ class KnowledgeService implements IKnowledgeService {
 }
 ```
 
-#### 异常处理
+### 异常处理
 默认情况下，当正常的请求返回了 http status >= 400 时，都会抛出一个异常对象 ```DifyException```。
 该对象接收了Dify返回的 ```status```、```code```、```message```、```params``` 这几个属性。
 当然你也可以通过 ```getOriginal()``` 方法获取原始返回内容。

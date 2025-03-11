@@ -31,7 +31,7 @@ Dify Api: <= 1.0.0
 </dependency>
 ```
 
-#### Create Client
+### Create Client
 ```java
 /**
  * Support methods: build()、buildChat()、buildFlow(), which have inconsistent return types
@@ -51,7 +51,7 @@ IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1
 ```
 Use whichever you like
 
-##### 1、IDifyBaseClient: Base Client
+#### 1、IDifyBaseClient: Base Client
 Encapsulates some public APIs and authentication logic, and provides simple and easy-to-use calling methods
 ```java
 // Call preset API
@@ -62,7 +62,7 @@ String result = client.requestJson(DifyRoute.buildGet("/messages"));
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
-##### 2、IDifyChatClient: scope = ChatBot、Agent、ChatFlow
+#### 2、IDifyChatClient: scope = ChatBot、Agent、ChatFlow
 ```IDifyChatClient``` extends ```IDifyBaseClient```, provides conversation APIs
 ```java
 IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
@@ -86,7 +86,7 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-##### 3、IDifyFlowClient: scope = WorkFlow
+#### 3、IDifyFlowClient: scope = WorkFlow
 ```IDifyFlowClient``` extends ```IDifyBaseClient```, provides workflow APIs
 ```java
 IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
@@ -106,7 +106,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 });
 ```
 
-#### Create External Knowledge
+### Create External Knowledge
 The current project dose not implement the knowledge API, and only declare parameter objects and interfaces
 ```java
 public interface IDifyKonwledgeService {
@@ -140,7 +140,7 @@ class KnowledgeService implements IKnowledgeService {
 }
 ```
 
-#### Exception Type
+### Exception Type
 By default, when the normal request returns http status>=400, an exception object ```DiffyException``` will be thrown.
 This object receives the '```status```, ```code```, ```message```, ```params```.
 Of course, you can also get the original return content through the ```getOriginal()``` method.
