@@ -6,7 +6,7 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.0.0-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.1.0-green" /> 
     </a>
 </p>
 
@@ -27,7 +27,7 @@ Dify Api: <= 1.0.0
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -36,10 +36,22 @@ Dify Api: <= 1.0.0
 /**
  * 支持 build()、buildChat()、buildFlow() 方法，其对应返回类型也是不一致的
  */
-IDifyClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+IDifyBaseClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 ```
+or
+```java
+// 创建一个 IDifyBaseClient 对象
+IDifyBaseClient baseClient = IDifyBaseClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
-##### 1、IDifyClient: 基础Client
+// 创建一个 IDifyChatClient 对象
+IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
+
+// 创建一个 IDifyFlowClient 对象
+IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
+```
+你喜欢用哪种就用那种
+
+##### 1、IDifyBaseClient: 基础Client
 封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
 ```java
 // 调用预设API
@@ -51,15 +63,9 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
 ##### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
-```IDifyChatClient``` 继承自 ```IDifyClient```，提供了会话相关的API：
-
+```IDifyChatClient``` 继承自 ```IDifyBaseClient```，提供了会话相关的API：
 ```java
-import io.github.yuanbaobaoo.dify.client.params.ParamFile;
-
-IDifyChatClient client = DifyClientBuilder.create()
-        .apiKey("app-xxxx")
-        .baseUrl("http://localhost:4000/v1")
-        .buildChat();
+IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{
@@ -72,7 +78,7 @@ ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").input
 }}).build();
 
 // 发送阻塞消息
-DifyChatResult result = client.sendMessages(m);
+DifyChatResult result = chatClient.sendMessages(m);
 
 // 发送流式消息
 CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
@@ -80,21 +86,19 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-##### 3、IDifyWorkChatClient: 适用于 WorkFlow 类型应用
-```IDifyWorkChatClient``` 继承自 ```IDifyClient```，提供了工作流相关的API：
+##### 3、IDifyFlowClient: 适用于 WorkFlow 类型应用
+```IDifyFlowClient``` 继承自 ```IDifyBaseClient```，提供了工作流相关的API：
 ```java
-IDifyWorkChatClient client = DifyClientBuilder.create()
-        .apiKey("app-xxxx")
-        .baseUrl("http://localhost:4000/v1")
-        .buildWorkFlow();
+IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
 // 创建消息
-ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
+ParamMessage m = ParamMessage.builder().user("abc-123").inputs(new HashMap<>() {{
     put("name", "元宝宝");
+    put("text", "Java为什么叫Java？");
 }}).build();
 
 // 阻塞式运行工作流
-DifyChatResult result = client.runBlocking(m);
+DifyChatResult result = flowClient.runBlocking(m);
 
 // 流式运行工作流
 CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
@@ -135,6 +139,11 @@ class KnowledgeService implements IKnowledgeService {
     }
 }
 ```
+
+#### 异常处理
+默认情况下，当正常的请求返回了 http status >= 400 时，都会抛出一个异常对象 ```DifyException```。
+该对象接收了Dify返回的 ```status```、```code```、```message```、```params``` 这几个属性。
+当然你也可以通过 ```getOriginal()``` 方法获取原始返回内容。
 
 ### 支持的API
 目前支持的API，可以参考上述三个接口文件。目前这个项目在持续更新中，如果接口不满足的，可以调用```requestJSON```、```requestMultipart```进行请求。

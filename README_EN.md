@@ -6,7 +6,7 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.0.0-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.1.0-green" /> 
     </a>
 </p>
 
@@ -27,7 +27,7 @@ Dify Api: <= 1.0.0
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -36,10 +36,22 @@ Dify Api: <= 1.0.0
 /**
  * Support methods: build()、buildChat()、buildFlow(), which have inconsistent return types
  */
-IDifyClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+IDifyBaseClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 ```
+or
+```java
+// Create IDifyBaseClient instance
+IDifyBaseClient baseClient = IDifyBaseClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
-##### 1、IDifyClient: Base Client
+// Create IDifyChatClient instance
+IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
+
+// Create IDifyFlowClient instance
+IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
+```
+Use whichever you like
+
+##### 1、IDifyBaseClient: Base Client
 Encapsulates some public APIs and authentication logic, and provides simple and easy-to-use calling methods
 ```java
 // Call preset API
@@ -51,12 +63,9 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
 ##### 2、IDifyChatClient: scope = ChatBot、Agent、ChatFlow
-```IDifyChatClient``` extends ```IDifyClient```, provides conversation APIs
+```IDifyChatClient``` extends ```IDifyBaseClient```, provides conversation APIs
 ```java
-IDifyChatClient client = DifyClientBuilder.create()
-        .apiKey("app-xxxx")
-        .baseUrl("http://localhost:4000/v1")
-        .buildChat();
+IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
 // create message
 ParamMessage m = ParamMessage.builder().query("Who are you").user("abc-123").inputs(new HashMap<>() {{
@@ -69,7 +78,7 @@ ParamMessage m = ParamMessage.builder().query("Who are you").user("abc-123").inp
 }}).build();
 
 // send block message
-DifyChatResult result = client.sendMessages(m);
+DifyChatResult result = chatClient.sendMessages(m);
 
 // send streaming message
 CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
@@ -77,21 +86,19 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-##### 3、IDifyWorkChatClient: scope = WorkFlow
-```IDifyWorkChatClient``` extends ```IDifyClient```, provides workflow APIs
+##### 3、IDifyFlowClient: scope = WorkFlow
+```IDifyFlowClient``` extends ```IDifyBaseClient```, provides workflow APIs
 ```java
-IDifyWorkChatClient client = DifyClientBuilder.create()
-        .apiKey("app-xxxx")
-        .baseUrl("http://localhost:4000/v1")
-        .buildWorkFlow();
+IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
 
 // create message
-ParamMessage m = ParamMessage.builder().query("测试方法有哪些").user("abc-123").inputs(new HashMap<>() {{
+ParamMessage m = ParamMessage.builder().user("abc-123").inputs(new HashMap<>() {{
     put("name", "元宝宝");
+    put("text", "Java为什么叫Java？");
 }}).build();
 
 // run workflow for blocking
-DifyChatResult result = client.runBlocking(m);
+DifyChatResult result = flowClient.runBlocking(m);
 
 // run workflow for streaming
 CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
@@ -132,6 +139,11 @@ class KnowledgeService implements IKnowledgeService {
     }
 }
 ```
+
+#### Exception Type
+By default, when the normal request returns http status>=400, an exception object ```DiffyException``` will be thrown.
+This object receives the '```status```, ```code```, ```message```, ```params```.
+Of course, you can also get the original return content through the ```getOriginal()``` method.
 
 ### Support API
 The currently supported API, you can refer to the above three interface files. 

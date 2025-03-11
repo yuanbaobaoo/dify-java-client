@@ -41,7 +41,7 @@ public class DifyClientBuilder {
      * build DifyBaseClient
      * @return IDifyClient
      */
-    public IDifyClient build() {
+    public IDifyBaseClient build() {
         if (baseUrl == null || apiKey == null) {
             throw new RuntimeException("Dify Client Build Error: params is not defined");
         }
@@ -65,21 +65,12 @@ public class DifyClientBuilder {
      * build DifyWorkFlowClient
      * @return IDifyWorkFlowClient
      */
-    public IDifyWorkFlowClient buildFlow() {
-        return buildWorkFlow();
-    }
-
-    /**
-     * build DifyWorkFlowClient
-     * @return IDifyWorkFlowClient
-     */
-    public IDifyWorkFlowClient buildWorkFlow() {
+    public IDifyFlowClient buildFlow() {
         if (baseUrl == null || apiKey == null) {
             throw new RuntimeException("Dify Client Build Error: params is not defined");
         }
 
         return new DifyWorkFlowClientImpl(baseUrl, apiKey);
     }
-
 
 }

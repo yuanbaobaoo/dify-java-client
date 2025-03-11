@@ -51,16 +51,17 @@ public class ParamMessage {
 
     /**
      * ToMap
+     *
      * @return Map<String, Object>
      */
     public Map<String, Object> toMap() {
-        return new HashMap<>(){{
-           put("query", query);
-           put("inputs", inputs);
-           put("user", user);
-           put("conversation_id", conversationId);
-           put("files", files != null ? JSON.toJSONString(files) : null);
-           put("auto_generate_name", autoGenerateName == null || autoGenerateName);
+        return new HashMap<>() {{
+            put("query", query);
+            put("inputs", inputs);
+            put("user", user);
+            put("conversation_id", conversationId);
+            put("files", files != null ? JSON.toJSONString(files) : null);
+            put("auto_generate_name", autoGenerateName == null || autoGenerateName);
         }};
     }
 

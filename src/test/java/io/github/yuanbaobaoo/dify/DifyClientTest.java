@@ -2,8 +2,7 @@ package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.client.DifyClientBuilder;
-import io.github.yuanbaobaoo.dify.client.IDifyClient;
+import io.github.yuanbaobaoo.dify.client.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import org.junit.jupiter.api.Test;
@@ -11,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.CompletableFuture;
 
 public class DifyClientTest {
-    IDifyClient client = DifyClientBuilder.create()
-            .apiKey("app-")
-            .baseUrl("http://localhost:4000/v1")
-            .build();
+    IDifyBaseClient client = IDifyBaseClient.newClient(
+            "http://localhost:4000/v1",
+            "app-"
+    );
 
     @Test
     public void blockTest() {

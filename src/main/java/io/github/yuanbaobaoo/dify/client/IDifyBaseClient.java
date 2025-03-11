@@ -14,21 +14,24 @@ import java.util.function.Consumer;
 /**
  * 基础Dify客户端
  */
-public interface IDifyClient {
+public interface IDifyBaseClient {
     /**
      * 获取应用基础信息
+     *
      * @return String
      */
     String getAppInfo() throws IOException, InterruptedException;
 
     /**
      * 获取应用参数信息
+     *
      * @return String
      */
     String getAppParameters() throws IOException, InterruptedException;
 
     /**
      * 获取应用元数据
+     *
      * @return String
      */
     String getAppMetaInfo() throws IOException, InterruptedException;
@@ -90,7 +93,7 @@ public interface IDifyClient {
     /**
      * request by application/json content-type
      *
-     * @param route  DifyRoute
+     * @param route DifyRoute
      * @return String
      */
     String requestJson(DifyRoute route)
@@ -100,8 +103,8 @@ public interface IDifyClient {
     /**
      * request by application/json content-type
      *
-     * @param route  DifyRoute
-     * @param query  Query 查询参数
+     * @param route DifyRoute
+     * @param query Query 查询参数
      * @return String
      */
     String requestJson(DifyRoute route, Map<String, Object> query)
@@ -157,5 +160,15 @@ public interface IDifyClient {
     String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params)
             throws DifyException, IOException, InterruptedException
     ;
+
+    /**
+     * new Dify Base Client
+     *
+     * @param baseUrl Dify Server Base URL
+     * @param apiKey  Api Key
+     */
+    static IDifyBaseClient newClient(String baseUrl, String apiKey) {
+        return DifyClientBuilder.create().baseUrl(baseUrl).apiKey(apiKey).build();
+    }
 
 }

@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSON;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import lombok.extern.slf4j.Slf4j;
-import io.github.yuanbaobaoo.dify.client.IDifyClient;
+import io.github.yuanbaobaoo.dify.client.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyBaseClientImpl implements IDifyClient {
+public class DifyBaseClientImpl implements IDifyBaseClient {
     private final String server;
     private final String apiKey;
     private final HttpClient httpClient;
