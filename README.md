@@ -17,9 +17,9 @@ Dify Java 客户端
 ### 快速开始
 - 环境需求  
 ```code
-Java : >= 17
+Java : >= 8 (1.8)
 Maven: >= 3
-Dify Api: <= 1.0.0
+Dify Api: <= 1.0.1
 ```
 
 - maven
