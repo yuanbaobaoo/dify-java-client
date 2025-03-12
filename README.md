@@ -17,7 +17,7 @@ Dify Java 客户端
 ### 快速开始
 - 环境需求  
 ```code
-Java : >= 8 (1.8)
+Java : >= 17
 Maven: >= 3
 Dify Api: <= 1.0.1
 ```
@@ -130,9 +130,9 @@ public KnowledgeResult retrieval(@RequestBody(required = false) KnowledgeArgs ar
     return knowledgeService.retrieval(request.getHeader("Authorization"), args);
 }
 ```
-- 2、实现接口```io.github.yuanbaobaoo.dify.service.IKnowledgeService```
+- 2、实现接口```io.github.yuanbaobaoo.dify.service.IDifyKnowledgeService```
 ```java
-class KnowledgeService implements IKnowledgeService {
+class KnowledgeService implements IDifyKnowledgeService {
     @Override
     public KnowledgeResult retrieval(String apiKey, KnowledgeArgs args) {
         // TODO 你的本地知识库检索逻辑

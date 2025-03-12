@@ -19,7 +19,7 @@ Dify Java Client
 ```code
 Java : >= 17
 Maven: >= 3
-Dify Api: <= 1.0.0
+Dify Api: <= 1.0.1
 ```
 
 - maven
@@ -130,9 +130,9 @@ public KnowledgeResult retrieval(@RequestBody(required = false) KnowledgeArgs ar
     return knowledgeService.retrieval(request.getHeader("Authorization"), args);
 }
 ```
-- 2、implement the interface```io.github.yuanbaobaoo.dify.service.IKnowledgeService```
+- 2、implement the interface```io.github.yuanbaobaoo.dify.service.IDifyKnowledgeService```
 ```java
-class KnowledgeService implements IKnowledgeService {
+class KnowledgeService implements IDifyKnowledgeService {
     @Override
     public KnowledgeResult retrieval(String apiKey, KnowledgeArgs args) {
         // TODO Your local knowledge retrieval logic
