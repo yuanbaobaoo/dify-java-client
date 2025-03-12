@@ -1,7 +1,7 @@
 package io.github.yuanbaobaoo.dify.service;
 
-import io.github.yuanbaobaoo.dify.types.KnowledgeResult;
 import io.github.yuanbaobaoo.dify.types.KnowledgeArgs;
+import io.github.yuanbaobaoo.dify.types.KnowledgeResult;
 
 public interface IDifyKnowledgeService {
     /**

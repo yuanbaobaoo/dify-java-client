@@ -1,29 +1,34 @@
 package io.github.yuanbaobaoo.dify.client.impl;
 
 import com.alibaba.fastjson2.JSON;
-import io.github.yuanbaobaoo.dify.types.DifyException;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
+import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.client.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
+import io.github.yuanbaobaoo.dify.types.DifyException;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.types.ResponseMode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-
+@Slf4j
 public class DifyBaseClientImpl implements IDifyBaseClient {
     private final String server;
     private final String apiKey;
@@ -67,12 +72,43 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
     }
 
     @Override
-    public String sendBlocking(DifyRoute route, Map<String, Object> params) throws DifyException, IOException, InterruptedException {
-        return sendBlocking(route, null, params);
+    public Boolean feedbacks(String messageId, String rating, String user, String content) {
+        try {
+            String result = requestJson(
+                    String.format("%s/%s/feedbacks", DifyRoutes.MESSAGES.getUrl(), messageId),
+                    HttpMethod.POST,
+                    null,
+                    new HashMap<>() {{
+                        put("rating", rating);
+                        put("user", user);
+                        put("content", content);
+                    }}
+            );
+
+            JSONObject json = JSON.parseObject(result);
+            return "success".equals(json.getString("result"));
+        } catch (DifyException e) {
+            log.error("feedbacks: {}", e.getOriginal());
+        } catch (Exception e) {
+            log.error("feedbacks", e);
+        }
+
+        return false;
     }
 
     @Override
-    public String sendBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
+    public String audioToText(File file, String user) throws DifyException, IOException, InterruptedException {
+        Map<String, Object> data = new HashMap<>();
+        data.put("file", file);
+        data.put("user", user);
+
+        JSONObject result = JSON.parseObject(requestMultipart(DifyRoutes.AUDIO_TO_TEXT, null, data));
+        return result.getString("text");
+
+    }
+
+    @Override
+    public String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
             throws DifyException, IOException, InterruptedException {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.blocking);
@@ -80,12 +116,12 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
     }
 
     @Override
-    public CompletableFuture<Void> sendStreaming(DifyRoute route, Map<String, Object> params, Consumer<String> consumer) {
-        return sendStreaming(route, null, params, consumer);
-    }
-
-    @Override
-    public CompletableFuture<Void> sendStreaming(DifyRoute route, Map<String, Object> query, Map<String, Object> params, Consumer<String> consumer) {
+    public CompletableFuture<Void> requestStreaming(
+            DifyRoute route,
+            Map<String, Object> query,
+            Map<String, Object> params,
+            Consumer<String> consumer
+    ) {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.streaming);
         HttpRequest.Builder builder = buildRequest(route.getUrl(), query);
