@@ -109,7 +109,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 ### Create External Knowledge
 The current project dose not implement the knowledge API, and only declare parameter objects and interfaces
 ```java
-public interface IDifyKonwledgeService {
+public interface IDifyKnowledgeService {
     /**
      * retrieval
      * @param apiKey API KEY

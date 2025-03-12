@@ -109,7 +109,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 ### 创建外部知识库
 当前项目并未对知识库API做实现，只声明了相关参数对象和接口   
 ```java
-public interface IDifyKonwledgeService {
+public interface IDifyKnowledgeService {
     /**
      * 知识检索
      * @param apiKey Dify传递的API KEY
