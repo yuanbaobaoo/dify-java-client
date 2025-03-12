@@ -17,6 +17,7 @@ public class DifyRoutes {
 
     /**
      * DESC: Get Application Meta Information
+     * Type: Public
      */
     public static final DifyRoute META_INFO = new DifyRoute("/meta", HttpMethod.GET);
 
@@ -27,10 +28,9 @@ public class DifyRoutes {
     public static final DifyRoute FILE_UPLOAD = new DifyRoute("/files/upload", HttpMethod.POST);
 
     /**
-     * Desc: Get Conversation History Messages
-     * Type: ChatFlow、Chat、Agent
+     * Type: ChatFlow、Chat、Agent、Completion
      */
-    public static final DifyRoute CHAT_MESSAGES = new DifyRoute("/messages", HttpMethod.GET);
+    public static final DifyRoute MESSAGES = new DifyRoute("/messages", HttpMethod.GET);
 
     /**
      * Get | Delete Conversations
@@ -42,11 +42,11 @@ public class DifyRoutes {
      * Desc: Get Conversation History Messages
      * Type: ChatFlow、Chat、Agent
      */
-    public static final DifyRoute CHAT_CHAT_MESSAGES = new DifyRoute("/chat-messages", HttpMethod.POST);
+    public static final DifyRoute CHAT_MESSAGES = new DifyRoute("/chat-messages", HttpMethod.POST);
 
     /**
      * Desc: Audio to Text
-     * Type: ChatFlow、Chat、Agent
+     * Type: ChatFlow、Chat、Agent、Completion
      */
     public static final DifyRoute AUDIO_TO_TEXT = new DifyRoute("/audio-to-text", HttpMethod.POST);
 
@@ -62,7 +62,14 @@ public class DifyRoutes {
     public static final DifyRoute WORKFLOW_TASK = new DifyRoute("/workflows/task", HttpMethod.POST);
 
     /**
+     * Desc: Get Workflow Logs
      * Type: workflow
      */
     public static final DifyRoute WORKFLOW_LOGS = new DifyRoute("/workflows/logs", HttpMethod.GET);
+
+    /**
+     * Desc: Get Completion Messages
+     * Type: Completion
+     */
+    public static final DifyRoute COMPLETION_MESSAGES = new DifyRoute("/completion-messages", HttpMethod.POST);
 }

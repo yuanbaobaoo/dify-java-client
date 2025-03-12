@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.client.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.client.IDifyFlowClient;
 import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.client.types.DifyWorkFlowResult;
 import io.github.yuanbaobaoo.dify.client.types.WorkflowStatus;
@@ -9,29 +10,26 @@ import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;
-import io.github.yuanbaobaoo.dify.client.IDifyFlowClient;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyFlowClient {
-
+public class DifyFlowClientImpl extends DifyBaseClientImpl implements IDifyFlowClient {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public DifyWorkFlowClientImpl(String server, String apiKey) {
+    public DifyFlowClientImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 
-
     @Override
     public CompletableFuture<Void> runStreaming(ParamMessage message, Consumer<DifyWorkFlowResult> consumer) {
-        return sendStreaming(DifyRoutes.WORKFLOW_RUN, message.toMap(), (line) -> {
+        return requestStreaming(DifyRoutes.WORKFLOW_RUN, null, message.toMap(), (line) -> {
             JSONObject json = JSON.parseObject(line);
             consumer.accept(DifyWorkFlowResult.builder().event(json.getString("event")).payload(json).build());
         });
@@ -40,7 +38,7 @@ public class DifyWorkFlowClientImpl extends DifyBaseClientImpl implements IDifyF
     @Override
     public JSONObject runBlocking(ParamMessage message) {
         try {
-            String result = sendBlocking(DifyRoutes.WORKFLOW_RUN, message.toMap());
+            String result = requestBlocking(DifyRoutes.WORKFLOW_RUN, null, message.toMap());
             return JSON.parseObject(result);
         } catch (DifyException e) {
             throw e;

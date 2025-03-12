@@ -14,16 +14,6 @@ import java.util.function.Consumer;
  */
 public interface IDifyFlowClient extends IDifyBaseClient {
     /**
-     * new Dify Work Flow Client
-     *
-     * @param baseUrl Dify Server Base URL
-     * @param apiKey  Api Key
-     */
-    static IDifyFlowClient newClient(String baseUrl, String apiKey) {
-        return DifyClientBuilder.create().baseUrl(baseUrl).apiKey(apiKey).buildFlow();
-    }
-
-    /**
      * 执行工作流（流式模式）
      *
      * @param message  ParamMessage

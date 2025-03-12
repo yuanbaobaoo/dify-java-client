@@ -15,7 +15,7 @@ import java.util.Map;
 @Builder
 public class ParamMessage {
     /**
-     * 用户输入/提问内容。
+     * 用户输入/提问内容。（仅对话类型应用）
      */
     private String query;
 
