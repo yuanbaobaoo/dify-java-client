@@ -2,75 +2,90 @@ package io.github.yuanbaobaoo.dify.client;
 
 import io.github.yuanbaobaoo.dify.client.impl.DifyBaseClientImpl;
 import io.github.yuanbaobaoo.dify.client.impl.DifyChatClientImpl;
-import io.github.yuanbaobaoo.dify.client.impl.DifyWorkFlowClientImpl;
+import io.github.yuanbaobaoo.dify.client.impl.DifyCompletionImpl;
+import io.github.yuanbaobaoo.dify.client.impl.DifyFlowClientImpl;
 
 /**
  * Dify Client builder
  */
 public class DifyClientBuilder {
-    private String baseUrl = "http://localhost:5001";
-    private String apiKey;
-
     /**
-     * create
-     * @return DifyClientBuilder
+     * builder
+     * @param <T>
      */
-    public static DifyClientBuilder create() {
-        return new DifyClientBuilder();
-    }
+    public static class Builder<T extends IDifyBaseClient> {
+        private String baseUrl = "http://localhost:5001";
+        private String apiKey;
+        private final Class<T> type;
 
-    /**
-     * dify server base url
-     * @param baseUrl String
-     */
-    public DifyClientBuilder baseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-        return this;
-    }
-
-    /**
-     * dify app api key
-     * @param apiKey String
-     */
-    public DifyClientBuilder apiKey(String apiKey) {
-        this.apiKey = apiKey;
-        return this;
-    }
-
-    /**
-     * build DifyBaseClient
-     * @return IDifyClient
-     */
-    public IDifyBaseClient build() {
-        if (baseUrl == null || apiKey == null) {
-            throw new RuntimeException("Dify Client Build Error: params is not defined");
+        /**
+         * constructor
+         * @param type Class<T>
+         */
+        public Builder(Class<T> type) {
+            this.type = type;
         }
 
-        return new DifyBaseClientImpl(baseUrl, apiKey);
+        /**
+         * dify server base url
+         * @param baseUrl String
+         */
+        public Builder<T> baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * dify app api key
+         * @param apiKey String
+         */
+        public Builder<T> apiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * build
+         */
+        public T build() {
+            if (baseUrl == null || apiKey == null) {
+                throw new RuntimeException("Dify Client Build Error: params is not defined");
+            }
+
+            try {
+                return type.getConstructor(String.class, String.class).newInstance(baseUrl, apiKey);
+            } catch (Exception e) {
+                throw new RuntimeException("Dify Client Build Error: class is not defined", e);
+            }
+        }
     }
 
     /**
-     * build DifyChatClient
-     * @return IDifyChatClient
+     * create dify base client
      */
-    public IDifyChatClient buildChat() {
-        if (baseUrl == null || apiKey == null) {
-            throw new RuntimeException("Dify Client Build Error: params is not defined");
-        }
-
-        return new DifyChatClientImpl(baseUrl, apiKey);
+    public static Builder<DifyBaseClientImpl> create() {
+        return new Builder<>(DifyBaseClientImpl.class);
     }
 
     /**
-     * build DifyWorkFlowClient
-     * @return IDifyWorkFlowClient
+     * create dify chat client
      */
-    public IDifyFlowClient buildFlow() {
-        if (baseUrl == null || apiKey == null) {
-            throw new RuntimeException("Dify Client Build Error: params is not defined");
-        }
+    public static Builder<DifyChatClientImpl> chat() {
+        return new Builder<>(DifyChatClientImpl.class);
+    }
 
-        return new DifyWorkFlowClientImpl(baseUrl, apiKey);
+    /**
+     * create dify flow client
+     */
+    public static Builder<DifyFlowClientImpl> flow() {
+        return new Builder<>(DifyFlowClientImpl.class);
+    }
+
+    /**
+     * create dify completion client
+     */
+    public static Builder<DifyCompletionImpl> completion() {
+        return new Builder<>(DifyCompletionImpl.class);
     }
 
 }

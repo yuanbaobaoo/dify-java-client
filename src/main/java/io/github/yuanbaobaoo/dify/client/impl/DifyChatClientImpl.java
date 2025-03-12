@@ -2,22 +2,18 @@ package io.github.yuanbaobaoo.dify.client.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.types.DifyException;
-import lombok.extern.slf4j.Slf4j;
 import io.github.yuanbaobaoo.dify.client.IDifyChatClient;
 import io.github.yuanbaobaoo.dify.client.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.client.types.DifyChatEvent;
 import io.github.yuanbaobaoo.dify.client.types.DifyChatResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
+import io.github.yuanbaobaoo.dify.types.DifyException;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -37,7 +33,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
     @Override
     public DifyChatResult sendMessages(ParamMessage message) {
         try {
-            String result = sendBlocking(DifyRoutes.CHAT_CHAT_MESSAGES, message.toMap());
+            String result = requestBlocking(DifyRoutes.CHAT_MESSAGES, null, message.toMap());
             return DifyChatResult.builder().event(DifyChatEvent.message).payload(JSON.parseObject(result)).build();
         } catch (DifyException e) {
             throw e;
@@ -49,7 +45,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
 
     @Override
     public CompletableFuture<Void> sendMessagesAsync(ParamMessage message, Consumer<DifyChatResult> consumer) {
-        return sendStreaming(DifyRoutes.CHAT_CHAT_MESSAGES, message.toMap(), (line) -> {
+        return requestStreaming(DifyRoutes.CHAT_MESSAGES, null, message.toMap(), (line) -> {
             JSONObject json = JSON.parseObject(line);
             consumer.accept(DifyChatResult.builder().event(json.getString("event")).payload(json).build());
         });
@@ -59,7 +55,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
     public Boolean stopResponse(String taskId, String user) {
         try {
             String result = requestJson(
-                    String.format("%s/%s/stop", DifyRoutes.CHAT_CHAT_MESSAGES.getUrl(), taskId),
+                    String.format("%s/%s/stop", DifyRoutes.CHAT_MESSAGES.getUrl(), taskId),
                     HttpMethod.POST,
                     null,
                     new HashMap<>() {{
@@ -82,7 +78,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
     public List<String> suggestedList(String messageId, String user) {
         try {
             String result = requestJson(
-                    String.format("%s/%s/suggested", DifyRoutes.CHAT_MESSAGES.getUrl(), messageId),
+                    String.format("%s/%s/suggested", DifyRoutes.MESSAGES.getUrl(), messageId),
                     HttpMethod.GET,
                     new HashMap<>() {{
                         put("user", user);
@@ -110,7 +106,7 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
     @Override
     public JSONObject history(String conversationId, String user, Integer limit, String firstId) {
         try {
-            String result = requestJson(DifyRoutes.CHAT_MESSAGES, new HashMap<>() {{
+            String result = requestJson(DifyRoutes.MESSAGES, new HashMap<>() {{
                 put("conversation_id", conversationId);
                 put("user", user);
                 put("limit", limit);
@@ -198,17 +194,6 @@ public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatC
         }
 
         return null;
-    }
-
-    @Override
-    public String audioToText(File file, String user) throws DifyException, IOException, InterruptedException {
-        Map<String, Object> data = new HashMap<>();
-        data.put("file", file);
-        data.put("user", user);
-
-        JSONObject result = JSON.parseObject(requestMultipart(DifyRoutes.AUDIO_TO_TEXT, null, data));
-        return result.getString("text");
-
     }
 
 }
