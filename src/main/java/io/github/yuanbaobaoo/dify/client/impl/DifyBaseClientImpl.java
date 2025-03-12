@@ -1,10 +1,8 @@
 package io.github.yuanbaobaoo.dify.client.impl;
 
-import cn.hutool.core.net.url.UrlBuilder;
 import com.alibaba.fastjson2.JSON;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
-import lombok.extern.slf4j.Slf4j;
 import io.github.yuanbaobaoo.dify.client.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
@@ -13,6 +11,7 @@ import io.github.yuanbaobaoo.dify.types.ResponseMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -20,14 +19,11 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-@Slf4j
+
 public class DifyBaseClientImpl implements IDifyBaseClient {
     private final String server;
     private final String apiKey;
@@ -118,8 +114,7 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
     }
 
     @Override
-    public String requestJson(DifyRoute route)
-            throws DifyException, IOException, InterruptedException {
+    public String requestJson(DifyRoute route) throws DifyException, IOException, InterruptedException {
         return requestJson(route.getUrl(), route.getMethod(), null, null);
     }
 
@@ -162,8 +157,7 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
     }
 
     @Override
-    public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException {
+    public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params) throws DifyException, IOException, InterruptedException {
         return requestMultipart(route.getUrl(), route.getMethod(), query, params);
     }
 
@@ -192,24 +186,30 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
     /**
      * build request
      *
-     * @param url  api url
-     * @param query  Query params
+     * @param url   api url
+     * @param query Query params
      */
     private HttpRequest.Builder buildRequest(String url, Map<String, Object> query) {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
+        StringBuilder sb = new StringBuilder();
 
-        UrlBuilder urlBuilder = UrlBuilder.ofHttp(this.server);
-        urlBuilder.addPath(url);
-
-        if (query != null) {
-            query.forEach((key, value) -> {
-                if (value != null && key != null) {
-                    urlBuilder.addQuery(key, value.toString());
-                }
-            });
+        if (this.server.endsWith("/") && url.startsWith("/")) {
+            sb.append(this.server, 0, this.server.length() - 1);
+        } else if (!this.server.endsWith("/") && !url.startsWith("/")) {
+            sb.append(this.server).append('/');
+        } else {
+            sb.append(this.server);
         }
 
-        builder.uri(urlBuilder.toURI());
+        sb.append(url);
+
+        if (query != null && !query.isEmpty()) {
+            sb.append("?");
+            query.forEach((key, value) -> sb.append(key).append("=").append(value).append("&"));
+            sb.setLength(sb.length() - 1);
+        }
+
+        builder.uri(URI.create(sb.toString()));
         builder.header("Authorization", "Bearer " + this.apiKey);
 
         return builder;
