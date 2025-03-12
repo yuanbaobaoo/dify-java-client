@@ -1,10 +1,10 @@
 package io.github.yuanbaobaoo.dify.types;
 
+import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 
 @Getter
 @Builder

@@ -1,9 +1,9 @@
 package io.github.yuanbaobaoo.dify.client;
 
-import io.github.yuanbaobaoo.dify.types.DifyException;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.HttpMethod;
+import io.github.yuanbaobaoo.dify.types.DifyException;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,16 +15,6 @@ import java.util.function.Consumer;
  * 基础Dify客户端
  */
 public interface IDifyBaseClient {
-    /**
-     * new Dify Base Client
-     *
-     * @param baseUrl Dify Server Base URL
-     * @param apiKey  Api Key
-     */
-    static IDifyBaseClient newClient(String baseUrl, String apiKey) {
-        return DifyClientBuilder.create().baseUrl(baseUrl).apiKey(apiKey).build();
-    }
-
     /**
      * 获取应用基础信息
      *
@@ -56,13 +46,23 @@ public interface IDifyBaseClient {
     DifyFileResult uploadFile(File file, String user) throws DifyException, IOException, InterruptedException;
 
     /**
-     * 发送同步接口请求
+     * 消息反馈
      *
-     * @param route  DifyRoute
-     * @param params Body params
-     * @return String
+     * @param messageId 消息ID
+     * @param rating    点赞 like, 点踩 dislike, 撤销点赞 null
+     * @param user      用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
+     * @param content   消息反馈的具体信息。
      */
-    String sendBlocking(DifyRoute route, Map<String, Object> params) throws DifyException, IOException, InterruptedException;
+    Boolean feedbacks(String messageId, String rating, String user, String content);
+
+    /**
+     * 语音转文字
+     *
+     * @param file 语音文件。 支持格式：['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm'] 文件
+     *             大小限制：15MB
+     * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
+     */
+    String audioToText(File file, String user) throws DifyException, IOException, InterruptedException;
 
     /**
      * 发送同步接口请求
@@ -72,7 +72,7 @@ public interface IDifyBaseClient {
      * @param params Body params
      * @return String
      */
-    String sendBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
+    String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
             throws DifyException, IOException, InterruptedException
     ;
 
@@ -80,20 +80,11 @@ public interface IDifyBaseClient {
      * 发送流式接口请求
      *
      * @param route  DifyRoute
-     * @param params Body params
-     * @return CompletableFuture<Void>
-     */
-    CompletableFuture<Void> sendStreaming(DifyRoute route, Map<String, Object> params, Consumer<String> consumer);
-
-    /**
-     * 发送流式接口请求
-     *
-     * @param route  DifyRoute
      * @param query  Query params
      * @param params Body params
      * @return CompletableFuture<Void>
      */
-    CompletableFuture<Void> sendStreaming(
+    CompletableFuture<Void> requestStreaming(
             DifyRoute route,
             Map<String, Object> query,
             Map<String, Object> params,

@@ -6,7 +6,7 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.1.0-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.2.0-green" /> 
     </a>
 </p>
 
@@ -27,29 +27,17 @@ Dify Api: <= 1.0.1
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
 ### 创建客户端
 ```java
 /**
- * 支持 build()、buildChat()、buildFlow() 方法，其对应返回类型也是不一致的
+ * 支持 create()、chat()、flow()、completion()，其对应返回类型也是不一致的
  */
 IDifyBaseClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 ```
-or
-```java
-// 创建一个 IDifyBaseClient 对象
-IDifyBaseClient baseClient = IDifyBaseClient.newClient("http://localhost:4000/v1", "app-xxxx");
-
-// 创建一个 IDifyChatClient 对象
-IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
-
-// 创建一个 IDifyFlowClient 对象
-IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
-```
-你喜欢用哪种就用哪种
 
 #### 1、IDifyBaseClient: 基础Client
 封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
@@ -65,7 +53,7 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 #### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
 ```IDifyChatClient``` 继承自 ```IDifyBaseClient```，提供了会话相关的API：
 ```java
-IDifyChatClient chatClient = IDifyChatClient.newClient("http://localhost:4000/v1", "app-xxxx");
+IDifyChatClient chatClient = DifyClientBuilder.chat().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{
@@ -89,7 +77,7 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 #### 3、IDifyFlowClient: 适用于 WorkFlow 类型应用
 ```IDifyFlowClient``` 继承自 ```IDifyBaseClient```，提供了工作流相关的API：
 ```java
-IDifyFlowClient flowClient = IDifyFlowClient.newClient("http://localhost:4000/v1", "app-xxxx");
+IDifyFlowClient flowClient = DifyClientBuilder.flow().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().user("abc-123").inputs(new HashMap<>() {{
@@ -102,6 +90,23 @@ DifyChatResult result = flowClient.runBlocking(m);
 
 // 流式运行工作流
 CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
+    System.out.println("ok: " + r.getPayload().toJSONString());
+});
+```
+
+#### 4、IDifyCompletion: 适用于 Completion 类型应用
+```IDifyCompletion``` 继承自 ```IDifyBaseClient```，提供了文本生成相关的API：
+```java
+IDifyCompletion completion = DifyClientBuilder.completion().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+
+// 创建消息
+ParamMessage m = ParamMessage.builder().query("Java为什么叫Java").user("abc-123").build();
+
+// 阻塞式运行
+DifyChatResult result = completion.sendMessages(m);
+
+// 流式运行
+CompletableFuture<Void> future = completion.sendMessagesAsync(m, (r) -> {
     System.out.println("ok: " + r.getPayload().toJSONString());
 });
 ```
@@ -148,23 +153,27 @@ class KnowledgeService implements IDifyKnowledgeService {
 ### 支持的API
 目前支持的API，可以参考上述三个接口文件。目前这个项目在持续更新中，如果接口不满足的，可以调用```requestJSON```、```requestMultipart```进行请求。
 
-| 内置API                                 | Dify Api                             | Method | 描述              |
-|---------------------------------------|--------------------------------------|--------|-----------------|
-| IDifyClient.getAppInfo                | /info                                | GET    | 获取应用基本信息        |
-| IDifyClient.getAppParameters          | /parameters                          | GET    | 获取应用参数          |
-| IDifyClient.getAppMetaInfo            | /meta                                | GET    | 获取应用Meta信息      |
-| IDifyClient.uploadFile                | /files/upload                        | POST   | 上传文件            |
-| IDifyChatClient.sendMessages          | /chat-messages                       | POST   | 发送对话消息（阻塞）      |
-| IDifyChatClient.sendMessagesAsync     | /chat-messages                       | POST   | 发送对话消息（流式）      |
-| IDifyChatClient.stopResponse          | /chat-messages/:task_id/stop         | POST   | 停止响应            |
-| IDifyChatClient.suggestedList         | /messages/{message_id}/suggested     | GET    | 下一轮问题列表         |
-| IDifyChatClient.history               | /messages                            | GET    | 获取会话历史消息        |
-| IDifyChatClient.conversations         | /conversations                       | GET    | 获取会话列表          |
-| IDifyChatClient.deleteConversation    | /conversations/:conversation_id      | DELETE | 删除会话            |
-| IDifyChatClient.renameConversation    | /conversations/:conversation_id/name | POST   | 会话重命名           |
-| IDifyChatClient.audioToText           | /audio-to-text                       | POST   | 语音转文字           |
-| IDifyWorkFlowClient.runStreaming      | /workflows/run                       | POST   | 执行 workflow（流式） |
-| IDifyWorkFlowClient.runBlocking       | /workflows/run                       | POST   | 执行 workflow（阻塞） |
-| IDifyWorkFlowClient.getWorkFlowStatus | /workflows/run/:workflow_id          | GET    | 获取 workflow执行情况 |
-| IDifyWorkFlowClient.getWorkFlowLog    | /workflows/logs                      | GET    | 获取 workflow 日志  |
-| IDifyWorkFlowClient.stopWorkFlow      | /workflows/tasks/:task_id/stop       | POST   | 停止响应workflow    |
+| 内置API                              | Dify Api                             | Method | 描述              |
+|------------------------------------|--------------------------------------|--------|-----------------|
+| IDifyBaseClient.getAppInfo         | /info                                | GET    | 获取应用基本信息        |
+| IDifyBaseClient.getAppParameters   | /parameters                          | GET    | 获取应用参数          |
+| IDifyBaseClient.getAppMetaInfo     | /meta                                | GET    | 获取应用Meta信息      |
+| IDifyBaseClient.uploadFile         | /files/upload                        | POST   | 上传文件            |
+| IDifyBaseClient.feedbacks          | /messages/:message_id/feedbacks      | POST   | 消息反馈            |
+| IDifyBaseClient.audioToText        | /audio-to-text                       | POST   | 语音转文字           |
+| IDifyChatClient.sendMessages       | /chat-messages                       | POST   | 发送对话消息（阻塞）      |
+| IDifyChatClient.sendMessagesAsync  | /chat-messages                       | POST   | 发送对话消息（流式）      |
+| IDifyChatClient.stopResponse       | /chat-messages/:task_id/stop         | POST   | 停止响应            |
+| IDifyChatClient.suggestedList      | /messages/{message_id}/suggested     | GET    | 下一轮问题列表         |
+| IDifyChatClient.history            | /messages                            | GET    | 获取会话历史消息        |
+| IDifyChatClient.conversations      | /conversations                       | GET    | 获取会话列表          |
+| IDifyChatClient.deleteConversation | /conversations/:conversation_id      | DELETE | 删除会话            |
+| IDifyChatClient.renameConversation | /conversations/:conversation_id/name | POST   | 会话重命名           |
+| IDifyFlowClient.runStreaming       | /workflows/run                       | POST   | 执行 workflow（流式） |
+| IDifyFlowClient.runBlocking        | /workflows/run                       | POST   | 执行 workflow（阻塞） |
+| IDifyFlowClient.getWorkFlowStatus  | /workflows/run/:workflow_id          | GET    | 获取 workflow执行情况 |
+| IDifyFlowClient.getWorkFlowLog     | /workflows/logs                      | GET    | 获取 workflow 日志  |
+| IDifyFlowClient.stopWorkFlow       | /workflows/tasks/:task_id/stop       | POST   | 停止响应workflow    |
+| IDifyCompletion.sendMessages       | /completion-messages                 | POST   | 发送文本生成消息（阻塞）    |
+| IDifyCompletion.sendMessagesAsync  | /completion-messages                 | POST   | 发送文本生成消息（流式）    |
+| IDifyCompletion.stopGenerate       | /completion-messages/:task_id/stop   | POST   | 停止响应completion  |
