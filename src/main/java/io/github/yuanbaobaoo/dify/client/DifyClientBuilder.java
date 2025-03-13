@@ -10,10 +10,38 @@ import io.github.yuanbaobaoo.dify.client.impl.DifyFlowClientImpl;
  */
 public class DifyClientBuilder {
     /**
+     * create dify base client
+     */
+    public static Builder<IDifyBaseClient, DifyBaseClientImpl> create() {
+        return new Builder<>(DifyBaseClientImpl.class);
+    }
+
+    /**
+     * create dify chat client
+     */
+    public static Builder<IDifyChatClient, DifyChatClientImpl> chat() {
+        return new Builder<>(DifyChatClientImpl.class);
+    }
+
+    /**
+     * create dify flow client
+     */
+    public static Builder<IDifyFlowClient, DifyFlowClientImpl> flow() {
+        return new Builder<>(DifyFlowClientImpl.class);
+    }
+
+    /**
+     * create dify completion client
+     */
+    public static Builder<IDifyCompletion, DifyCompletionImpl> completion() {
+        return new Builder<>(DifyCompletionImpl.class);
+    }
+
+    /**
      * builder
      * @param <T>
      */
-    public static class Builder<T extends IDifyBaseClient> {
+    public static class Builder<R, T extends R> {
         private String baseUrl = "http://localhost:5001";
         private String apiKey;
         private final Class<T> type;
@@ -30,7 +58,7 @@ public class DifyClientBuilder {
          * dify server base url
          * @param baseUrl String
          */
-        public Builder<T> baseUrl(String baseUrl) {
+        public Builder<R, T> baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
             return this;
         }
@@ -39,7 +67,7 @@ public class DifyClientBuilder {
          * dify app api key
          * @param apiKey String
          */
-        public Builder<T> apiKey(String apiKey) {
+        public Builder<R, T> apiKey(String apiKey) {
             this.apiKey = apiKey;
             return this;
         }
@@ -47,7 +75,7 @@ public class DifyClientBuilder {
         /**
          * build
          */
-        public T build() {
+        public R build() {
             if (baseUrl == null || apiKey == null) {
                 throw new RuntimeException("Dify Client Build Error: params is not defined");
             }
@@ -58,34 +86,6 @@ public class DifyClientBuilder {
                 throw new RuntimeException("Dify Client Build Error: class is not defined", e);
             }
         }
-    }
-
-    /**
-     * create dify base client
-     */
-    public static Builder<DifyBaseClientImpl> create() {
-        return new Builder<>(DifyBaseClientImpl.class);
-    }
-
-    /**
-     * create dify chat client
-     */
-    public static Builder<DifyChatClientImpl> chat() {
-        return new Builder<>(DifyChatClientImpl.class);
-    }
-
-    /**
-     * create dify flow client
-     */
-    public static Builder<DifyFlowClientImpl> flow() {
-        return new Builder<>(DifyFlowClientImpl.class);
-    }
-
-    /**
-     * create dify completion client
-     */
-    public static Builder<DifyCompletionImpl> completion() {
-        return new Builder<>(DifyCompletionImpl.class);
     }
 
 }

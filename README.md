@@ -152,6 +152,7 @@ class KnowledgeService implements IDifyKnowledgeService {
 
 ### 支持的API
 目前支持的API，可以参考上述三个接口文件。目前这个项目在持续更新中，如果接口不满足的，可以调用```requestJSON```、```requestMultipart```进行请求。
+>声明一个DifyRoute对象: ```DifyRoute route = new DifyRoute("/info", HttpMethod.GET);```
 
 | 内置API                              | Dify Api                             | Method | 描述              |
 |------------------------------------|--------------------------------------|--------|-----------------|

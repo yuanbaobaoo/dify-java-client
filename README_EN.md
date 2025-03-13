@@ -154,6 +154,7 @@ Of course, you can also get the original return content through the ```getOrigin
 The currently supported API, you can refer to the above three interface files. 
 The project is currently being updated, and if the interface is not satisfied, 
 you can call ```requestJSON```、```requestMultipart```to request.
+>Declare an DifyRoute object: ```DifyRoute route = new DifyRoute("/info", HttpMethod.GET);```
 
 | Method                             | Dify Api                             | Method | 描述                                     |
 |------------------------------------|--------------------------------------|--------|----------------------------------------|
