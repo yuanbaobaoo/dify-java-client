@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyBaseClientImpl implements IDifyBaseClient {
+public class BaseClientImpl implements IDifyBaseClient {
     private final String server;
     private final String apiKey;
     private final HttpClient httpClient;
@@ -40,7 +40,7 @@ public class DifyBaseClientImpl implements IDifyBaseClient {
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public DifyBaseClientImpl(String server, String apiKey) {
+    public BaseClientImpl(String server, String apiKey) {
         this.apiKey = apiKey;
         this.server = server;
         this.httpClient = HttpClient.newHttpClient();

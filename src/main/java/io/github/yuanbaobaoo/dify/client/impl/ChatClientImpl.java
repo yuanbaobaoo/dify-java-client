@@ -18,14 +18,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyChatClientImpl extends DifyBaseClientImpl implements IDifyChatClient {
+public class ChatClientImpl extends BaseClientImpl implements IDifyChatClient {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public DifyChatClientImpl(String server, String apiKey) {
+    public ChatClientImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 
