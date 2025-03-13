@@ -241,7 +241,13 @@ public class BaseClientImpl implements IDifyBaseClient {
 
         if (query != null && !query.isEmpty()) {
             sb.append("?");
-            query.forEach((key, value) -> sb.append(key).append("=").append(value).append("&"));
+
+            query.forEach((key, value) -> {
+                if (value != null) {
+                    sb.append(key).append("=").append(value).append("&");
+                }
+            });
+
             sb.setLength(sb.length() - 1);
         }
 
