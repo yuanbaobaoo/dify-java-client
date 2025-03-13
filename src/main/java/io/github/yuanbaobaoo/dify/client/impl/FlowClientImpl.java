@@ -16,14 +16,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class DifyFlowClientImpl extends DifyBaseClientImpl implements IDifyFlowClient {
+public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public DifyFlowClientImpl(String server, String apiKey) {
+    public FlowClientImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 
