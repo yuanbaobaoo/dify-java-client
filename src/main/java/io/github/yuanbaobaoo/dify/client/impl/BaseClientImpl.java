@@ -243,7 +243,7 @@ public class BaseClientImpl implements IDifyBaseClient {
             sb.append("?");
 
             query.forEach((key, value) -> {
-                if (value != null) {
+                if (key != null && value != null) {
                     sb.append(key).append("=").append(value).append("&");
                 }
             });
