@@ -1,7 +1,6 @@
 package io.github.yuanbaobaoo.dify.client;
 
 import io.github.yuanbaobaoo.dify.client.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
@@ -90,76 +89,5 @@ public interface IDifyBaseClient {
             Map<String, Object> params,
             Consumer<String> consumer
     );
-
-    /**
-     * request by application/json content-type
-     *
-     * @param route DifyRoute
-     * @return String
-     */
-    String requestJson(DifyRoute route)
-            throws DifyException, IOException, InterruptedException
-    ;
-
-    /**
-     * request by application/json content-type
-     *
-     * @param route DifyRoute
-     * @param query Query 查询参数
-     * @return String
-     */
-    String requestJson(DifyRoute route, Map<String, Object> query)
-            throws DifyException, IOException, InterruptedException
-    ;
-
-    /**
-     * request by application/json content-type
-     *
-     * @param route  DifyRoute
-     * @param query  Query 查询参数
-     * @param params Body 参数
-     * @return String
-     */
-    String requestJson(DifyRoute route, Map<String, Object> query, Object params)
-            throws DifyException, IOException, InterruptedException
-    ;
-
-    /**
-     * request by application/json content-type
-     *
-     * @param url    API URL
-     * @param method HTTP请求方法
-     * @param query  Query 查询参数
-     * @param params Body 参数
-     * @return String
-     */
-    String requestJson(String url, HttpMethod method, Map<String, Object> query, Object params)
-            throws DifyException, IOException, InterruptedException
-    ;
-
-    /**
-     * request by multipart/form-data content-type
-     *
-     * @param route  DifyRoute
-     * @param query  Query 查询参数
-     * @param params Body 参数，文件流需自行在params中传入
-     * @return String
-     */
-    String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException
-    ;
-
-    /**
-     * request by multipart/form-data content-type
-     *
-     * @param url    API URL
-     * @param method HTTP请求方法
-     * @param query  Query 查询参数
-     * @param params Body 参数，文件流需自行在params中传入
-     * @return String
-     */
-    String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException
-    ;
 
 }
