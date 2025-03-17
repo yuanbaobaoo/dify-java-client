@@ -1,4 +1,4 @@
-package io.github.yuanbaobaoo.dify.service;
+package io.github.yuanbaobaoo.dify.knowledge.external;
 
 import io.github.yuanbaobaoo.dify.types.KnowledgeArgs;
 import io.github.yuanbaobaoo.dify.types.KnowledgeResult;

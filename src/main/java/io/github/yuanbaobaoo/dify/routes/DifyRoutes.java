@@ -4,6 +4,11 @@ import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 public class DifyRoutes {
     /**
+     * Supported the dify api version
+     */
+    public static final String version = "/v1";
+
+    /**
      * DESC: Get Application Basic Information
      * Type: Public
      */
@@ -72,4 +77,16 @@ public class DifyRoutes {
      * Type: Completion
      */
     public static final DifyRoute COMPLETION_MESSAGES = new DifyRoute("/completion-messages", HttpMethod.POST);
+
+    /**
+     * Desc: Datasets
+     * Type: Dataset
+     */
+    public static final DifyRoute DATASETS = new DifyRoute("/datasets", HttpMethod.POST);
+
+
+    public static final DifyRoute DATASETS_DOC_CREATE_TEXT = new DifyRoute(
+            "/datasets/${datasetId}/document/create-by-text",
+            HttpMethod.POST
+    );
 }
