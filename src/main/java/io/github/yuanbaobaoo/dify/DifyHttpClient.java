@@ -1,6 +1,8 @@
 package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
+import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
+import io.github.yuanbaobaoo.dify.types.DifyClientException;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -45,7 +47,7 @@ public class DifyHttpClient {
      * @param route DifyRoute
      * @return String
      */
-    public String requestJson(DifyRoute route) throws DifyException, IOException, InterruptedException {
+    public String requestJson(DifyRoute route) {
         return requestJson(route.getUrl(), route.getMethod(), null, null);
     }
 
@@ -56,8 +58,7 @@ public class DifyHttpClient {
      * @param query Query 查询参数
      * @return String
      */
-    public String requestJson(DifyRoute route, Map<String, Object> query)
-            throws DifyException, IOException, InterruptedException {
+    public String requestJson(DifyRoute route, Map<String, Object> query) {
         return requestJson(route.getUrl(), route.getMethod(), query, null);
     }
 
@@ -69,8 +70,7 @@ public class DifyHttpClient {
      * @param params Body 参数
      * @return String
      */
-    public String requestJson(DifyRoute route, Map<String, Object> query, Object params)
-            throws DifyException, IOException, InterruptedException {
+    public String requestJson(DifyRoute route, Map<String, Object> query, Object params) {
         return requestJson(route.getUrl(), route.getMethod(), query, params);
     }
 
@@ -83,29 +83,34 @@ public class DifyHttpClient {
      * @param params Body 参数
      * @return String
      */
-    public String requestJson(String url, HttpMethod method, Map<String, Object> query, Object params)
-            throws DifyException, IOException, InterruptedException {
-        HttpRequest.Builder builder = buildRequest(url, query);
+    public String requestJson(String url, HttpMethod method, Map<String, Object> query, Object params) {
+        try {
+            HttpRequest.Builder builder = buildRequest(url, query);
 
-        if (params == null) {
-            params = new HashMap<>();
+            if (params == null) {
+                params = new HashMap<>();
+            }
+
+            if (method == HttpMethod.GET) {
+                builder.method(method.name(), HttpRequest.BodyPublishers.noBody());
+            } else {
+                builder.header("Content-Type", "application/json");
+                builder.method(method.name(), HttpRequest.BodyPublishers.ofString(JSON.toJSONString(params)));
+            }
+
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+
+            // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
+            if (response.statusCode() >= 400) {
+                throw new DifyException(response.body(), response.statusCode());
+            }
+
+            return response.body();
+        } catch (DifyException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DifyClientException(e);
         }
-
-        if (method == HttpMethod.GET) {
-            builder.method(method.name(), HttpRequest.BodyPublishers.noBody());
-        } else {
-            builder.header("Content-Type", "application/json");
-            builder.method(method.name(), HttpRequest.BodyPublishers.ofString(JSON.toJSONString(params)));
-        }
-
-        HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-
-        // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
-        if (response.statusCode() >= 400) {
-            throw new DifyException(response.body(), response.statusCode());
-        }
-
-        return response.body();
     }
 
     /**
@@ -151,8 +156,7 @@ public class DifyHttpClient {
      * @param params Body 参数，文件流需自行在params中传入
      * @return String
      */
-    public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException {
+    public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params) {
         return requestMultipart(route.getUrl(), route.getMethod(), query, params);
     }
 
@@ -165,25 +169,30 @@ public class DifyHttpClient {
      * @param params Body 参数，文件流需自行在params中传入
      * @return String
      */
-    public String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException {
-        HttpRequest.Builder builder = buildRequest(url, query);
+    public String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params) {
+        try {
+            HttpRequest.Builder builder = buildRequest(url, query);
 
-        if (params == null) {
-            params = new HashMap<>();
+            if (params == null) {
+                params = new HashMap<>();
+            }
+
+            String boundary = "-----------" + UUID.randomUUID().toString().replaceAll("-", "");
+            builder.header("Content-Type", "multipart/form-data; boundary=" + boundary);
+            builder.method(method.name(), convertMapToMultipart(boundary, params));
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+
+            // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
+            if (response.statusCode() >= 400) {
+                throw new DifyException(response.body(), response.statusCode());
+            }
+
+            return response.body();
+        }  catch (DifyException e) {
+            throw e;
+        }  catch (Exception e) {
+            throw new DifyClientException(e);
         }
-
-        String boundary = "-----------" + UUID.randomUUID().toString().replaceAll("-", "");
-        builder.header("Content-Type", "multipart/form-data; boundary=" + boundary);
-        builder.method(method.name(), convertMapToMultipart(boundary, params));
-        HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-
-        // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
-        if (response.statusCode() >= 400) {
-            throw new DifyException(response.body(), response.statusCode());
-        }
-
-        return response.body();
     }
 
     /**

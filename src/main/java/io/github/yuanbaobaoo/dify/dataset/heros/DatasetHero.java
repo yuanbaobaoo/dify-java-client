@@ -17,7 +17,6 @@ import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,10 +44,13 @@ public class DatasetHero extends Dataset {
 
     /**
      * DifyHttpClient
+     *
      * @param client DifyHttpClient
      */
     public void resetDifyClient(DifyHttpClient client) {
-        this.client = client;
+        if (client != null) {
+            this.client = client;
+        }
     }
 
     /**
@@ -62,7 +64,7 @@ public class DatasetHero extends Dataset {
     /**
      * 删除数据库
      */
-    public void delete() throws IOException, InterruptedException {
+    public void delete() {
         client.requestJson(
                 String.format("%s/%s", AppRoutes.DATASETS.getUrl(), getId()),
                 HttpMethod.DELETE,
@@ -75,7 +77,7 @@ public class DatasetHero extends Dataset {
      * 通过文本创建文档
      * @param doc ParamDocument
      */
-    public DocumentResult insertText(ParamDocument doc) throws IOException, InterruptedException {
+    public DocumentResult insertText(ParamDocument doc) {
         return insertText(doc, null, null, null);
     }
 
@@ -87,7 +89,7 @@ public class DatasetHero extends Dataset {
      * @param embeddingModelProvider Embedding 模型供应商
      */
     public DocumentResult insertText(ParamDocument doc, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider)
-            throws IOException, InterruptedException {
+            {
         Map<String, Object> params = doc.toMap();
         params.put("retrieval_model", retrievalModel);
         params.put("embedding_model", embeddingModel);
@@ -109,7 +111,7 @@ public class DatasetHero extends Dataset {
      * @param file File
      * @param data ParamDocument
      */
-    public DocumentResult insertFile(File file, ParamDocument data) throws IOException, InterruptedException {
+    public DocumentResult insertFile(File file, ParamDocument data) {
         return insertFile(file, data, null, null, null);
     }
 
@@ -121,8 +123,7 @@ public class DatasetHero extends Dataset {
      * @param embeddingModel Embedding 模型名称
      * @param embeddingModelProvider Embedding 模型供应商
      */
-    public DocumentResult insertFile(File file, ParamDocument data, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider)
-            throws IOException, InterruptedException {
+    public DocumentResult insertFile(File file, ParamDocument data, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider) {
         Map<String, Object> params = new HashMap<>();
         params.put("file", file);
         params.put("data", data);
@@ -145,7 +146,7 @@ public class DatasetHero extends Dataset {
      * 获取文档嵌入状态（进度）
      * @param batch 上传文档的批次号
      */
-    public List<BatchStatus> queryBatchStatus(String batch) throws IOException, InterruptedException {
+    public List<BatchStatus> queryBatchStatus(String batch) {
         DifyRoute route = AppRoutes.DATASETS_INDEXING_STATUS.format(new HashMap<>() {{
             put("datasetId", getId());
             put("batch", batch);
@@ -161,7 +162,7 @@ public class DatasetHero extends Dataset {
     /**
      * 获取知识库文档列表
      */
-    public DifyPage<Document> documents() throws IOException, InterruptedException {
+    public DifyPage<Document> documents() {
         return documents(null ,null, null);
     }
 
@@ -171,7 +172,7 @@ public class DatasetHero extends Dataset {
      * @param limit 返回条数
      * @param keyword 搜索关键词，可选，目前仅搜索文档名称
      */
-    public DifyPage<Document> documents(Integer page, Integer limit, String keyword) throws IOException, InterruptedException {
+    public DifyPage<Document> documents(Integer page, Integer limit, String keyword) {
         DifyRoute route = AppRoutes.DATASETS_DOCS.format(new HashMap<>() {{
             put("datasetId", getId());
         }});
@@ -191,7 +192,7 @@ public class DatasetHero extends Dataset {
      * @param query 检索关键词
      * @param retrievalModel RetrievalModel
      */
-    public RetrieveResult retrieve(String query, RetrievalModel retrievalModel) throws IOException, InterruptedException {
+    public RetrieveResult retrieve(String query, RetrievalModel retrievalModel) {
         String result = client.requestJson(AppRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
             put("datasetId", getId());
         }}), null, new HashMap<>() {{
