@@ -1,8 +1,7 @@
 package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
-import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
-import io.github.yuanbaobaoo.dify.routes.HttpMethod;
+import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
@@ -22,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class DifyHttpClient {
+    private final static String version = "/v1";
+
     private final String server;
     private final String apiKey;
     private final HttpClient httpClient;
@@ -195,8 +196,8 @@ public class DifyHttpClient {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         StringBuilder sb = new StringBuilder();
 
-        if (!this.server.endsWith(DifyRoutes.version) && !this.server.endsWith(DifyRoutes.version + "/")) {
-            url = (DifyRoutes.version + url).replaceAll("//", "/");
+        if (!this.server.endsWith(version) && !this.server.endsWith(version + "/")) {
+            url = (version + url).replaceAll("//", "/");
         }
 
         if (this.server.endsWith("/") && url.startsWith("/")) {

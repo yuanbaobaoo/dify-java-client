@@ -2,9 +2,9 @@ package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.client.DifyClientBuilder;
-import io.github.yuanbaobaoo.dify.client.IDifyBaseClient;
-import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
+import io.github.yuanbaobaoo.dify.app.DifyClientBuilder;
+import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
+import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ public class DifyClientTest {
 """);
 
         try {
-            String res = client.requestBlocking(DifyRoutes.CHAT_MESSAGES, null, object);
+            String res = client.requestBlocking(AppRoutes.CHAT_MESSAGES, null, object);
             System.out.println("ok: " + JSON.parse(res).toString());
         } catch (DifyException e) {
             System.out.println("error dify: " + e.toString());
@@ -50,7 +50,7 @@ public class DifyClientTest {
 """);
 
         try {
-            CompletableFuture<Void> future = client.requestStreaming(DifyRoutes.CHAT_MESSAGES, null, object, (s) -> {
+            CompletableFuture<Void> future = client.requestStreaming(AppRoutes.CHAT_MESSAGES, null, object, (s) -> {
                 System.out.println("ok: " + JSON.parse(s).toString());
             });
 
