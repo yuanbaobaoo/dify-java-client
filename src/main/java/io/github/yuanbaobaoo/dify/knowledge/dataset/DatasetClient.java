@@ -25,10 +25,10 @@ public class DatasetClient {
      * Create an Empty Knowledge Base. 创建空知识库
      * @param data ParamDataset
      */
-    public Dataset create(ParamDataset data) throws IOException, InterruptedException {
+    public SuperDataset create(ParamDataset data) throws IOException, InterruptedException {
         String result = client.requestJson(DifyRoutes.DATASETS, null, data);
 
-        Dataset dataset = JSON.parseObject(result, Dataset.class);
+        SuperDataset dataset = JSON.parseObject(result, SuperDataset.class);
         dataset.resetDifyClient(this.client);
 
         return dataset;
@@ -45,13 +45,7 @@ public class DatasetClient {
             put("limit", limit);
         }}, null);
 
-        DifyPage<Dataset> sets = JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
-
-        for (Dataset set: sets.getData()) {
-            set.resetDifyClient(this.client);
-        }
-
-        return sets;
+        return JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
     }
 
     /**
@@ -71,16 +65,16 @@ public class DatasetClient {
      * 快捷构建一个Dataset对象
      * @param datasetId 知识库ID
      */
-    public Dataset ofDataset(String datasetId) {
-        return new Dataset(datasetId, this.client);
+    public SuperDataset ofDataset(String datasetId) {
+        return new SuperDataset(datasetId, this.client);
     }
 
     /**
-     * 快捷创建一个DifyDocument对象
+     * 快捷创建一个Document对象
      * @param documentId 文档ID
      */
-    public void ofDocument(String documentId) {
-
+    public SuperDocument ofDocument(String datasetId, String documentId) {
+        return new SuperDocument(datasetId, documentId, this.client);
     }
 
 }
