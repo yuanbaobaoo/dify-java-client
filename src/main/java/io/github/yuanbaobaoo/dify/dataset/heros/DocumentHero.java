@@ -54,7 +54,7 @@ public class DocumentHero extends Document {
     /**
      * 通过文本更新文档
      */
-    public DocumentResult updateByText(ParamDocument data) throws IOException, InterruptedException {
+    public DocumentResult updateByText(ParamDocument data) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_UPDATE_TEXT.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -72,7 +72,7 @@ public class DocumentHero extends Document {
      * @param file File
      * @param rule ProcessRule
      */
-    public DocumentResult updateByFile(File file, ProcessRule rule) throws IOException, InterruptedException {
+    public DocumentResult updateByFile(File file, ProcessRule rule) {
         return updateByFile(null, file, rule);
     }
 
@@ -83,7 +83,7 @@ public class DocumentHero extends Document {
      * @param file 需要上传的文件
      * @param rule 处理规则
      */
-    public DocumentResult updateByFile(String name, File file, ProcessRule rule) throws IOException, InterruptedException {
+    public DocumentResult updateByFile(String name, File file, ProcessRule rule) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_UPDATE_FILE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -104,7 +104,7 @@ public class DocumentHero extends Document {
     /**
      * 删除文档
      */
-    public Boolean delete() throws IOException, InterruptedException {
+    public Boolean delete() {
         DifyRoute route = AppRoutes.DATASETS_DOCS_DELETE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -119,7 +119,7 @@ public class DocumentHero extends Document {
     /**
      * 获取上传文件
      */
-    public DocFileInfo queryFileInfo() throws IOException, InterruptedException {
+    public DocFileInfo queryFileInfo() {
         DifyRoute route = AppRoutes.DATASETS_DOCS_FILE_INFO.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -132,7 +132,7 @@ public class DocumentHero extends Document {
     /**
      * 查询文档分段
      */
-    public SegmentResult querySegments() throws IOException, InterruptedException {
+    public SegmentResult querySegments() {
         return querySegments(null, null);
     }
 
@@ -140,7 +140,7 @@ public class DocumentHero extends Document {
      * 查询文档分段
      * @param keyword 搜索关键词
      */
-    public SegmentResult querySegments(String keyword) throws IOException, InterruptedException {
+    public SegmentResult querySegments(String keyword) {
         return querySegments(keyword, null);
     }
 
@@ -149,7 +149,7 @@ public class DocumentHero extends Document {
      * @param keyword 搜索关键词
      * @param status 搜索状态
      */
-    public SegmentResult querySegments(String keyword, String status) throws IOException, InterruptedException {
+    public SegmentResult querySegments(String keyword, String status) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -171,7 +171,7 @@ public class DocumentHero extends Document {
      *      keywords 关键字，非必填
      *      answer   答案内容，非必填，如果知识库的模式为 Q&A 模式则传值
      */
-    public SegmentResult insertSegment(List<Segment> segments) throws IOException, InterruptedException {
+    public SegmentResult insertSegment(List<Segment> segments) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_ADD.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -188,7 +188,7 @@ public class DocumentHero extends Document {
      * 删除文档分段
      * @param segmentId 文档分段ID
      */
-    public Boolean deleteSegment(String segmentId) throws IOException, InterruptedException {
+    public Boolean deleteSegment(String segmentId) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_DEL.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
@@ -207,7 +207,7 @@ public class DocumentHero extends Document {
      * @param content  文本内容/问题内容
      * @param regenerate 是否重新生成子分段
      */
-    public SegmentResult updateSegment(String segmentId, String content, boolean regenerate) throws IOException, InterruptedException {
+    public SegmentResult updateSegment(String segmentId, String content, boolean regenerate) {
         return updateSegment(Segment.builder().id(segmentId).content(content).build(), regenerate);
     }
 
@@ -216,7 +216,7 @@ public class DocumentHero extends Document {
      * @param segment Segment
      * @param regenerate  是否重新生成子分段
      */
-    public SegmentResult updateSegment(Segment segment, boolean regenerate) throws IOException, InterruptedException {
+    public SegmentResult updateSegment(Segment segment, boolean regenerate) {
         DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_UPDATE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());

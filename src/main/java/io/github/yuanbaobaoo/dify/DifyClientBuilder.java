@@ -1,9 +1,17 @@
-package io.github.yuanbaobaoo.dify.app;
+package io.github.yuanbaobaoo.dify;
 
+import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
+import io.github.yuanbaobaoo.dify.app.IDifyChatClient;
+import io.github.yuanbaobaoo.dify.app.IDifyCompletion;
+import io.github.yuanbaobaoo.dify.app.IDifyFlowClient;
 import io.github.yuanbaobaoo.dify.app.impl.BaseClientImpl;
 import io.github.yuanbaobaoo.dify.app.impl.ChatClientImpl;
 import io.github.yuanbaobaoo.dify.app.impl.CompletionImpl;
 import io.github.yuanbaobaoo.dify.app.impl.FlowClientImpl;
+import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
+import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
+import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
+import io.github.yuanbaobaoo.dify.dataset.impl.DatasetClientImpl;
 
 /**
  * Dify Client builder
@@ -12,7 +20,7 @@ public class DifyClientBuilder {
     /**
      * create dify base client
      */
-    public static Builder<IDifyBaseClient, BaseClientImpl> create() {
+    public static Builder<IDifyBaseClient, BaseClientImpl> base() {
         return new Builder<>(BaseClientImpl.class);
     }
 
@@ -38,13 +46,21 @@ public class DifyClientBuilder {
     }
 
     /**
+     * create dify dataset client
+     */
+    public static DatasetBuilder<IDatasetClient, DatasetClientImpl> dataset() {
+        return new DatasetBuilder<>(DatasetClientImpl.class);
+    }
+
+    /**
      * builder
      * @param <T>
      */
     public static class Builder<R, T extends R> {
-        private String baseUrl = "http://localhost:5001";
-        private String apiKey;
         private final Class<T> type;
+
+        protected String baseUrl = "http://localhost:5001";
+        protected String apiKey;
 
         /**
          * constructor
@@ -85,6 +101,37 @@ public class DifyClientBuilder {
             } catch (Exception e) {
                 throw new RuntimeException("Dify Client Build Error: class is not defined", e);
             }
+        }
+    }
+
+    /**
+     * DatasetBuilder
+     * @param <T>
+     */
+    public static class DatasetBuilder<R, T extends R> extends Builder<R, T> {
+        /**
+         * constructor
+         *
+         * @param type Class<T>
+         */
+        public DatasetBuilder(Class<T> type) {
+            super(type);
+        }
+
+        /**
+         * 快捷构建一个Dataset对象
+         * @param datasetId 知识库ID
+         */
+        public DatasetHero ofDataset(String datasetId) {
+            return new DatasetHero(datasetId, new DifyHttpClient(baseUrl, apiKey));
+        }
+
+        /**
+         * 快捷创建一个Document对象
+         * @param documentId 文档ID
+         */
+        public DocumentHero ofDocument(String datasetId, String documentId) {
+            return new DocumentHero(datasetId, documentId, new DifyHttpClient(baseUrl, apiKey));
         }
     }
 
