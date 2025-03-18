@@ -1,11 +1,12 @@
 package io.github.yuanbaobaoo.dify.knowledge.dataset;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.List;
 public class SuperDocument extends Document {
     private String datasetId;
     private DifyHttpClient client;
-
 
     /**
      * Constructor
@@ -62,47 +62,171 @@ public class SuperDocument extends Document {
 
     /**
      * 通过文件更新文档
+     * @param file File
+     * @param rule ProcessRule
      */
-    public void updateByFile() {
+    public DocAlterResult updateByFile(File file, ProcessRule rule) throws IOException, InterruptedException {
+        return updateByFile(null, file, rule);
+    }
 
+    /**
+     * 通过文件更新文档
+     *
+     * @param name 文档名称
+     * @param file 需要上传的文件
+     * @param rule 处理规则
+     */
+    public DocAlterResult updateByFile(String name, File file, ProcessRule rule) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_UPDATE_FILE.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+        }});
+
+        String result = client.requestMultipart(route, null, new HashMap<>() {{
+            put("name", name);
+            put("file", file);
+            put("process_rule", rule);
+        }});
+
+        DocAlterResult document = JSON.parseObject(result, DocAlterResult.class);
+        document.getDocument().resetDifyClient(this.client);
+
+        return document;
     }
 
     /**
      * 删除文档
      */
-    public void delete() {
+    public Boolean delete() throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_DELETE.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+        }});
 
+        String result = client.requestJson(route);
+        JSONObject json = JSON.parseObject(result);
+
+        return "success".equals(json.getString("result"));
     }
 
     /**
-     * 获取文档嵌入状态（进度）
-     *
-     * @param batch 上传文档的批次号
+     * 获取上传文件
      */
-    public void queryIndexingStatus(List<String> batch) {
+    public DocFileInfo queryFileInfo() throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_FILE_INFO.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+        }});
 
+        String result = client.requestJson(route);
+        return JSON.parseObject(result, DocFileInfo.class);
     }
 
-    public String querySegments() {
-        return "ss";
+    /**
+     * 查询文档分段
+     */
+    public SegmentResult querySegments() throws IOException, InterruptedException {
+        return querySegments(null, null);
     }
 
-    public void addSegments() {
-
+    /**
+     * 查询文档分段
+     * @param keyword 搜索关键词
+     */
+    public SegmentResult querySegments(String keyword) throws IOException, InterruptedException {
+        return querySegments(keyword, null);
     }
 
-    public void delSegments() {
+    /**
+     * 查询文档分段
+     * @param keyword 搜索关键词
+     * @param status 搜索状态
+     */
+    public SegmentResult querySegments(String keyword, String status) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_SEGMENTS.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+        }});
 
+        String result = client.requestJson(route, new HashMap<>(){{
+            put("keyword", keyword);
+            put("status", status);
+        }}, null);
+
+        return JSON.parseObject(result, SegmentResult.class);
     }
 
-    @JSONField(deserialize = false)
-    public void setSegments() {
+    /**
+     * 新增分段
+     *
+     * @param segments  List<Segment>
+     *      content  文本内容/问题内容
+     *      keywords 关键字，非必填
+     *      answer   答案内容，非必填，如果知识库的模式为 Q&A 模式则传值
+     */
+    public SegmentResult insertSegment(List<Segment> segments) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_SEGMENTS_ADD.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+        }});
 
+        String result = client.requestJson(route, null, new HashMap<>(){{
+            put("segments", segments);
+        }});
+
+        return JSON.parseObject(result, SegmentResult.class);
     }
 
-    @JSONField(serialize = false)
-    public void getFileInfo() {
+    /**
+     * 删除文档分段
+     * @param segmentId 文档分段ID
+     */
+    public Boolean deleteSegment(String segmentId) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_SEGMENTS_DEL.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segmentId);
+        }});
 
+        String result = client.requestJson(route);
+        JSONObject json = JSON.parseObject(result);
+
+        return "success".equals(json.getString("result"));
+    }
+
+    /**
+     * 更新文档分段
+     * @param segmentId 文档分段ID
+     * @param content  文本内容/问题内容
+     * @param regenerate 是否重新生成子分段
+     */
+    public SegmentResult updateSegment(String segmentId, String content, boolean regenerate) throws IOException, InterruptedException {
+        return updateSegment(Segment.builder().id(segmentId).content(content).build(), regenerate);
+    }
+
+    /**
+     * 更新文档分段
+     * @param segment Segment
+     * @param regenerate  是否重新生成子分段
+     */
+    public SegmentResult updateSegment(Segment segment, boolean regenerate) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_DOCS_SEGMENTS_UPDATE.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segment.getId());
+        }});
+
+        String result = client.requestJson(route, null, new HashMap<>(){{
+            put("segment", new HashMap<>() {{
+                put("content", segment.getContent());
+                put("answer", segment.getAnswer());
+                put("keywords", segment.getKeywords());
+                put("enabled", segment.getEnabled());
+                put("regenerate_child_chunks", regenerate);
+            }});
+        }});
+
+        return JSON.parseObject(result, SegmentResult.class);
     }
 
 }

@@ -1,18 +1,21 @@
 package io.github.yuanbaobaoo.dify.knowledge.dataset;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DifyRoutes;
+import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SuperDataset extends Dataset {
-    private DifyHttpClient apiClient;
+    private DifyHttpClient client;
 
     /**
      * Constructor
@@ -29,7 +32,7 @@ public class SuperDataset extends Dataset {
      */
     public SuperDataset(String id, DifyHttpClient client) {
         this.setId(id);
-        this.apiClient = client;
+        this.client = client;
     }
 
     /**
@@ -37,7 +40,7 @@ public class SuperDataset extends Dataset {
      * @param client DifyHttpClient
      */
     public void resetDifyClient(DifyHttpClient client) {
-        this.apiClient = client;
+        this.client = client;
     }
 
     /**
@@ -45,7 +48,19 @@ public class SuperDataset extends Dataset {
      * @param documentId 文档ID
      */
     public SuperDocument ofDocument(String documentId) {
-        return new SuperDocument(this.getId(), documentId, this.apiClient);
+        return new SuperDocument(this.getId(), documentId, this.client);
+    }
+
+    /**
+     * 删除数据库
+     */
+    public void delete() throws IOException, InterruptedException {
+        client.requestJson(
+                String.format("%s/%s", DifyRoutes.DATASETS.getUrl(), getId()),
+                HttpMethod.DELETE,
+                null,
+                null
+        );
     }
 
     /**
@@ -74,9 +89,9 @@ public class SuperDataset extends Dataset {
             put("datasetId", getId());
         }});
 
-        String result = apiClient.requestJson(route, null, params);
+        String result = client.requestJson(route, null, params);
         DocAlterResult document = JSON.parseObject(result, DocAlterResult.class);
-        document.getDocument().resetDifyClient(this.apiClient);
+        document.getDocument().resetDifyClient(this.client);
 
         return document;
     }
@@ -111,11 +126,28 @@ public class SuperDataset extends Dataset {
             put("datasetId", getId());
         }});
 
-        String result = apiClient.requestMultipart(route, null, params);
+        String result = client.requestMultipart(route, null, params);
         DocAlterResult document = JSON.parseObject(result, DocAlterResult.class);
-        document.getDocument().resetDifyClient(this.apiClient);
+        document.getDocument().resetDifyClient(this.client);
 
         return document;
+    }
+
+    /**
+     * 获取文档嵌入状态（进度）
+     * @param batch 上传文档的批次号
+     */
+    public List<DocBatch> queryBatchStatus(String batch) throws IOException, InterruptedException {
+        DifyRoute route = DifyRoutes.DATASETS_INDEXING_STATUS.format(new HashMap<>() {{
+            put("datasetId", getId());
+            put("batch", batch);
+        }});
+
+        JSONObject result = JSON.parseObject(
+                client.requestJson(route)
+        );
+
+        return result.getJSONArray("data").toJavaList(DocBatch.class);
     }
 
     /**
@@ -142,7 +174,7 @@ public class SuperDataset extends Dataset {
             put("keyword", keyword);
         }};
 
-        String result = apiClient.requestJson(route, query, null);
+        String result = client.requestJson(route, query, null);
         return JSON.parseObject(result, new TypeReference<DifyPage<Document>>() {});
     }
 
@@ -152,7 +184,7 @@ public class SuperDataset extends Dataset {
      * @param retrievalModel RetrievalModel
      */
     public RetrieveResult retrieve(String query, RetrievalModel retrievalModel) throws IOException, InterruptedException {
-        String result = apiClient.requestJson(DifyRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
+        String result = client.requestJson(DifyRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
             put("datasetId", getId());
         }}), null, new HashMap<>() {{
             put("query", query);

@@ -53,12 +53,7 @@ public class DatasetClient {
      * @param datasetId 知识库ID
      */
     public void delete(String datasetId) throws IOException, InterruptedException {
-        client.requestJson(
-                String.format("%s/%s", DifyRoutes.DATASETS.getUrl(), datasetId),
-                HttpMethod.DELETE,
-                null,
-                null
-        );
+        ofDataset(datasetId).delete();
     }
 
     /**
