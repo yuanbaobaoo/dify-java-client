@@ -26,10 +26,10 @@ public class Segment {
     private Long disabledAt;
     private String disabledBy;
     private String status;
-    private Long created_by;
-    private Long created_at;
-    private Long indexing_at;
-    private Long completed_at;
+    private String createdBy;
+    private Long createdAt;
+    private Long indexingAt;
+    private Long completedAt;
     private String error;
     private Long stopped_at;
     private Document document;

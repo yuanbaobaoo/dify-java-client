@@ -84,24 +84,30 @@ public class DifyRoutes {
      */
     public static final DifyRoute DATASETS = new DifyRoute("/datasets", HttpMethod.POST);
 
+    public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
+            "/datasets/${datasetId}/retrieve",
+            HttpMethod.POST
+    );
 
-    public static final DifyRoute DATASETS_DOC_CREATE_TEXT = new DifyRoute(
+    public static final DifyRoute DATASETS_CREATE_DOC_TEXT = new DifyRoute(
             "/datasets/${datasetId}/document/create-by-text",
             HttpMethod.POST
     );
 
-    public static final DifyRoute DATASETS_DOC_CREATE_FILE = new DifyRoute(
+    public static final DifyRoute DATASETS_CREATE_DOC_FILE = new DifyRoute(
             "/datasets/${datasetId}/document/create-by-file",
             HttpMethod.POST
     );
 
-    public static final DifyRoute DATASETS_DOC_LIST = new DifyRoute(
+    public static final DifyRoute DATASETS_DOCS = new DifyRoute(
             "/datasets/${datasetId}/documents",
             HttpMethod.GET
     );
 
-    public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
-            "/datasets/${dataset_id}/retrieve",
+    public static final DifyRoute DATASETS_DOCS_UPDATE_TEXT = new DifyRoute(
+            "/datasets/${datasetId}/documents/${documentId}/update-by-text",
             HttpMethod.POST
     );
+
+
 }

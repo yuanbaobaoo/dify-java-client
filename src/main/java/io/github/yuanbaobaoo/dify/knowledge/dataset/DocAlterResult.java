@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DatasetDoc {
+public class DocAlterResult {
     private String batch;
-    private Document document;
+    private SuperDocument document;
 }
