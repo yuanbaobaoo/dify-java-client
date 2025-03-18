@@ -89,4 +89,19 @@ public class DifyRoutes {
             "/datasets/${datasetId}/document/create-by-text",
             HttpMethod.POST
     );
+
+    public static final DifyRoute DATASETS_DOC_CREATE_FILE = new DifyRoute(
+            "/datasets/${datasetId}/document/create-by-file",
+            HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_DOC_LIST = new DifyRoute(
+            "/datasets/${datasetId}/documents",
+            HttpMethod.GET
+    );
+
+    public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
+            "/datasets/${dataset_id}/retrieve",
+            HttpMethod.POST
+    );
 }
