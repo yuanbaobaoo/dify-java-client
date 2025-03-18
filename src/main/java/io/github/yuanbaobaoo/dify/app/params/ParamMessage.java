@@ -1,6 +1,5 @@
 package io.github.yuanbaobaoo.dify.app.params;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,10 +56,10 @@ public class ParamMessage {
     public Map<String, Object> toMap() {
         return new HashMap<>() {{
             put("query", query);
-            put("inputs", inputs);
+            put("inputs", inputs == null ? new HashMap<>() : inputs);
             put("user", user);
             put("conversation_id", conversationId);
-            put("files", files != null ? JSON.toJSONString(files) : null);
+            put("files", files);
             put("auto_generate_name", autoGenerateName == null || autoGenerateName);
         }};
     }
