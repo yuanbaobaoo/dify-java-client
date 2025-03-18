@@ -238,6 +238,10 @@ public class DifyHttpClient {
             String key = entry.getKey();
             Object value = entry.getValue();
 
+            if (key == null || value == null) {
+                continue;
+            }
+
             if (value instanceof Path || value instanceof File) {
                 // 文件字段（支持 Path 或 File 对象）
                 Path filePath = (value instanceof Path) ? (Path) value : ((File) value).toPath();
@@ -253,13 +257,21 @@ public class DifyHttpClient {
 
                 parts.add(HttpRequest.BodyPublishers.ofByteArray(fileBytes));
                 parts.add(HttpRequest.BodyPublishers.ofString("\r\n"));
-            } else {
-                // 其他字符都当作字符串
+            } else if (value instanceof String) {
+                // 字符串
                 parts.add(HttpRequest.BodyPublishers.ofString(
                         "--" + boundary + "\r\n" +
                                 "Content-Disposition: form-data; name=\"" + key + "\"\r\n" +
                                 "Content-Type: text/plain\r\n\r\n" +
                                 value + "\r\n"
+                ));
+            } else {
+                // 其他类型都使用JSON转换为字符串处理
+                parts.add(HttpRequest.BodyPublishers.ofString(
+                        "--" + boundary + "\r\n" +
+                                "Content-Disposition: form-data; name=\"" + key + "\"\r\n" +
+                                "Content-Type: text/plain\r\n\r\n" +
+                                JSON.toJSONString(value) + "\r\n"
                 ));
             }
         }

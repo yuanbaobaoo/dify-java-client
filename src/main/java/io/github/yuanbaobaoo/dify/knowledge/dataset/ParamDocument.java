@@ -1,10 +1,14 @@
 package io.github.yuanbaobaoo.dify.knowledge.dataset;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.PropertyNamingStrategy;
 import com.alibaba.fastjson2.annotation.JSONType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -76,28 +80,19 @@ public class ParamDocument {
     private ProcessRule processRule;
 
     /**
-     * 检索模式
-     * search_method (string) 检索方法
-     * hybrid_search 混合检索
-     * semantic_search 语义检索
-     * full_text_search 全文检索
-     * reranking_enable (bool) 是否开启rerank
-     * reranking_model (object) Rerank 模型配置
-     * reranking_provider_name (string) Rerank 模型的提供商
-     * reranking_model_name (string) Rerank 模型的名称
-     * top_k (int) 召回条数
-     * score_threshold_enabled (bool)是否开启召回分数限制
-     * score_threshold (float) 召回分数限制
+     * To HashMap
      */
-    private Object retrievalModel;
+    public HashMap<String, Object> toMap() {
+        return new HashMap<>() {{
+            put("name", name);
+            put("text", text);
+            put("doc_type", docType);
+            put("doc_metadata", docMetadata);
+            put("indexing_technique", indexingTechnique);
+            put("doc_form", docForm);
+            put("doc_language", docLanguage);
+            put("process_rule", processRule);
+        }};
+    }
 
-    /**
-     * Embedding 模型名称
-     */
-    private String embeddingModel;
-
-    /**
-     * Embedding 模型供应商
-     */
-    private String embeddingModelProvider;
 }
