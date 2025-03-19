@@ -6,20 +6,19 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.2.4-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.3.0-green" /> 
     </a>
 </p>
 
-Dify Java Client
+The Simple and Easy-to-Use Dify Java Client
 
 [中文](./README.md) | English
 
-### Quick Start
+### Install
 - env requirements
 ```code
 Java : >= 17
-Maven: >= 3
-Dify Api: <= 1.x
+Dify Version: <= 1.x
 ```
 
 - maven
@@ -27,31 +26,40 @@ Dify Api: <= 1.x
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.2.4</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
-### Create Client
+## Quick Start
+```DifyClientBuilder```: Used to create various client instances
 ```java
 /**
- * Support methods: create()、chat()、flow()、completion(), which have inconsistent return types
+ * 支持 base()、chat()、flow()、completion()、dataset()，which have inconsistent return types
  */
-IDifyBaseClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
 ```
 
-#### 1、IDifyBaseClient: Base Client
-Encapsulates some public APIs and authentication logic, and provides simple and easy-to-use calling methods
+## Chat Type Client
+Chat type clients refers to applications applicable to ChatBot, Agent, ChatFlow, and Completion. 
+It provides session related APIs and supports streaming return of sessions. It mainly includes the following:
+- [```IDifyBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyBaseClient.java)
+- [```IDifyChatClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyChatClient.java)
+- [```IDifyFlowClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyFlowClient.java)
+- [```IDifyCompletion```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyCompletion.java)
+
+### 1、IDifyBaseClient
+base client, encapsulates some public APIs and authentication logic, and provides simple and easy-to-use calling methods
 ```java
+IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+
 // Call preset API
 String metaInfo = client.getAppMetaInfo();
-// Request custom API
-String result = client.requestJson(DifyRoute.buildGet("/messages"));
 // Upload file
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
-#### 2、IDifyChatClient: scope = ChatBot、Agent、ChatFlow
-```IDifyChatClient``` extends ```IDifyBaseClient```, provides conversation APIs
+### 2、IDifyChatClient
+scope = ChatBot、Agent、ChatFlow, extends ```IDifyBaseClient```, provides conversation APIs
 ```java
 IDifyChatClient chatClient = DifyClientBuilder.chat().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 
@@ -74,8 +82,8 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-#### 3、IDifyFlowClient: scope = WorkFlow
-```IDifyFlowClient``` extends ```IDifyBaseClient```, provides workflow APIs
+### 3、IDifyFlowClient
+scope = WorkFlow, extends ```IDifyBaseClient```, provides workflow APIs
 ```java
 IDifyFlowClient flowClient = DifyClientBuilder.flow().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 
@@ -94,8 +102,8 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 });
 ```
 
-#### 4、IDifyCompletion: scope = Completion
-```IDifyCompletion``` extends ```IDifyBaseClient```, provides completion APIs
+### 4、IDifyCompletion
+scope = Completion, extends ```IDifyBaseClient```, provides completion APIs
 ```java
 IDifyCompletion completion = DifyClientBuilder.completion().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
 
@@ -111,10 +119,90 @@ CompletableFuture<Void> future = completion.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-### Create External Knowledge
+## Dataset(Knowledge) Client
+The current project provides the definition of internal knowledge base client and external knowledge base related types, 
+of which the external knowledge base has not been specifically implemented.
+
+### Dify Dataset: IDifyDatasetClient
+For specific API definitions, please refer to [```io.github.yuanbaobaoo.dify.client.dataset.IDifyDatasetClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/dataset/IDatasetClient.java)
+
+#### Reference
+```java
+IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("http://localhost:4000").build();
+
+// create params
+ParamDataset dataset = ParamDataset.builder()
+        .name("your knowledge name")
+        .build();
+
+// request create
+client.create(dataset);
+```
+
+#### Hero Class
+In the project, for the tool class of the knowledge base, in addition to providing related methods based on ```IDatasetClient```, 
+it also provides Hero class to support the operation of the knowledge base.Which way to use depends on your needs.
+
+- Case 1: add document
+```java
+// dify config
+DifyConfig config = DifyConfig.builder().server("http://localhost:4000").apiKey("dataset-xxxx").build();
+
+// create params
+ParamDocument document = ParamDocument.builder()
+        .name("测试文档")
+        .text("你好啊你好吧")
+        .indexingTechnique(DatasetConsts.IndexingTechnique.high_quality)
+        .processRule(ProcessRule.builder().mode(ProcessRule.Mode.automatic).build())
+        .build();
+```
+Mode1、use IDatasetClient
+```java
+IDatasetClient client = DifyClientBuilder.dataset().config(config).build();
+client.insertDocByText("Dataset Id", document);
+```
+Mode2、use DifyClientBuilder to build the Hero object
+```java
+DatasetHero dataset = DifyClientBuilder.dataset().config(config).of("Dataset Id");
+dataset.insertTxt(document);
+```
+Mod3、use Hero Class
+```java
+DatasetHero dataset = DatasetHero.of("Dataset Id", config);
+dataset.insertTxt(document);
+```
+
+- Case 2: update document
+```java
+// dify config
+DifyConfig config = DifyConfig.builder().server("http://localhost:4000").apiKey("dataset-xxxx").build();
+
+// create params
+ParamDocument document = ParamDocument.builder()
+        .name("测试.txt2")
+        .text("又疑瑶台近，飞上青云端")
+        .build();
+```
+Mode1、use IDatasetClient
+```java
+IDatasetClient client = DifyClientBuilder.dataset().config(config).build();
+client.updateDocByText("Dataset ID", "Document ID", dataset);
+```
+Mode2、use DifyClientBuilder to build the Hero object
+```java
+DocumentHero documentHero = DifyClientBuilder.dataset().config(config).ofDocument("Dataset ID", "Document ID");
+documentHero.updateByText(document);
+```
+Mod3、use Hero Class
+```java
+DocumentHero documentHero = DocumentHero.of("Dataset ID", "Document ID", config);
+documentHero.updateByText(document);
+```
+
+### Dify External Dataset: IKnowledgeService
 The current project dose not implement the knowledge API, and only declare parameter objects and interfaces
 ```java
-public interface IDifyKnowledgeService {
+public interface IKnowledgeService {
     /**
      * retrieval
      * @param apiKey API KEY
@@ -135,9 +223,9 @@ public KnowledgeResult retrieval(@RequestBody(required = false) KnowledgeArgs ar
     return knowledgeService.retrieval(request.getHeader("Authorization"), args);
 }
 ```
-- 2、implement the interface```io.github.yuanbaobaoo.dify.service.IDifyKnowledgeService```
+- 2、implement the interface```io.github.yuanbaobaoo.dify.dataset.IKnowledgeService```
 ```java
-class KnowledgeService implements IDifyKnowledgeService {
+class KnowledgeService implements IKnowledgeService {
     @Override
     public KnowledgeResult retrieval(String apiKey, KnowledgeArgs args) {
         // TODO Your local knowledge retrieval logic
@@ -149,34 +237,3 @@ class KnowledgeService implements IDifyKnowledgeService {
 By default, when the normal request returns http status>=400, an exception object ```DiffyException``` will be thrown.
 This object receives the '```status```, ```code```, ```message```, ```params```.
 Of course, you can also get the original return content through the ```getOriginal()``` method.
-
-### Support API
-The currently supported API, you can refer to the above three interface files. 
-The project is currently being updated, and if the interface is not satisfied, 
-you can call ```requestJSON```、```requestMultipart```to request.
->Declare an DifyRoute object: ```DifyRoute route = new DifyRoute("/info", HttpMethod.GET);```
-
-| Method                             | Dify Api                             | Method | 描述                                     |
-|------------------------------------|--------------------------------------|--------|----------------------------------------|
-| IDifyBaseClient.getAppInfo         | /info                                | GET    | Get Application Basic Information      |
-| IDifyBaseClient.getAppParameters   | /parameters                          | GET    | Get Application Parameters Information |
-| IDifyBaseClient.getAppMetaInfo     | /meta                                | GET    | Get Application Meta Information       |
-| IDifyBaseClient.uploadFile         | /files/upload                        | POST   | File Upload                            |
-| IDifyBaseClient.feedbacks          | /messages/:message_id/feedbacks      | POST   | Message Feedback                       |
-| IDifyBaseClient.audioToText        | /audio-to-text                       | POST   | Speech to Text                         |
-| IDifyChatClient.sendMessages       | /chat-messages                       | POST   | Send Chat Message(blocking)            |
-| IDifyChatClient.sendMessagesAsync  | /chat-messages                       | POST   | Send Chat Message(streaming)           |
-| IDifyChatClient.stopResponse       | /chat-messages/:task_id/stop         | POST   | Stop Generate                          |
-| IDifyChatClient.suggestedList      | /messages/{message_id}/suggested     | GET    | Next Suggested Questions               |
-| IDifyChatClient.history            | /messages                            | GET    | Get Conversation History Messages      |
-| IDifyChatClient.conversations      | /conversations                       | GET    | Get Conversations                      |
-| IDifyChatClient.deleteConversation | /conversations/:conversation_id      | DELETE | Delete Conversation                    |
-| IDifyChatClient.renameConversation | /conversations/:conversation_id/name | POST   | Conversation Rename                    |
-| IDifyFlowClient.runStreaming       | /workflows/run                       | POST   | Execute Workflow (streaming)           |
-| IDifyFlowClient.runBlocking        | /workflows/run                       | POST   | Execute Workflow (blocking)            |
-| IDifyFlowClient.getWorkFlowStatus  | /workflows/run/:workflow_id          | GET    | Get Workflow Status                    |
-| IDifyFlowClient.getWorkFlowLog     | /workflows/logs                      | GET    | Get Workflow Logs                      |
-| IDifyFlowClient.stopWorkFlow       | /workflows/tasks/:task_id/stop       | POST   | Stop Generate                          |
-| IDifyCompletion.sendMessages       | /completion-messages                 | POST   | Send Completion Message(blocking)      |
-| IDifyCompletion.sendMessagesAsync  | /completion-messages                 | POST   | Send Completion Message(streaming)     |
-| IDifyCompletion.stopGenerate       | /completion-messages/:task_id/stop   | POST   | Stop Generate                          |

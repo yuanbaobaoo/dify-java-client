@@ -14,11 +14,11 @@ dify-java-client
 
 中文 | [English](./README_EN.md)
 
-## 快速开始
+## 安装依赖
 - 环境需求  
 ```code
 Java : >= 17
-Dify Api: <= 1.x
+Dify Version: <= 1.x
 ```
 
 - maven
@@ -30,8 +30,8 @@ Dify Api: <= 1.x
 </dependency>
 ```
 
-## DifyClientBuilder
-用于创建各类客户端实例
+## 快速开始 
+```DifyClientBuilder```： 用于创建各类客户端实例
 ```java
 /**
  * 支持 base()、chat()、flow()、completion()、dataset()，其对应返回类型也是不一致的
@@ -39,16 +39,18 @@ Dify Api: <= 1.x
 IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
 ```
 
-## App Client
-app客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应用，提供了会话相关的API，支持会话的流式返回。主要包含如下  
-- ```IDifyBaseClient```
-- ```IDifyChatClient```
-- ```IDifyFlowClient```
-- ```IDifyCompletion```
+## 对话类型 Client
+app客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应用，提供了会话相关的API，支持会话的流式返回。主要包含如下：
+- [```IDifyBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyBaseClient.java)
+- [```IDifyChatClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyChatClient.java)
+- [```IDifyFlowClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyFlowClient.java)
+- [```IDifyCompletion```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyCompletion.java)
 
 ### 1、IDifyBaseClient
-基础Client，提供Dify公共API，具体可查阅 [```IDifyBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyBaseClient.java)
+基础Client，提供Dify公共API，具体可查阅 ```IDifyBaseClient```
 ```java
+IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+
 // 调用接口
 String metaInfo = client.getAppMetaInfo();
 // 上传文件
@@ -122,7 +124,7 @@ CompletableFuture<Void> future = completion.sendMessagesAsync(m, (r) -> {
 ### Dify内置知识库: IDifyDatasetClient
 具体API定义，请查阅 [```io.github.yuanbaobaoo.dify.client.dataset.IDifyDatasetClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/dataset/IDatasetClient.java)
 
-#### 快速上手
+#### 参考案例
 ```java
 IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("http://localhost:4000").build();
 
@@ -192,7 +194,6 @@ documentHero.updateByText(document);
 方式3、直接创建Hero对象
 ```java
 DocumentHero documentHero = DocumentHero.of("知识库ID", "文档ID", config);
-// 创建文档
 documentHero.updateByText(document);
 ```
 
