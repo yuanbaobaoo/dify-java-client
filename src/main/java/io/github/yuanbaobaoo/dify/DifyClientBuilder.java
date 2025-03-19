@@ -71,6 +71,16 @@ public class DifyClientBuilder {
         }
 
         /**
+         * config
+         * @param config DifyConfig
+         */
+        public Builder<R, T> config(DifyConfig config) {
+            this.baseUrl = config.getServer();
+            this.apiKey = config.getApiKey();
+            return this;
+        }
+
+        /**
          * dify server base url
          * @param baseUrl String
          */
@@ -110,6 +120,16 @@ public class DifyClientBuilder {
     public static class DatasetBuilder {
         private String baseUrl = "http://localhost:5001";
         private String apiKey;
+
+        /**
+         * config
+         * @param config DifyConfig
+         */
+        public DatasetBuilder config(DifyConfig config) {
+            this.baseUrl = config.getServer();
+            this.apiKey = config.getApiKey();
+            return this;
+        }
 
         /**
          * dify server base url
