@@ -3,6 +3,7 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
+import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.Dataset;
@@ -22,35 +23,68 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetHero extends Dataset {
-    private DifyHttpClient client;
+    private final DifyConfig config;
 
     /**
-     * Constructor
+     * new DatasetHero
+     * @param id Dataset id
+     * @param config DifyConfig
      */
-    public DatasetHero() {
+    public static DatasetHero of(String id, DifyConfig config) {
+        return new DatasetHero(config.getServer(), config.getApiKey(), id);
+    }
 
+    /**
+     * new DatasetHero
+     * @param dataset Dataset
+     * @param config DifyConfig
+     */
+    public static DatasetHero of(Dataset dataset, DifyConfig config) {
+        return new DatasetHero(config.getServer(), config.getApiKey(), dataset);
     }
 
     /**
      * Constructor
-     *
-     * @param id     dataset id
-     * @param client DatasetClient
+     * @param server Dify Server Address
+     * @param apiKey Api Key
+     * @param id Dataset id
      */
-    public DatasetHero(String id, DifyHttpClient client) {
+    private DatasetHero(String server, String apiKey, String id) {
+        this.config = DifyConfig.builder().server(server).apiKey(apiKey).build();
         this.setId(id);
-        this.client = client;
     }
 
     /**
-     * DifyHttpClient
-     *
-     * @param client DifyHttpClient
+     * Constructor
+     * @param server Dify Server Address
+     * @param apiKey Api Key
+     * @param dataset Dataset
      */
-    public void resetDifyClient(DifyHttpClient client) {
-        if (client != null) {
-            this.client = client;
-        }
+    private DatasetHero(String server, String apiKey, Dataset dataset) {
+        this.config = DifyConfig.builder().server(server).apiKey(apiKey).build();
+
+        this.setId(dataset.getId());
+        this.setName(dataset.getName());
+        this.setDescription(dataset.getDescription());
+        this.setProvider(dataset.getProvider());
+        this.setPermission(dataset.getPermission());
+        this.setDataSourceType(dataset.getDataSourceType());
+        this.setIndexingTechnique(dataset.getIndexingTechnique());
+        this.setAppCount(dataset.getAppCount());
+        this.setDocumentCount(dataset.getDocumentCount());
+        this.setWordCount(dataset.getWordCount());
+        this.setCreatedBy(dataset.getCreatedBy());
+        this.setCreatedAt(dataset.getCreatedAt());
+        this.setUpdatedBy(dataset.getUpdatedBy());
+        this.setUpdatedAt(dataset.getUpdatedAt());
+        this.setEmbeddingModel(dataset.getEmbeddingModel());
+        this.setEmbeddingModelProvider(dataset.getEmbeddingModelProvider());
+        this.setEmbeddingAvailable(dataset.getEmbeddingAvailable());
+        this.setTags(dataset.getTags());
+        this.setDocForm(dataset.getDocForm());
+        this.setRetrievalModelDict(dataset.getRetrievalModelDict());
+        this.setExternalKnowledgeInfo(dataset.getExternalKnowledgeInfo());
+        this.setExternalRetrievalModel(dataset.getExternalRetrievalModel());
     }
 
     /**
@@ -58,14 +92,14 @@ public class DatasetHero extends Dataset {
      * @param documentId 文档ID
      */
     public DocumentHero ofDocument(String documentId) {
-        return new DocumentHero(this.getId(), documentId, this.client);
+        return DocumentHero.of(this.getId(), documentId, this.config);
     }
 
     /**
      * 删除数据库
      */
     public void delete() {
-        client.requestJson(
+        DifyHttpClient.get(config).requestJson(
                 String.format("%s/%s", AppRoutes.DATASETS.getUrl(), getId()),
                 HttpMethod.DELETE,
                 null,
@@ -88,8 +122,7 @@ public class DatasetHero extends Dataset {
      * @param embeddingModel Embedding 模型名称
      * @param embeddingModelProvider Embedding 模型供应商
      */
-    public DocumentResult insertText(ParamDocument doc, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider)
-            {
+    public DocumentResult insertText(ParamDocument doc, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider) {
         Map<String, Object> params = doc.toMap();
         params.put("retrieval_model", retrievalModel);
         params.put("embedding_model", embeddingModel);
@@ -99,11 +132,8 @@ public class DatasetHero extends Dataset {
             put("datasetId", getId());
         }});
 
-        String result = client.requestJson(route, null, params);
-        DocumentResult document = JSON.parseObject(result, DocumentResult.class);
-        document.getDocument().resetDifyClient(this.client);
-
-        return document;
+        String result = DifyHttpClient.get(config).requestJson(route, null, params);
+        return DocumentResult.parse(this.getId(), result, config);
     }
 
     /**
@@ -135,11 +165,8 @@ public class DatasetHero extends Dataset {
             put("datasetId", getId());
         }});
 
-        String result = client.requestMultipart(route, null, params);
-        DocumentResult document = JSON.parseObject(result, DocumentResult.class);
-        document.getDocument().resetDifyClient(this.client);
-
-        return document;
+        String result = DifyHttpClient.get(config).requestMultipart(route, null, params);
+        return DocumentResult.parse(this.getId(), result, config);
     }
 
     /**
@@ -153,7 +180,7 @@ public class DatasetHero extends Dataset {
         }});
 
         JSONObject result = JSON.parseObject(
-                client.requestJson(route)
+                DifyHttpClient.get(config).requestJson(route)
         );
 
         return result.getJSONArray("data").toJavaList(BatchStatus.class);
@@ -183,7 +210,7 @@ public class DatasetHero extends Dataset {
             put("keyword", keyword);
         }};
 
-        String result = client.requestJson(route, query, null);
+        String result = DifyHttpClient.get(config).requestJson(route, query, null);
         return JSON.parseObject(result, new TypeReference<DifyPage<Document>>() {});
     }
 
@@ -193,7 +220,7 @@ public class DatasetHero extends Dataset {
      * @param retrievalModel RetrievalModel
      */
     public RetrieveResult retrieve(String query, RetrievalModel retrievalModel) {
-        String result = client.requestJson(AppRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
+        String result = DifyHttpClient.get(config).requestJson(AppRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
             put("datasetId", getId());
         }}), null, new HashMap<>() {{
             put("query", query);
@@ -202,4 +229,5 @@ public class DatasetHero extends Dataset {
 
         return JSON.parseObject(result, RetrieveResult.class);
     }
+
 }

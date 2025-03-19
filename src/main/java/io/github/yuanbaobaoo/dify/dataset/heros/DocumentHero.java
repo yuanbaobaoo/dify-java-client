@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.DocFileInfo;
@@ -14,41 +15,77 @@ import io.github.yuanbaobaoo.dify.dataset.types.ProcessRule;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 public class DocumentHero extends Document {
-    private String datasetId;
-    private DifyHttpClient client;
+    private final String datasetId;
+    private final DifyConfig config;
 
     /**
-     * Constructor
+     * new DocumentHero
+     * @param datasetId dataset id
+     * @param id document id
+     * @param config DifyConfig
      */
-    public DocumentHero() {
-
+    public static DocumentHero of(String datasetId, String id, DifyConfig config) {
+        return new DocumentHero(datasetId, id, config);
     }
 
-    /**
-     * Constructor
+    /**new DocumentHero
      *
      * @param datasetId dataset id
-     * @param id        dataset id
-     * @param client    DatasetClient
+     * @param doc Document
+     * @param config DifyConfig
      */
-    public DocumentHero(String datasetId, String id, DifyHttpClient client) {
-        this.setId(id);
-        this.client = client;
-        this.datasetId = datasetId;
+    public static DocumentHero of(String datasetId, Document doc, DifyConfig config) {
+        return new DocumentHero(datasetId, doc, config);
     }
 
     /**
-     * DifyHttpClient
-     *
-     * @param client DifyHttpClient
+     * Constructor
+     * @param datasetId Dataset Id
+     * @param id Document id
+     * @param config DifyConfig
      */
-    public void resetDifyClient(DifyHttpClient client) {
-        this.client = client;
+    private DocumentHero(String datasetId, String id, DifyConfig config) {
+        this.config = config;
+        this.datasetId = datasetId;
+
+        this.setId(id);
+    }
+
+    /**
+     * Constructor
+     * @param datasetId Dataset Id
+     * @param doc Document
+     * @param config DifyConfig
+     */
+    private DocumentHero(String datasetId, Document doc, DifyConfig config) {
+        this.config = config;
+        this.datasetId = datasetId;
+
+        this.setId(doc.getId());
+        this.setName(doc.getName());
+        this.setDocForm(doc.getDocForm());
+        this.setDatasetProcessRuleId(doc.getDatasetProcessRuleId());
+        this.setDataSourceType(doc.getDataSourceType());
+        this.setDataSourceInfo(doc.getDataSourceInfo());
+        this.setDataSourceDetailDict(doc.getDataSourceDetailDict());
+        this.setCreatedAt(doc.getCreatedAt());
+        this.setCreatedBy(doc.getCreatedBy());
+        this.setDisabledAt(doc.getDisabledAt());
+        this.setDisabledBy(doc.getDisabledBy());
+        this.setEnabled(doc.getEnabled());
+        this.setError(doc.getError());
+        this.setHitCount(doc.getHitCount());
+        this.setWordCount(doc.getWordCount());
+        this.setDisplayStatus(doc.getDisplayStatus());
+        this.setIndexingStatus(doc.getIndexingStatus());
+        this.setTokens(doc.getTokens());
+        this.setArchived(doc.getArchived());
+        this.setCreatedFrom(doc.getCreatedFrom());
+        this.setPosition(doc.getPosition());
     }
 
     /**
@@ -60,11 +97,8 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestJson(route, null, data);
-        DocumentResult document = JSON.parseObject(result, DocumentResult.class);
-        document.getDocument().resetDifyClient(this.client);
-
-        return document;
+        String result = DifyHttpClient.get(config).requestJson(route, null, data);
+        return DocumentResult.parse(datasetId, result, config);
     }
 
     /**
@@ -89,16 +123,13 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestMultipart(route, null, new HashMap<>() {{
+        String result = DifyHttpClient.get(config).requestMultipart(route, null, new HashMap<>() {{
             put("name", name);
             put("file", file);
             put("process_rule", rule);
         }});
 
-        DocumentResult document = JSON.parseObject(result, DocumentResult.class);
-        document.getDocument().resetDifyClient(this.client);
-
-        return document;
+        return DocumentResult.parse(datasetId, result, config);
     }
 
     /**
@@ -110,7 +141,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestJson(route);
+        String result = DifyHttpClient.get(config).requestJson(route);
         JSONObject json = JSON.parseObject(result);
 
         return "success".equals(json.getString("result"));
@@ -125,7 +156,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestJson(route);
+        String result = DifyHttpClient.get(config).requestJson(route);
         return JSON.parseObject(result, DocFileInfo.class);
     }
 
@@ -155,7 +186,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestJson(route, new HashMap<>(){{
+        String result = DifyHttpClient.get(config).requestJson(route, new HashMap<>(){{
             put("keyword", keyword);
             put("status", status);
         }}, null);
@@ -177,7 +208,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = client.requestJson(route, null, new HashMap<>(){{
+        String result = DifyHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
             put("segments", segments);
         }});
 
@@ -195,7 +226,7 @@ public class DocumentHero extends Document {
             put("segmentId", segmentId);
         }});
 
-        String result = client.requestJson(route);
+        String result = DifyHttpClient.get(config).requestJson(route);
         JSONObject json = JSON.parseObject(result);
 
         return "success".equals(json.getString("result"));
@@ -223,7 +254,7 @@ public class DocumentHero extends Document {
             put("segmentId", segment.getId());
         }});
 
-        String result = client.requestJson(route, null, new HashMap<>(){{
+        String result = DifyHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
             put("segment", new HashMap<>() {{
                 put("content", segment.getContent());
                 put("answer", segment.getAnswer());
