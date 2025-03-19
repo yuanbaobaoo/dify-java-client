@@ -30,6 +30,11 @@ Dify Version: <= 1.x
 </dependency>
 ```
 
+- gradle
+```gradle
+implementation group: 'io.github.yuanbaobaoo', name: 'dify-java-client', version: '1.3.0'
+```
+
 ## Quick Start
 ```DifyClientBuilder```: Used to create various client instances
 ```java

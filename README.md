@@ -30,6 +30,11 @@ Dify Version: <= 1.x
 </dependency>
 ```
 
+- gradle
+```gradle
+implementation group: 'io.github.yuanbaobaoo', name: 'dify-java-client', version: '1.3.0'
+```
+
 ## 快速开始 
 ```DifyClientBuilder```： 用于创建各类客户端实例
 ```java
