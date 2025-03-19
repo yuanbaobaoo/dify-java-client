@@ -5,16 +5,15 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.Dataset;
 import io.github.yuanbaobaoo.dify.dataset.entity.Document;
-import io.github.yuanbaobaoo.dify.dataset.entity.RetrieveResult;
+import io.github.yuanbaobaoo.dify.dataset.types.RetrieveResult;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.BatchStatus;
 import io.github.yuanbaobaoo.dify.dataset.types.DocumentResult;
 import io.github.yuanbaobaoo.dify.dataset.types.RetrievalModel;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
-import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
@@ -27,7 +26,8 @@ public class DatasetHero extends Dataset {
 
     /**
      * new DatasetHero
-     * @param id Dataset id
+     *
+     * @param id     Dataset id
      * @param config DifyConfig
      */
     public static DatasetHero of(String id, DifyConfig config) {
@@ -36,8 +36,9 @@ public class DatasetHero extends Dataset {
 
     /**
      * new DatasetHero
+     *
      * @param dataset Dataset
-     * @param config DifyConfig
+     * @param config  DifyConfig
      */
     public static DatasetHero of(Dataset dataset, DifyConfig config) {
         return new DatasetHero(config.getServer(), config.getApiKey(), dataset);
@@ -45,9 +46,10 @@ public class DatasetHero extends Dataset {
 
     /**
      * Constructor
+     *
      * @param server Dify Server Address
      * @param apiKey Api Key
-     * @param id Dataset id
+     * @param id     Dataset id
      */
     private DatasetHero(String server, String apiKey, String id) {
         this.config = DifyConfig.builder().server(server).apiKey(apiKey).build();
@@ -56,8 +58,9 @@ public class DatasetHero extends Dataset {
 
     /**
      * Constructor
-     * @param server Dify Server Address
-     * @param apiKey Api Key
+     *
+     * @param server  Dify Server Address
+     * @param apiKey  Api Key
      * @param dataset Dataset
      */
     private DatasetHero(String server, String apiKey, Dataset dataset) {
@@ -89,6 +92,7 @@ public class DatasetHero extends Dataset {
 
     /**
      * 快捷创建一个Document对象
+     *
      * @param documentId 文档ID
      */
     public DocumentHero ofDocument(String documentId) {
@@ -99,16 +103,12 @@ public class DatasetHero extends Dataset {
      * 删除数据库
      */
     public void delete() {
-        DifyHttpClient.get(config).requestJson(
-                String.format("%s/%s", AppRoutes.DATASETS.getUrl(), getId()),
-                HttpMethod.DELETE,
-                null,
-                null
-        );
+        DifyHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_DELETE);
     }
 
     /**
      * 通过文本创建文档
+     *
      * @param doc ParamDocument
      */
     public DocumentResult insertText(ParamDocument doc) {
@@ -117,9 +117,10 @@ public class DatasetHero extends Dataset {
 
     /**
      * 通过文本创建文档
-     * @param doc ParamDocument
-     * @param retrievalModel RetrievalModel
-     * @param embeddingModel Embedding 模型名称
+     *
+     * @param doc                    ParamDocument
+     * @param retrievalModel         RetrievalModel
+     * @param embeddingModel         Embedding 模型名称
      * @param embeddingModelProvider Embedding 模型供应商
      */
     public DocumentResult insertText(ParamDocument doc, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider) {
@@ -128,7 +129,7 @@ public class DatasetHero extends Dataset {
         params.put("embedding_model", embeddingModel);
         params.put("embedding_model_provider", embeddingModelProvider);
 
-        DifyRoute route = AppRoutes.DATASETS_CREATE_DOC_TEXT.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_CREATE_DOC_TEXT.format(new HashMap<>() {{
             put("datasetId", getId());
         }});
 
@@ -138,6 +139,7 @@ public class DatasetHero extends Dataset {
 
     /**
      * 通过文件创建文档
+     *
      * @param file File
      * @param data ParamDocument
      */
@@ -147,10 +149,11 @@ public class DatasetHero extends Dataset {
 
     /**
      * 通过文件创建文档
-     * @param file File
-     * @param data ParamDocument
-     * @param retrievalModel retrievalModel
-     * @param embeddingModel Embedding 模型名称
+     *
+     * @param file                   File
+     * @param data                   ParamDocument
+     * @param retrievalModel         retrievalModel
+     * @param embeddingModel         Embedding 模型名称
      * @param embeddingModelProvider Embedding 模型供应商
      */
     public DocumentResult insertFile(File file, ParamDocument data, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider) {
@@ -161,7 +164,7 @@ public class DatasetHero extends Dataset {
         params.put("embedding_model", embeddingModel);
         params.put("embedding_model_provider", embeddingModelProvider);
 
-        DifyRoute route = AppRoutes.DATASETS_CREATE_DOC_FILE.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_CREATE_DOC_FILE.format(new HashMap<>() {{
             put("datasetId", getId());
         }});
 
@@ -171,10 +174,11 @@ public class DatasetHero extends Dataset {
 
     /**
      * 获取文档嵌入状态（进度）
+     *
      * @param batch 上传文档的批次号
      */
     public List<BatchStatus> queryBatchStatus(String batch) {
-        DifyRoute route = AppRoutes.DATASETS_INDEXING_STATUS.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_INDEXING_STATUS.format(new HashMap<>() {{
             put("datasetId", getId());
             put("batch", batch);
         }});
@@ -190,37 +194,49 @@ public class DatasetHero extends Dataset {
      * 获取知识库文档列表
      */
     public DifyPage<Document> documents() {
-        return documents(null ,null, null);
+        return documents(null, null, null);
     }
 
     /**
      * 获取知识库文档列表
-     * @param page 页码
-     * @param limit 返回条数
+     *
+     * @param page    页码
+     * @param limit   返回条数
      * @param keyword 搜索关键词，可选，目前仅搜索文档名称
      */
     public DifyPage<Document> documents(Integer page, Integer limit, String keyword) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS.format(new HashMap<>() {{
             put("datasetId", getId());
         }});
 
-        Map<String, Object> query = new HashMap<>(){{
+        Map<String, Object> query = new HashMap<>() {{
             put("page", page);
             put("limit", limit);
             put("keyword", keyword);
         }};
 
         String result = DifyHttpClient.get(config).requestJson(route, query, null);
-        return JSON.parseObject(result, new TypeReference<DifyPage<Document>>() {});
+        return JSON.parseObject(result, new TypeReference<DifyPage<Document>>() {
+        });
     }
 
     /**
      * 检索知识库
+     *
      * @param query 检索关键词
+     */
+    public RetrieveResult retrieve(String query) {
+        return retrieve(query, null);
+    }
+
+    /**
+     * 检索知识库
+     *
+     * @param query          检索关键词
      * @param retrievalModel RetrievalModel
      */
     public RetrieveResult retrieve(String query, RetrievalModel retrievalModel) {
-        String result = DifyHttpClient.get(config).requestJson(AppRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
+        String result = DifyHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_RETRIEVE.format(new HashMap<>() {{
             put("datasetId", getId());
         }}), null, new HashMap<>() {{
             put("query", query);

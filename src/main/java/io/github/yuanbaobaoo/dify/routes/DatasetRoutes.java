@@ -1,4 +1,4 @@
-package io.github.yuanbaobaoo.dify.dataset.routes;
+package io.github.yuanbaobaoo.dify.routes;
 
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
@@ -9,6 +9,7 @@ public class DatasetRoutes {
      * Type: Dataset
      */
     public static final DifyRoute DATASETS = new DifyRoute("/datasets", HttpMethod.POST);
+    public static final DifyRoute DATASETS_DELETE = new DifyRoute(DATASETS.getUrl(), HttpMethod.DELETE);
 
     public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
             "/datasets/${datasetId}/retrieve",

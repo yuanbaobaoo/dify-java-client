@@ -6,7 +6,7 @@ import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -14,7 +14,6 @@ import io.github.yuanbaobaoo.dify.app.types.ResponseMode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

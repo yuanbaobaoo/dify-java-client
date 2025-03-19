@@ -7,7 +7,7 @@ import io.github.yuanbaobaoo.dify.app.IDifyFlowClient;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyWorkFlowResult;
 import io.github.yuanbaobaoo.dify.app.types.WorkflowStatus;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import lombok.extern.slf4j.Slf4j;

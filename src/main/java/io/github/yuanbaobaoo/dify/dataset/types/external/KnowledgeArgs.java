@@ -1,4 +1,4 @@
-package io.github.yuanbaobaoo.dify.dataset.external;
+package io.github.yuanbaobaoo.dify.dataset.types.external;
 
 import lombok.Getter;
 import lombok.Setter;

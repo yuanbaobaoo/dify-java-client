@@ -4,11 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.DocFileInfo;
 import io.github.yuanbaobaoo.dify.dataset.entity.Document;
 import io.github.yuanbaobaoo.dify.dataset.entity.Segment;
-import io.github.yuanbaobaoo.dify.dataset.entity.SegmentResult;
+import io.github.yuanbaobaoo.dify.dataset.types.SegmentResult;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.DocumentResult;
 import io.github.yuanbaobaoo.dify.dataset.types.ProcessRule;
@@ -92,7 +92,7 @@ public class DocumentHero extends Document {
      * 通过文本更新文档
      */
     public DocumentResult updateByText(ParamDocument data) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_UPDATE_TEXT.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_UPDATE_TEXT.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -118,7 +118,7 @@ public class DocumentHero extends Document {
      * @param rule 处理规则
      */
     public DocumentResult updateByFile(String name, File file, ProcessRule rule) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_UPDATE_FILE.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_UPDATE_FILE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -136,7 +136,7 @@ public class DocumentHero extends Document {
      * 删除文档
      */
     public Boolean delete() {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_DELETE.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_DELETE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -151,7 +151,7 @@ public class DocumentHero extends Document {
      * 获取上传文件
      */
     public DocFileInfo queryFileInfo() {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_FILE_INFO.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_FILE_INFO.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -181,7 +181,7 @@ public class DocumentHero extends Document {
      * @param status 搜索状态
      */
     public SegmentResult querySegments(String keyword, String status) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -203,7 +203,7 @@ public class DocumentHero extends Document {
      *      answer   答案内容，非必填，如果知识库的模式为 Q&A 模式则传值
      */
     public SegmentResult insertSegment(List<Segment> segments) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_ADD.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_ADD.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
         }});
@@ -220,7 +220,7 @@ public class DocumentHero extends Document {
      * @param segmentId 文档分段ID
      */
     public Boolean deleteSegment(String segmentId) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_DEL.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_DEL.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
             put("segmentId", segmentId);
@@ -248,7 +248,7 @@ public class DocumentHero extends Document {
      * @param regenerate  是否重新生成子分段
      */
     public SegmentResult updateSegment(Segment segment, boolean regenerate) {
-        DifyRoute route = AppRoutes.DATASETS_DOCS_SEGMENTS_UPDATE.format(new HashMap<>() {{
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_UPDATE.format(new HashMap<>() {{
             put("datasetId", datasetId);
             put("documentId", getId());
             put("segmentId", segment.getId());
