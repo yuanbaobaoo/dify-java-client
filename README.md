@@ -47,7 +47,7 @@ app客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应
 - ```IDifyCompletion```
 
 ### 1、IDifyBaseClient
-基础Client，封装了部分公共API，提供简单易用的调用方法
+基础Client，提供Dify公共API，具体可查阅 [```IDifyBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyBaseClient.java)
 ```java
 // 调用接口
 String metaInfo = client.getAppMetaInfo();
@@ -120,7 +120,7 @@ CompletableFuture<Void> future = completion.sendMessagesAsync(m, (r) -> {
 当前项目提供了内部知识库Client 与 外部知识库相关类型定义，其中外部知识库并没有做具体实现。
 
 ### Dify内置知识库: IDifyDatasetClient
-具体API定义，请查阅 ```io.github.yuanbaobaoo.dify.client.dataset.IDifyDatasetClient```
+具体API定义，请查阅 [```io.github.yuanbaobaoo.dify.client.dataset.IDifyDatasetClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/dataset/IDatasetClient.java)
 
 #### 快速上手
 ```java
@@ -136,7 +136,7 @@ client.create(dataset);
 ```
 
 #### Hero类
-项目中，针对知识库的工具类，除了提供了基于 ```DifyClientBuilder``` 的相关创建方法外，还提供了Hero类对知识库进行操作支持。
+项目中，针对知识库的工具类，除了提供了基于 ```IDatasetClient``` 的相关方法外，还提供了Hero类对知识库进行操作支持。
 具体使用哪种方式，取决于你的需求。
 
 - 案例一：新增文档
@@ -165,7 +165,6 @@ dataset.insertTxt(document);
 方式3、直接创建Hero对象
 ```java
 DatasetHero dataset = DatasetHero.of("知识库ID", config);
-// 创建文档
 dataset.insertTxt(document);
 ```
 
