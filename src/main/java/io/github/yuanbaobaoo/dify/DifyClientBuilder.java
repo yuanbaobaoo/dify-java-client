@@ -123,15 +123,16 @@ public class DifyClientBuilder {
          * @param datasetId 知识库ID
          */
         public DatasetHero ofDataset(String datasetId) {
-            return new DatasetHero(datasetId, new DifyHttpClient(baseUrl, apiKey));
+            return DatasetHero.of(datasetId, DifyConfig.builder().server(baseUrl).apiKey(apiKey).build());
         }
 
         /**
          * 快捷创建一个Document对象
+         * @param datasetId 知识库ID
          * @param documentId 文档ID
          */
         public DocumentHero ofDocument(String datasetId, String documentId) {
-            return new DocumentHero(datasetId, documentId, new DifyHttpClient(baseUrl, apiKey));
+            return DocumentHero.of(datasetId, documentId, DifyConfig.builder().server(baseUrl).apiKey(apiKey).build());
         }
     }
 

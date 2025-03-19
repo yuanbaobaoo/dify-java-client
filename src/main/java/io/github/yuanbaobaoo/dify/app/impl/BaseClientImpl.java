@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
@@ -20,7 +21,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class BaseClientImpl extends DifyHttpClient implements IDifyBaseClient {
+public class BaseClientImpl implements IDifyBaseClient {
+    protected final DifyConfig config;
+
     /**
      * constructor
      *
@@ -28,38 +31,38 @@ public class BaseClientImpl extends DifyHttpClient implements IDifyBaseClient {
      * @param apiKey The App Api Key
      */
     public BaseClientImpl(String server, String apiKey) {
-        super(server, apiKey);
+        config = DifyConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     @Override
-    public String getAppInfo() throws DifyException, IOException, InterruptedException {
-        return requestJson(AppRoutes.INFO, null, null);
+    public String getAppInfo()  {
+        return DifyHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
     }
 
     @Override
-    public String getAppParameters() throws DifyException, IOException, InterruptedException {
-        return requestJson(AppRoutes.PARAMETERS, null, null);
+    public String getAppParameters() {
+        return DifyHttpClient.get(config).requestJson(AppRoutes.PARAMETERS, null, null);
     }
 
     @Override
-    public String getAppMetaInfo() throws DifyException, IOException, InterruptedException {
-        return requestJson(AppRoutes.META_INFO, null, null);
+    public String getAppMetaInfo() {
+        return DifyHttpClient.get(config).requestJson(AppRoutes.META_INFO, null, null);
     }
 
     @Override
-    public DifyFileResult uploadFile(File file, String user) throws DifyException, IOException, InterruptedException {
+    public DifyFileResult uploadFile(File file, String user) {
         Map<String, Object> data = new HashMap<>();
         data.put("file", file);
         data.put("user", user);
 
-        String result = requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
+        String result = DifyHttpClient.get(config).requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
         return JSON.parseObject(result, DifyFileResult.class);
     }
 
     @Override
     public Boolean feedbacks(String messageId, String rating, String user, String content) {
         try {
-            String result = requestJson(
+            String result = DifyHttpClient.get(config).requestJson(
                     String.format("%s/%s/feedbacks", AppRoutes.MESSAGES.getUrl(), messageId),
                     HttpMethod.POST,
                     null,
@@ -82,22 +85,23 @@ public class BaseClientImpl extends DifyHttpClient implements IDifyBaseClient {
     }
 
     @Override
-    public String audioToText(File file, String user) throws DifyException, IOException, InterruptedException {
+    public String audioToText(File file, String user) {
         Map<String, Object> data = new HashMap<>();
         data.put("file", file);
         data.put("user", user);
 
-        JSONObject result = JSON.parseObject(requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data));
-        return result.getString("text");
+        JSONObject result = JSON.parseObject(
+                DifyHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
+        );
 
+        return result.getString("text");
     }
 
     @Override
-    public String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException {
+    public String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params) {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.blocking);
-        return requestJson(route, query, params);
+        return DifyHttpClient.get(config).requestJson(route, query, params);
     }
 
     @Override
@@ -110,7 +114,7 @@ public class BaseClientImpl extends DifyHttpClient implements IDifyBaseClient {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.streaming);
         // 异步请求
-        return requestJsonAsync(route, query, params, line -> {
+        return DifyHttpClient.get(config).requestJsonAsync(route, query, params, line -> {
             final String FLAG = "data:";
 
             if (line.startsWith(FLAG)) {

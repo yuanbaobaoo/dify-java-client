@@ -1,11 +1,9 @@
 package io.github.yuanbaobaoo.dify.app;
 
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -19,21 +17,21 @@ public interface IDifyBaseClient {
      *
      * @return String
      */
-    String getAppInfo() throws IOException, InterruptedException;
+    String getAppInfo();
 
     /**
      * 获取应用参数信息
      *
      * @return String
      */
-    String getAppParameters() throws IOException, InterruptedException;
+    String getAppParameters();
 
     /**
      * 获取应用元数据
      *
      * @return String
      */
-    String getAppMetaInfo() throws IOException, InterruptedException;
+    String getAppMetaInfo();
 
     /**
      * 上传文件
@@ -42,7 +40,7 @@ public interface IDifyBaseClient {
      * @param user 用户标识
      * @return DifyFileResult
      */
-    DifyFileResult uploadFile(File file, String user) throws DifyException, IOException, InterruptedException;
+    DifyFileResult uploadFile(File file, String user);
 
     /**
      * 消息反馈
@@ -61,7 +59,7 @@ public interface IDifyBaseClient {
      *             大小限制：15MB
      * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
      */
-    String audioToText(File file, String user) throws DifyException, IOException, InterruptedException;
+    String audioToText(File file, String user);
 
     /**
      * 发送同步接口请求
@@ -71,9 +69,7 @@ public interface IDifyBaseClient {
      * @param params Body params
      * @return String
      */
-    String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params)
-            throws DifyException, IOException, InterruptedException
-    ;
+    String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params);
 
     /**
      * 发送流式接口请求

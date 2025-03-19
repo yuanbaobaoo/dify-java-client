@@ -2,6 +2,7 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.IDifyFlowClient;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyWorkFlowResult;
@@ -51,7 +52,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public JSONObject getWorkFlowStatus(String workFlowId) {
         try {
-            String result = requestJson(
+            String result = DifyHttpClient.get(config).requestJson(
                     AppRoutes.WORKFLOW_RUN.getUrl() + "/" + workFlowId,
                     HttpMethod.GET,
                     null,
@@ -71,7 +72,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public Boolean stopWorkFlow(String taskId, String user) {
         try {
-            String result = requestJson(
+            String result = DifyHttpClient.get(config).requestJson(
                     String.format("%s/%s/stop", AppRoutes.WORKFLOW_TASK.getUrl(), taskId),
                     HttpMethod.POST,
                     null,
@@ -94,7 +95,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public JSONObject getWorkFlowLog(String keyword, WorkflowStatus status, Integer page, Integer limit) {
         try {
-            String result = requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
+            String result = DifyHttpClient.get(config).requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
                 put("keyword", keyword);
                 put("status", status.name());
                 put("page", page);

@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DifyHttpClient {
     private final static String version = "/v1";
+    private final static Map<String, DifyHttpClient> cache = new ConcurrentHashMap<>();
 
     private final String server;
     private final String apiKey;
@@ -31,13 +33,39 @@ public class DifyHttpClient {
     /**
      * constructor
      *
-     * @param server Dify Server URL
-     * @param apiKey The App Api Key
+     * @param server Dify Server Address
+     * @param apiKey Api Key
      */
-    public DifyHttpClient(String server, String apiKey) {
+    private DifyHttpClient(String server, String apiKey) {
         this.apiKey = apiKey;
         this.server = server;
         this.httpClient = HttpClient.newHttpClient();
+    }
+
+    /**
+     * 从缓存池中获取一个client对象，如果没有则创建
+     * @param config DifyConfig
+     */
+    public static DifyHttpClient get(DifyConfig config) {
+        return get(config.getServer(), config.getApiKey());
+    }
+
+    /**
+     * 从缓存池中获取一个client对象，如果没有则创建
+     * @param server Dify Server Address
+     * @param apiKey Api Key
+     */
+    public static DifyHttpClient get(String server, String apiKey) {
+        return cache.computeIfAbsent(String.format("%s-%s", server, apiKey), id -> new DifyHttpClient(server, apiKey));
+    }
+
+    /**
+     * 实例化一个新对象
+     * @param server Dify Server Address
+     * @param apiKey Api Key
+     */
+    public static DifyHttpClient newHttpClient(String server, String apiKey) {
+        return new DifyHttpClient(server, apiKey);
     }
 
     /**
