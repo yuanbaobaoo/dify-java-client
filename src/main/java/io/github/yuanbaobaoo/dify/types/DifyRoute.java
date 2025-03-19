@@ -1,10 +1,12 @@
 package io.github.yuanbaobaoo.dify.types;
 
-import io.github.yuanbaobaoo.dify.routes.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.StringSubstitutor;
+
+import java.util.Map;
 
 @Getter
 @Builder
@@ -22,7 +24,18 @@ public class DifyRoute {
     private HttpMethod method;
 
     /**
+     * Replace url placeholder. 替换URL模板参数
+     *
+     * @param params Map<String, Object>
+     */
+    public DifyRoute format(Map<String, Object> params) {
+        url = StringSubstitutor.replace(url, params);
+        return this;
+    }
+
+    /**
      * build get route info
+     *
      * @param url API URL
      */
     public static DifyRoute buildGet(String url) {
@@ -30,7 +43,8 @@ public class DifyRoute {
     }
 
     /**
-     *  build post route info
+     * build post route info
+     *
      * @param url API URL
      */
     public static DifyRoute buildPost(String url) {
@@ -39,6 +53,7 @@ public class DifyRoute {
 
     /**
      * build delete route info
+     *
      * @param url API URL
      */
     public static DifyRoute buildDelete(String url) {

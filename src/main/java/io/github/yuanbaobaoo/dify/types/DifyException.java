@@ -21,6 +21,7 @@ public class DifyException extends RuntimeException {
      * response status | http status
      */
     private Integer status;
+
     /**
      * dify response -> code
      */
