@@ -4,7 +4,7 @@
 
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.3.0-PRE</version>
+    <version>1.3.0</version>
     <description>The Simple Dify Java Client</description>
     <url>https://github.com/yuanbaobaoo/dify-java-client</url>
 

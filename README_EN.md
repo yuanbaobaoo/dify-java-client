@@ -34,7 +34,7 @@ Dify Version: <= 1.x
 ```DifyClientBuilder```: Used to create various client instances
 ```java
 /**
- * 支持 base()、chat()、flow()、completion()、dataset()，which have inconsistent return types
+ * Support base()、chat()、flow()、completion()、dataset()，which have inconsistent return types
  */
 IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
 ```
