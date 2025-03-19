@@ -48,8 +48,8 @@ public class DifyClientBuilder {
     /**
      * create dify dataset client
      */
-    public static DatasetBuilder<IDatasetClient, DatasetClientImpl> dataset() {
-        return new DatasetBuilder<>(DatasetClientImpl.class);
+    public static DatasetBuilder dataset() {
+        return new DatasetBuilder();
     }
 
     /**
@@ -59,8 +59,8 @@ public class DifyClientBuilder {
     public static class Builder<R, T extends R> {
         private final Class<T> type;
 
-        protected String baseUrl = "http://localhost:5001";
-        protected String apiKey;
+        private String baseUrl = "http://localhost:5001";
+        private String apiKey;
 
         /**
          * constructor
@@ -106,23 +106,49 @@ public class DifyClientBuilder {
 
     /**
      * DatasetBuilder
-     * @param <T>
      */
-    public static class DatasetBuilder<R, T extends R> extends Builder<R, T> {
+    public static class DatasetBuilder {
+        private String baseUrl = "http://localhost:5001";
+        private String apiKey;
+
         /**
-         * constructor
-         *
-         * @param type Class<T>
+         * dify server base url
+         * @param baseUrl String
          */
-        public DatasetBuilder(Class<T> type) {
-            super(type);
+        public DatasetBuilder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * dify app api key
+         * @param apiKey String
+         */
+        public DatasetBuilder apiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * build
+         */
+        public IDatasetClient build() {
+            if (baseUrl == null || apiKey == null) {
+                throw new RuntimeException("Dify Client Build Error: params is not defined");
+            }
+
+            try {
+                return DatasetClientImpl.build(baseUrl, apiKey);
+            } catch (Exception e) {
+                throw new RuntimeException("Dify Client Build Error: class is not defined", e);
+            }
         }
 
         /**
          * 快捷构建一个Dataset对象
          * @param datasetId 知识库ID
          */
-        public DatasetHero ofDataset(String datasetId) {
+        public DatasetHero of(String datasetId) {
             return DatasetHero.of(datasetId, DifyConfig.builder().server(baseUrl).apiKey(apiKey).build());
         }
 

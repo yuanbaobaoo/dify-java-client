@@ -1,7 +1,7 @@
 package io.github.yuanbaobaoo.dify.dataset;
 
-import io.github.yuanbaobaoo.dify.dataset.external.KnowledgeArgs;
-import io.github.yuanbaobaoo.dify.dataset.external.KnowledgeResult;
+import io.github.yuanbaobaoo.dify.dataset.types.external.KnowledgeArgs;
+import io.github.yuanbaobaoo.dify.dataset.types.external.KnowledgeResult;
 
 public interface IKnowledgeService {
     /**

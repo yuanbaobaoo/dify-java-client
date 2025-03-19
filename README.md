@@ -6,7 +6,7 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.2.4-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.3.0-green" /> 
     </a>
 </p>
 
@@ -14,11 +14,10 @@ Dify Java 客户端
 
 中文 | [English](./README_EN.md)
 
-### 快速开始
+## 快速开始
 - 环境需求  
 ```code
 Java : >= 17
-Maven: >= 3
 Dify Api: <= 1.x
 ```
 
@@ -27,25 +26,30 @@ Dify Api: <= 1.x
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.2.4</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
-### 创建客户端
+## App Client
+app客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应用，提供了会话相关的API，支持会话的流式返回。主要包含如下  
+- ```IDifyBaseClient```
+- ```IDifyChatClient```
+- ```IDifyFlowClient```
+- ```IDifyCompletion```
+
+### 初始化
 ```java
 /**
- * 支持 create()、chat()、flow()、completion()，其对应返回类型也是不一致的
+ * 支持 base()、chat()、flow()、completion()，其对应返回类型也是不一致的
  */
-IDifyBaseClient client = DifyClientBuilder.create().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
 ```
 
 #### 1、IDifyBaseClient: 基础Client
-封装了部分公共API 与 鉴权逻辑，提供简单易用的调用方法
+封装了部分公共API，提供简单易用的调用方法
 ```java
 // 调用预设API
 String metaInfo = client.getAppMetaInfo();
-// 调用自定义API
-String result = client.requestJson(DifyRoute.buildGet("/messages"));
 // 上传文件
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
@@ -53,7 +57,7 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 #### 2、IDifyChatClient: 适用于 ChatBot、Agent、ChatFlow 类型应用
 ```IDifyChatClient``` 继承自 ```IDifyBaseClient```，提供了会话相关的API：
 ```java
-IDifyChatClient chatClient = DifyClientBuilder.chat().apiKey("app-xxxx").baseUrl("http://localhost:4000/v1").build();
+IDifyChatClient chatClient = DifyClientBuilder.chat().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{

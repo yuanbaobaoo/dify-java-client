@@ -6,14 +6,11 @@ import io.github.yuanbaobaoo.dify.DifyConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
-import io.github.yuanbaobaoo.dify.dataset.types.BatchStatus;
-import io.github.yuanbaobaoo.dify.dataset.types.DocumentResult;
-import io.github.yuanbaobaoo.dify.dataset.types.ProcessRule;
-import io.github.yuanbaobaoo.dify.dataset.types.RetrievalModel;
+import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
 import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
@@ -90,7 +87,7 @@ public class DatasetClientImpl implements IDatasetClient {
 
     @Override
     public DatasetHero create(ParamDataset data) {
-        String result = DifyHttpClient.get(server).requestJson(AppRoutes.DATASETS, null, data);
+        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
 
         Dataset dataset = JSON.parseObject(result, Dataset.class);
         return DatasetHero.of(dataset, server);
@@ -98,7 +95,7 @@ public class DatasetClientImpl implements IDatasetClient {
 
     @Override
     public DifyPage<Dataset> list(int page, int limit) {
-        String result = DifyHttpClient.get(server).requestJson(AppRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
+        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
             put("page", page);
             put("limit", limit);
         }}, null);

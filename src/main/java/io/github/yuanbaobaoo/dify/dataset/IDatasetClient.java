@@ -5,10 +5,7 @@ import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
-import io.github.yuanbaobaoo.dify.dataset.types.BatchStatus;
-import io.github.yuanbaobaoo.dify.dataset.types.DocumentResult;
-import io.github.yuanbaobaoo.dify.dataset.types.ProcessRule;
-import io.github.yuanbaobaoo.dify.dataset.types.RetrievalModel;
+import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 
 import java.io.File;

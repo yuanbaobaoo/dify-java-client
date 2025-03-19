@@ -3,7 +3,7 @@ package io.github.yuanbaobaoo.dify;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
-import io.github.yuanbaobaoo.dify.app.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import org.junit.jupiter.api.Test;
 
