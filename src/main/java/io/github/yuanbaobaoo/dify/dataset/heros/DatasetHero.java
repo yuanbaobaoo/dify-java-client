@@ -103,7 +103,9 @@ public class DatasetHero extends Dataset {
      * 删除数据库
      */
     public void delete() {
-        DifyHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_DELETE);
+        DifyHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_DELETE.format(new HashMap<>() {{
+            put("datasetId", getId());
+        }}));
     }
 
     /**
