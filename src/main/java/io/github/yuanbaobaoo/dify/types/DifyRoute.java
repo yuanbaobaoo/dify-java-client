@@ -29,8 +29,8 @@ public class DifyRoute {
      * @param params Map<String, Object>
      */
     public DifyRoute format(Map<String, Object> params) {
-        url = StringSubstitutor.replace(url, params);
-        return this;
+        String u = StringSubstitutor.replace(url, params);
+        return DifyRoute.builder().url(u).method(method).build();
     }
 
     /**
