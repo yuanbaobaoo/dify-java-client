@@ -237,6 +237,10 @@ class KnowledgeService implements IKnowledgeService {
 ```
 
 ### 异常处理
-默认情况下，当正常的请求返回了 http status >= 400 时，都会抛出一个异常对象 ```DifyException```。
+- **DifyException**
+>默认情况下，当正常的请求返回了 http status >= 400 时，都会抛出一个异常对象 ```DifyException```。
 该对象接收了Dify返回的 ```status```、```code```、```message```、```params``` 这几个属性。
 当然你也可以通过 ```getOriginal()``` 方法获取原始返回内容。
+
+- **DifyClientException**
+>除了 ```DifyException``` 之外，其他所有类型的异常都会被包装成非受检异常 ```DifyClientException``` 抛出

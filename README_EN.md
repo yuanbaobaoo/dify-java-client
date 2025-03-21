@@ -239,6 +239,10 @@ class KnowledgeService implements IKnowledgeService {
 ```
 
 ### Exception Type
-By default, when the normal request returns http status>=400, an exception object ```DiffyException``` will be thrown.
+- **DifyException**
+>By default, when the normal request returns http status>=400, an exception object ```DiffyException``` will be thrown.
 This object receives the '```status```, ```code```, ```message```, ```params```.
 Of course, you can also get the original return content through the ```getOriginal()``` method.
+
+- **DifyClientException**
+>Except for ```DifyException```, all other types of exceptions will be wrapped as non inspected exceptions ```DifyClientException``` and thrown
