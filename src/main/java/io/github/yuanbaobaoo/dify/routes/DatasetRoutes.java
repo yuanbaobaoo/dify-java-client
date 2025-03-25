@@ -9,7 +9,11 @@ public class DatasetRoutes {
      * Type: Dataset
      */
     public static final DifyRoute DATASETS = new DifyRoute("/datasets", HttpMethod.POST);
-    public static final DifyRoute DATASETS_DELETE = new DifyRoute("/datasets/${datasetId}", HttpMethod.DELETE);
+
+    public static final DifyRoute DATASETS_DELETE = new DifyRoute(
+            "/datasets/${datasetId}",
+            HttpMethod.DELETE
+    );
 
     public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
             "/datasets/${datasetId}/retrieve",
