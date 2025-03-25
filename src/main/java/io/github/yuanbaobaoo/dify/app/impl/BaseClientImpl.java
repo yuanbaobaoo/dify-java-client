@@ -7,6 +7,7 @@ import io.github.yuanbaobaoo.dify.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
+import io.github.yuanbaobaoo.dify.types.DifyFile;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -94,6 +95,26 @@ public class BaseClientImpl implements IDifyBaseClient {
         );
 
         return result.getString("text");
+    }
+
+    @Override
+    public DifyFile textToAudioByMessage(String user, String messageId) {
+        return textToAudio(user, null, messageId);
+    }
+
+    @Override
+    public DifyFile textToAudio(String user, String text) {
+        return textToAudio(user, text, null);
+    }
+
+    @Override
+    public DifyFile textToAudio(String user, String text, String messageId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("message_id", messageId);
+        data.put("text", text);
+        data.put("user", user);
+
+        return DifyHttpClient.get(config).requestFile(AppRoutes.TEXT_TO_AUDIO, null, data);
     }
 
     @Override

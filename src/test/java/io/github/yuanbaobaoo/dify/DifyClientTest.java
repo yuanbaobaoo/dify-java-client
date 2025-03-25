@@ -10,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.CompletableFuture;
 
 public class DifyClientTest {
-    IDifyBaseClient client = DifyClientBuilder.base().baseUrl("http://localhost:4000").apiKey("app-").build();
+    IDifyBaseClient client = DifyClientBuilder
+            .base()
+            .baseUrl("https://api.dify.ai/v1")
+            .apiKey("app-")
+            .build();
 
     @Test
     public void blockTest() {
