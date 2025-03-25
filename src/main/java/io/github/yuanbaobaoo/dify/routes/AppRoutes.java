@@ -47,9 +47,15 @@ public class AppRoutes {
 
     /**
      * Desc: Audio to Text
-     * Type: ChatFlow、Chat、Agent、Completion
+     * Type: ChatFlow、Chat、Agent
      */
     public static final DifyRoute AUDIO_TO_TEXT = new DifyRoute("/audio-to-text", HttpMethod.POST);
+
+    /**
+     * Text to Audio
+     * Type: ChatFlow、Chat、Agent、Completion
+     */
+    public static final DifyRoute TEXT_TO_AUDIO = new DifyRoute("/text-to-audio", HttpMethod.POST);
 
     /**
      * Desc: run workflow

@@ -6,11 +6,11 @@ dify-java-client
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.3.2-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.3.3-green" /> 
     </a>
 </p>
 
-The Simple and Easy-to-Use Dify Java Client
+The Simple and Easy-to-Use Dify Java Client, Support the use of [Dify](https://dify.ai/) Workflow, Assistant, Agent, Dataset, text to speech, voice to text, etc...
 
 [中文](./README.md) | English
 
@@ -26,7 +26,7 @@ Dify Version: <= 1.x
 <dependency>
     <groupId>io.github.yuanbaobaoo</groupId>
     <artifactId>dify-java-client</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
 </dependency>
 ```
 

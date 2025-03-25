@@ -1,10 +1,7 @@
 package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
-import io.github.yuanbaobaoo.dify.types.DifyClientException;
-import io.github.yuanbaobaoo.dify.types.DifyException;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
-import io.github.yuanbaobaoo.dify.types.HttpMethod;
+import io.github.yuanbaobaoo.dify.types.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -44,6 +38,7 @@ public class DifyHttpClient {
 
     /**
      * 从缓存池中获取一个client对象，如果没有则创建
+     *
      * @param config DifyConfig
      */
     public static DifyHttpClient get(DifyConfig config) {
@@ -52,6 +47,7 @@ public class DifyHttpClient {
 
     /**
      * 从缓存池中获取一个client对象，如果没有则创建
+     *
      * @param server Dify Server Address
      * @param apiKey Api Key
      */
@@ -61,6 +57,7 @@ public class DifyHttpClient {
 
     /**
      * 实例化一个新对象
+     *
      * @param server Dify Server Address
      * @param apiKey Api Key
      */
@@ -133,6 +130,64 @@ public class DifyHttpClient {
             }
 
             return response.body();
+        } catch (DifyException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DifyClientException(e);
+        }
+    }
+
+    /**
+     * request by application/json content-type. return File bytes
+     *
+     * @param route  DifyRoute
+     * @param query  query params
+     * @param params body params
+     */
+    public DifyFile requestFile(DifyRoute route, Map<String, Object> query, Object params) {
+        return requestFile(route.getUrl(), route.getMethod(), query, params);
+    }
+
+    /**
+     * request by application/json content-type. return File bytes
+     *
+     * @param url    API URL
+     * @param method HTTP METHOD
+     * @param query  query map
+     * @param params body map
+     */
+    public DifyFile requestFile(String url, HttpMethod method, Map<String, Object> query, Object params) {
+        try {
+            HttpRequest.Builder builder = buildRequest(url, query);
+
+            if (params == null) {
+                params = new HashMap<>();
+            }
+
+            if (method == HttpMethod.GET) {
+                builder.method(method.name(), HttpRequest.BodyPublishers.noBody());
+            } else {
+                builder.header("Content-Type", "application/json");
+                builder.method(method.name(), HttpRequest.BodyPublishers.ofString(JSON.toJSONString(params)));
+            }
+
+            HttpResponse<byte[]> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofByteArray());
+
+            // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
+            if (response.statusCode() >= 400) {
+                throw new DifyException(new String(response.body()), response.statusCode());
+            }
+
+            String suffix = null;
+            String contentType = null;
+            Optional<String> contentTypeOpt = response.headers().firstValue("Content-Type");
+
+            if (contentTypeOpt.isPresent()) {
+                contentType = contentTypeOpt.get();
+                suffix = contentType.replaceAll(".*/", "");
+            }
+
+            return DifyFile.builder().type(contentType).suffix(suffix).data(response.body()).build();
         } catch (DifyException e) {
             throw e;
         } catch (Exception e) {
@@ -215,9 +270,9 @@ public class DifyHttpClient {
             }
 
             return response.body();
-        }  catch (DifyException e) {
+        } catch (DifyException e) {
             throw e;
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new DifyClientException(e);
         }
     }
