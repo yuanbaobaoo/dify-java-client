@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
 
-public class DifyClientTest {
-    IAppBaseClient client = DifyAppClientBuilder
+public class DifyAppClientTest {
+    IAppBaseClient client = DifyClientBuilder.app()
             .base()
             .baseUrl("https://api.dify.ai/v1")
             .apiKey("app-")

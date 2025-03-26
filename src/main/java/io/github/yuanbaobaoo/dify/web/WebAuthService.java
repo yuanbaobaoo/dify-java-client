@@ -1,10 +1,12 @@
 package io.github.yuanbaobaoo.dify.web;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.PropertyNamingStrategy;
+import com.alibaba.fastjson2.annotation.JSONType;
 import io.github.yuanbaobaoo.dify.routes.ConsoleRoutes;
-import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.utils.DifyWebConfig;
-import io.github.yuanbaobaoo.dify.web.types.DifyLoginResult;
+import io.github.yuanbaobaoo.dify.types.DifyClientException;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
+import io.github.yuanbaobaoo.dify.types.WebConfig;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 
 @Slf4j
-public class DifyAuthService {
+public class WebAuthService {
     @Getter
     @Setter
     private static class LoginResult {
@@ -22,6 +24,7 @@ public class DifyAuthService {
 
     @Getter
     @Setter
+    @JSONType(naming = PropertyNamingStrategy.SnakeCase)
     private static class TokenList {
         private String accessToken;
         private String refreshToken;
@@ -31,8 +34,8 @@ public class DifyAuthService {
      * 登录
      * @param config DifyWebConfig
      */
-    public static DifyLoginResult login(DifyWebConfig config) {
-        DifyHttpClient client = DifyHttpClient.newHttpClient(config.getServer());
+    public static String login(WebConfig config) {
+        SimpleHttpClient client = SimpleHttpClient.newHttpClient(config.getServer());
 
         String result = client.requestJson(ConsoleRoutes.LOGIN, null, new HashMap<>() {{
             put("email", config.getUserName());
@@ -41,8 +44,12 @@ public class DifyAuthService {
             put("remember_me", "zh-true");
         }});
 
-        LoginResult loginResult = JSON.parse(result, LoginResult.class);
+        LoginResult loginResult = JSON.parseObject(result, LoginResult.class);
 
-        return ;
+        if ("success".equals(loginResult.getResult())) {
+            return loginResult.getData().getAccessToken();
+        }
+
+        throw new DifyClientException("登录失败: " + result);
     }
 }

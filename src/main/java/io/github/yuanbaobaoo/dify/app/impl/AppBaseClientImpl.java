@@ -2,8 +2,8 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
-import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.IAppBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 @Slf4j
 public class AppBaseClientImpl implements IAppBaseClient {
-    protected final DifyApiConfig config;
+    protected final ApiConfig config;
 
     /**
      * constructor
@@ -31,22 +31,22 @@ public class AppBaseClientImpl implements IAppBaseClient {
      * @param apiKey The App Api Key
      */
     public AppBaseClientImpl(String server, String apiKey) {
-        config = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
+        config = ApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     @Override
     public String getAppInfo()  {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
     }
 
     @Override
     public String getAppParameters() {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.PARAMETERS, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.PARAMETERS, null, null);
     }
 
     @Override
     public String getAppMetaInfo() {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.META_INFO, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.META_INFO, null, null);
     }
 
     @Override
@@ -55,14 +55,14 @@ public class AppBaseClientImpl implements IAppBaseClient {
         data.put("file", file);
         data.put("user", user);
 
-        String result = DifyHttpClient.get(config).requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
+        String result = SimpleHttpClient.get(config).requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
         return JSON.parseObject(result, DifyFileResult.class);
     }
 
     @Override
     public Boolean feedbacks(String messageId, String rating, String user, String content) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/feedbacks", AppRoutes.MESSAGES.getUrl(), messageId),
                     HttpMethod.POST,
                     null,
@@ -91,7 +91,7 @@ public class AppBaseClientImpl implements IAppBaseClient {
         data.put("user", user);
 
         JSONObject result = JSON.parseObject(
-                DifyHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
+                SimpleHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
         );
 
         return result.getString("text");
@@ -114,14 +114,14 @@ public class AppBaseClientImpl implements IAppBaseClient {
         data.put("text", text);
         data.put("user", user);
 
-        return DifyHttpClient.get(config).requestFile(AppRoutes.TEXT_TO_AUDIO, null, data);
+        return SimpleHttpClient.get(config).requestFile(AppRoutes.TEXT_TO_AUDIO, null, data);
     }
 
     @Override
     public String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params) {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.blocking);
-        return DifyHttpClient.get(config).requestJson(route, query, params);
+        return SimpleHttpClient.get(config).requestJson(route, query, params);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class AppBaseClientImpl implements IAppBaseClient {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.streaming);
         // 异步请求
-        return DifyHttpClient.get(config).requestJsonAsync(route, query, params, line -> {
+        return SimpleHttpClient.get(config).requestJsonAsync(route, query, params, line -> {
             final String FLAG = "data:";
 
             if (line.startsWith(FLAG)) {

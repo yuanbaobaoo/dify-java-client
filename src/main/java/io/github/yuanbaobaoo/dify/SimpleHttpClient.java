@@ -1,7 +1,8 @@
-package io.github.yuanbaobaoo.dify.utils;
+package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
 import io.github.yuanbaobaoo.dify.types.*;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class DifyHttpClient {
-    private final static Map<String, DifyHttpClient> cache = new ConcurrentHashMap<>();
+public class SimpleHttpClient {
+    private final static Map<String, SimpleHttpClient> cache = new ConcurrentHashMap<>();
 
     private final String server;
     private final String apiKey;
@@ -29,7 +30,7 @@ public class DifyHttpClient {
      * @param server Dify Server Address
      * @param apiKey Api Key
      */
-    private DifyHttpClient(String server, String apiKey) {
+    private SimpleHttpClient(String server, String apiKey) {
         this.apiKey = apiKey;
         this.server = server;
         this.httpClient = HttpClient.newHttpClient();
@@ -40,7 +41,7 @@ public class DifyHttpClient {
      *
      * @param config DifyConfig
      */
-    public static DifyHttpClient get(DifyApiConfig config) {
+    public static SimpleHttpClient get(ApiConfig config) {
         return get(config.getServer(), config.getApiKey());
     }
 
@@ -50,8 +51,8 @@ public class DifyHttpClient {
      * @param server Dify Server Address
      * @param apiKey Api Key
      */
-    public static DifyHttpClient get(String server, String apiKey) {
-        return cache.computeIfAbsent(String.format("%s-%s", server, apiKey), id -> new DifyHttpClient(server, apiKey));
+    public static SimpleHttpClient get(String server, String apiKey) {
+        return cache.computeIfAbsent(String.format("%s-%s", server, apiKey), id -> new SimpleHttpClient(server, apiKey));
     }
 
     /**
@@ -59,8 +60,8 @@ public class DifyHttpClient {
      *
      * @param server Dify Server Address
      */
-    public static DifyHttpClient newHttpClient(String server) {
-        return new DifyHttpClient(server, null);
+    public static SimpleHttpClient newHttpClient(String server) {
+        return new SimpleHttpClient(server, null);
     }
 
     /**
@@ -69,8 +70,8 @@ public class DifyHttpClient {
      * @param server Dify Server Address
      * @param apiKey Api Key
      */
-    public static DifyHttpClient newHttpClient(String server, String apiKey) {
-        return new DifyHttpClient(server, apiKey);
+    public static SimpleHttpClient newHttpClient(String server, String apiKey) {
+        return new SimpleHttpClient(server, apiKey);
     }
 
     /**

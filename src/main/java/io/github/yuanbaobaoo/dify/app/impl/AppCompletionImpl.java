@@ -2,7 +2,7 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.IAppCompletion;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatEvent;
@@ -56,7 +56,7 @@ public class AppCompletionImpl extends AppBaseClientImpl implements IAppCompleti
     @Override
     public Boolean stopGenerate(String taskId, String user) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/stop", AppRoutes.COMPLETION_MESSAGES.getUrl(), taskId),
                     HttpMethod.POST,
                     null,

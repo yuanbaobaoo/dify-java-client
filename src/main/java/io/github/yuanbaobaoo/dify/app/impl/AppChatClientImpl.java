@@ -2,7 +2,7 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.IAppChatClient;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatEvent;
@@ -54,7 +54,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public Boolean stopResponse(String taskId, String user) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/stop", AppRoutes.CHAT_MESSAGES.getUrl(), taskId),
                     HttpMethod.POST,
                     null,
@@ -77,7 +77,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public List<String> suggestedList(String messageId, String user) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/suggested", AppRoutes.MESSAGES.getUrl(), messageId),
                     HttpMethod.GET,
                     new HashMap<>() {{
@@ -106,7 +106,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public JSONObject history(String conversationId, String user, Integer limit, String firstId) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(AppRoutes.MESSAGES, new HashMap<>() {{
+            String result = SimpleHttpClient.get(config).requestJson(AppRoutes.MESSAGES, new HashMap<>() {{
                 put("conversation_id", conversationId);
                 put("user", user);
                 put("limit", limit);
@@ -129,7 +129,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public JSONObject conversations(String user, Integer limit, String sortBy, String lastId) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(AppRoutes.CHAT_CONVERSATIONS, new HashMap<>() {{
+            String result = SimpleHttpClient.get(config).requestJson(AppRoutes.CHAT_CONVERSATIONS, new HashMap<>() {{
                 put("user", user);
                 put("last_id", lastId);
                 put("sort_by", sortBy);
@@ -152,7 +152,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public Boolean deleteConversation(String conversationId, String user) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     AppRoutes.CHAT_CONVERSATIONS.getUrl() + "/" + conversationId,
                     HttpMethod.DELETE,
                     null,
@@ -175,7 +175,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     @Override
     public JSONObject renameConversation(String conversationId, String user,  String name) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/name", AppRoutes.CHAT_CONVERSATIONS.getUrl(), conversationId),
                     HttpMethod.POST,
                     null,

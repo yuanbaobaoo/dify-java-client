@@ -1,23 +1,23 @@
-package io.github.yuanbaobaoo.dify;
+package io.github.yuanbaobaoo.dify.utils;
 
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
 import io.github.yuanbaobaoo.dify.dataset.impl.DatasetClientImpl;
-import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
 
 /**
  * Dify 知识库 builder
  */
-public class DifyDatasetBuilder {
+public class DatasetBuilder {
     private String apiKey;
     private String baseUrl;
 
     /**
      * builder
      */
-    public static DifyDatasetBuilder builder() {
-        return new DifyDatasetBuilder();
+    public static DatasetBuilder builder() {
+        return new DatasetBuilder();
     }
 
     /**
@@ -25,14 +25,14 @@ public class DifyDatasetBuilder {
      * @param server Dify 服务地址
      * @param apiKey 知识库 Api Key
      */
-    public static DifyDatasetBuilder builder(String server, String apiKey) {
-        return new DifyDatasetBuilder(server, apiKey);
+    public static DatasetBuilder builder(String server, String apiKey) {
+        return new DatasetBuilder(server, apiKey);
     }
 
     /**
      * constructor
      */
-    private DifyDatasetBuilder() {
+    private DatasetBuilder() {
 
     }
 
@@ -41,7 +41,7 @@ public class DifyDatasetBuilder {
      * @param server Dify 服务地址
      * @param apiKey 知识库 Api Key
      */
-    private DifyDatasetBuilder(String server, String apiKey) {
+    private DatasetBuilder(String server, String apiKey) {
         this.apiKey = apiKey;
         this.baseUrl = server;
     }
@@ -50,7 +50,7 @@ public class DifyDatasetBuilder {
      * config
      * @param config DifyConfig
      */
-    public DifyDatasetBuilder config(DifyApiConfig config) {
+    public DatasetBuilder config(ApiConfig config) {
         this.baseUrl = config.getServer();
         this.apiKey = config.getApiKey();
         return this;
@@ -60,7 +60,7 @@ public class DifyDatasetBuilder {
      * dify server base url
      * @param baseUrl String
      */
-    public DifyDatasetBuilder baseUrl(String baseUrl) {
+    public DatasetBuilder baseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
         return this;
     }
@@ -69,7 +69,7 @@ public class DifyDatasetBuilder {
      * dify app api key
      * @param apiKey String
      */
-    public DifyDatasetBuilder apiKey(String apiKey) {
+    public DatasetBuilder apiKey(String apiKey) {
         this.apiKey = apiKey;
         return this;
     }
@@ -94,7 +94,7 @@ public class DifyDatasetBuilder {
      * @param datasetId 知识库ID
      */
     public DatasetHero of(String datasetId) {
-        return DatasetHero.of(datasetId, DifyApiConfig.builder().server(baseUrl).apiKey(apiKey).build());
+        return DatasetHero.of(datasetId, ApiConfig.builder().server(baseUrl).apiKey(apiKey).build());
     }
 
     /**
@@ -103,7 +103,7 @@ public class DifyDatasetBuilder {
      * @param documentId 文档ID
      */
     public DocumentHero ofDocument(String datasetId, String documentId) {
-        return DocumentHero.of(datasetId, documentId, DifyApiConfig.builder().server(baseUrl).apiKey(apiKey).build());
+        return DocumentHero.of(datasetId, documentId, ApiConfig.builder().server(baseUrl).apiKey(apiKey).build());
     }
 
 }
