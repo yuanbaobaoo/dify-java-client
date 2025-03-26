@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatasetClientTest {
-    IDatasetClient client = DifyClientBuilder.dataset()
+    IDatasetClient client = DifyAppClientBuilder.dataset()
             .baseUrl("http://localhost:4000")
             .apiKey("dataset-")
             .build();

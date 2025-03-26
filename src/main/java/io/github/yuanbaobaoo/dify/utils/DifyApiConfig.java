@@ -1,4 +1,4 @@
-package io.github.yuanbaobaoo.dify;
+package io.github.yuanbaobaoo.dify.utils;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class DifyConfig {
+public class DifyApiConfig {
     /**
      * Dify Server Address
      */

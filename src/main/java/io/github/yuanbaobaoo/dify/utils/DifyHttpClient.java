@@ -1,4 +1,4 @@
-package io.github.yuanbaobaoo.dify;
+package io.github.yuanbaobaoo.dify.utils;
 
 import com.alibaba.fastjson2.JSON;
 import io.github.yuanbaobaoo.dify.types.*;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DifyHttpClient {
-    private final static String version = "/v1";
     private final static Map<String, DifyHttpClient> cache = new ConcurrentHashMap<>();
 
     private final String server;
@@ -41,7 +40,7 @@ public class DifyHttpClient {
      *
      * @param config DifyConfig
      */
-    public static DifyHttpClient get(DifyConfig config) {
+    public static DifyHttpClient get(DifyApiConfig config) {
         return get(config.getServer(), config.getApiKey());
     }
 
@@ -53,6 +52,15 @@ public class DifyHttpClient {
      */
     public static DifyHttpClient get(String server, String apiKey) {
         return cache.computeIfAbsent(String.format("%s-%s", server, apiKey), id -> new DifyHttpClient(server, apiKey));
+    }
+
+    /**
+     * 实例化一个新对象
+     *
+     * @param server Dify Server Address
+     */
+    public static DifyHttpClient newHttpClient(String server) {
+        return new DifyHttpClient(server, null);
     }
 
     /**
@@ -144,7 +152,7 @@ public class DifyHttpClient {
      * @param query  query params
      * @param params body params
      */
-    public DifyFile requestFile(DifyRoute route, Map<String, Object> query, Object params) {
+    public AudioFile requestFile(DifyRoute route, Map<String, Object> query, Object params) {
         return requestFile(route.getUrl(), route.getMethod(), query, params);
     }
 
@@ -156,7 +164,7 @@ public class DifyHttpClient {
      * @param query  query map
      * @param params body map
      */
-    public DifyFile requestFile(String url, HttpMethod method, Map<String, Object> query, Object params) {
+    public AudioFile requestFile(String url, HttpMethod method, Map<String, Object> query, Object params) {
         try {
             HttpRequest.Builder builder = buildRequest(url, query);
 
@@ -187,7 +195,7 @@ public class DifyHttpClient {
                 suffix = contentType.replaceAll(".*/", "");
             }
 
-            return DifyFile.builder().type(contentType).suffix(suffix).data(response.body()).build();
+            return AudioFile.builder().type(contentType).suffix(suffix).data(response.body()).build();
         } catch (DifyException e) {
             throw e;
         } catch (Exception e) {
@@ -287,10 +295,6 @@ public class DifyHttpClient {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         StringBuilder sb = new StringBuilder();
 
-        if (!this.server.endsWith(version) && !this.server.endsWith(version + "/")) {
-            url = (version + url).replaceAll("//", "/");
-        }
-
         if (this.server.endsWith("/") && url.startsWith("/")) {
             sb.append(this.server, 0, this.server.length() - 1);
         } else if (!this.server.endsWith("/") && !url.startsWith("/")) {
@@ -314,7 +318,10 @@ public class DifyHttpClient {
         }
 
         builder.uri(URI.create(sb.toString()));
-        builder.header("Authorization", "Bearer " + this.apiKey);
+
+        if (this.apiKey != null) {
+            builder.header("Authorization", "Bearer " + this.apiKey);
+        }
 
         return builder;
     }

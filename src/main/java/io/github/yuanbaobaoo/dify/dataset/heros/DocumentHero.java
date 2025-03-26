@@ -2,8 +2,8 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyConfig;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
+import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.DocFileInfo;
 import io.github.yuanbaobaoo.dify.dataset.entity.Document;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class DocumentHero extends Document {
     private final String datasetId;
-    private final DifyConfig config;
+    private final DifyApiConfig config;
 
     /**
      * new DocumentHero
@@ -28,7 +28,7 @@ public class DocumentHero extends Document {
      * @param id document id
      * @param config DifyConfig
      */
-    public static DocumentHero of(String datasetId, String id, DifyConfig config) {
+    public static DocumentHero of(String datasetId, String id, DifyApiConfig config) {
         return new DocumentHero(datasetId, id, config);
     }
 
@@ -38,7 +38,7 @@ public class DocumentHero extends Document {
      * @param doc Document
      * @param config DifyConfig
      */
-    public static DocumentHero of(String datasetId, Document doc, DifyConfig config) {
+    public static DocumentHero of(String datasetId, Document doc, DifyApiConfig config) {
         return new DocumentHero(datasetId, doc, config);
     }
 
@@ -48,7 +48,7 @@ public class DocumentHero extends Document {
      * @param id Document id
      * @param config DifyConfig
      */
-    private DocumentHero(String datasetId, String id, DifyConfig config) {
+    private DocumentHero(String datasetId, String id, DifyApiConfig config) {
         this.config = config;
         this.datasetId = datasetId;
 
@@ -61,7 +61,7 @@ public class DocumentHero extends Document {
      * @param doc Document
      * @param config DifyConfig
      */
-    private DocumentHero(String datasetId, Document doc, DifyConfig config) {
+    private DocumentHero(String datasetId, Document doc, DifyApiConfig config) {
         this.config = config;
         this.datasetId = datasetId;
 
