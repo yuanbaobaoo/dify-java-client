@@ -2,12 +2,12 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyConfig;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
+import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
+import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.app.IAppBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
-import io.github.yuanbaobaoo.dify.types.DifyFile;
+import io.github.yuanbaobaoo.dify.types.AudioFile;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -21,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class BaseClientImpl implements IDifyBaseClient {
-    protected final DifyConfig config;
+public class AppBaseClientImpl implements IAppBaseClient {
+    protected final DifyApiConfig config;
 
     /**
      * constructor
@@ -30,8 +30,8 @@ public class BaseClientImpl implements IDifyBaseClient {
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public BaseClientImpl(String server, String apiKey) {
-        config = DifyConfig.builder().server(server).apiKey(apiKey).build();
+    public AppBaseClientImpl(String server, String apiKey) {
+        config = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     @Override
@@ -98,17 +98,17 @@ public class BaseClientImpl implements IDifyBaseClient {
     }
 
     @Override
-    public DifyFile textToAudioByMessage(String user, String messageId) {
+    public AudioFile textToAudioByMessage(String user, String messageId) {
         return textToAudio(user, null, messageId);
     }
 
     @Override
-    public DifyFile textToAudio(String user, String text) {
+    public AudioFile textToAudio(String user, String text) {
         return textToAudio(user, text, null);
     }
 
     @Override
-    public DifyFile textToAudio(String user, String text, String messageId) {
+    public AudioFile textToAudio(String user, String text, String messageId) {
         Map<String, Object> data = new HashMap<>();
         data.put("message_id", messageId);
         data.put("text", text);

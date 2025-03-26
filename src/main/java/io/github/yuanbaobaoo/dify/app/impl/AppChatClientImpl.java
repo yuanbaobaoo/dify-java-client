@@ -2,8 +2,8 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.IDifyChatClient;
+import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.app.IAppChatClient;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatEvent;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatResult;
@@ -19,14 +19,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class ChatClientImpl extends BaseClientImpl implements IDifyChatClient {
+public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClient {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public ChatClientImpl(String server, String apiKey) {
+    public AppChatClientImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 

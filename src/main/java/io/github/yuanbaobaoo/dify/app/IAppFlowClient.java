@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * 适用于工作流应用的客户端
  * workflow
  */
-public interface IDifyFlowClient extends IDifyBaseClient {
+public interface IAppFlowClient extends IAppBaseClient {
     /**
      * 执行工作流（流式模式）
      *

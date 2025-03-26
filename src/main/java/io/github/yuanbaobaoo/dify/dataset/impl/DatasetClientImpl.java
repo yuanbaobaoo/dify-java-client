@@ -2,14 +2,14 @@ package io.github.yuanbaobaoo.dify.dataset.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import io.github.yuanbaobaoo.dify.DifyConfig;
+import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DatasetClientImpl implements IDatasetClient {
-    private final DifyConfig server;
+    private final DifyApiConfig server;
 
     private final Map<String, DatasetHero> datasetCache = new ConcurrentHashMap<>();
     private final Map<String, DocumentHero> documentCache = new ConcurrentHashMap<>();
@@ -42,7 +42,7 @@ public class DatasetClientImpl implements IDatasetClient {
      * @param apiKey String
      */
     private DatasetClientImpl(String server, String apiKey) {
-        this.server = DifyConfig.builder().server(server).apiKey(apiKey).build();
+        this.server = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     /**

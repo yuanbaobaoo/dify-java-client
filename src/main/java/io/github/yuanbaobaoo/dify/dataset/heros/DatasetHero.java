@@ -3,8 +3,8 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
-import io.github.yuanbaobaoo.dify.DifyConfig;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
+import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.Dataset;
 import io.github.yuanbaobaoo.dify.dataset.entity.Document;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DatasetHero extends Dataset {
-    private final DifyConfig config;
+    private final DifyApiConfig config;
 
     /**
      * new DatasetHero
@@ -30,7 +30,7 @@ public class DatasetHero extends Dataset {
      * @param id     Dataset id
      * @param config DifyConfig
      */
-    public static DatasetHero of(String id, DifyConfig config) {
+    public static DatasetHero of(String id, DifyApiConfig config) {
         return new DatasetHero(config.getServer(), config.getApiKey(), id);
     }
 
@@ -40,7 +40,7 @@ public class DatasetHero extends Dataset {
      * @param dataset Dataset
      * @param config  DifyConfig
      */
-    public static DatasetHero of(Dataset dataset, DifyConfig config) {
+    public static DatasetHero of(Dataset dataset, DifyApiConfig config) {
         return new DatasetHero(config.getServer(), config.getApiKey(), dataset);
     }
 
@@ -52,7 +52,7 @@ public class DatasetHero extends Dataset {
      * @param id     Dataset id
      */
     private DatasetHero(String server, String apiKey, String id) {
-        this.config = DifyConfig.builder().server(server).apiKey(apiKey).build();
+        this.config = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
         this.setId(id);
     }
 
@@ -64,7 +64,7 @@ public class DatasetHero extends Dataset {
      * @param dataset Dataset
      */
     private DatasetHero(String server, String apiKey, Dataset dataset) {
-        this.config = DifyConfig.builder().server(server).apiKey(apiKey).build();
+        this.config = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
 
         this.setId(dataset.getId());
         this.setName(dataset.getName());
