@@ -1,7 +1,7 @@
 package io.github.yuanbaobaoo.dify.app;
 
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.types.DifyFile;
+import io.github.yuanbaobaoo.dify.types.AudioFile;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * 基础Dify客户端
  */
-public interface IDifyBaseClient {
+public interface IAppBaseClient {
     /**
      * 获取应用基础信息
      *
@@ -68,7 +68,7 @@ public interface IDifyBaseClient {
      * @param user      用户标识，由开发者定义规则，需保证用户标识在应用内唯一
      * @param messageId Dify 生成的文本消息 message-id
      */
-    DifyFile textToAudioByMessage(String user, String messageId);
+    AudioFile textToAudioByMessage(String user, String messageId);
 
     /**
      * 文字转语音
@@ -76,7 +76,7 @@ public interface IDifyBaseClient {
      * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
      * @param text 语音生成内容。
      */
-    DifyFile textToAudio(String user, String text);
+    AudioFile textToAudio(String user, String text);
 
     /**
      * 文字转语音
@@ -86,7 +86,7 @@ public interface IDifyBaseClient {
      * @param messageId Dify 生成的文本消息，那么直接传递生成的message-id 即可，后台会通过 message_id 查找相应的内容直接合成语音信息。
      *                  如果同时传 message_id 和 text，优先使用 message_id。
      */
-    DifyFile textToAudio(String user, String text, String messageId);
+    AudioFile textToAudio(String user, String text, String messageId);
 
     /**
      * 发送同步接口请求

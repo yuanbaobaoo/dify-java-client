@@ -2,12 +2,12 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyConfig;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
+import io.github.yuanbaobaoo.dify.app.IAppBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
-import io.github.yuanbaobaoo.dify.types.DifyFile;
+import io.github.yuanbaobaoo.dify.types.AudioFile;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -21,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class BaseClientImpl implements IDifyBaseClient {
-    protected final DifyConfig config;
+public class AppBaseClientImpl implements IAppBaseClient {
+    protected final ApiConfig config;
 
     /**
      * constructor
@@ -30,23 +30,23 @@ public class BaseClientImpl implements IDifyBaseClient {
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public BaseClientImpl(String server, String apiKey) {
-        config = DifyConfig.builder().server(server).apiKey(apiKey).build();
+    public AppBaseClientImpl(String server, String apiKey) {
+        config = ApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     @Override
     public String getAppInfo()  {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
     }
 
     @Override
     public String getAppParameters() {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.PARAMETERS, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.PARAMETERS, null, null);
     }
 
     @Override
     public String getAppMetaInfo() {
-        return DifyHttpClient.get(config).requestJson(AppRoutes.META_INFO, null, null);
+        return SimpleHttpClient.get(config).requestJson(AppRoutes.META_INFO, null, null);
     }
 
     @Override
@@ -55,14 +55,14 @@ public class BaseClientImpl implements IDifyBaseClient {
         data.put("file", file);
         data.put("user", user);
 
-        String result = DifyHttpClient.get(config).requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
+        String result = SimpleHttpClient.get(config).requestMultipart(AppRoutes.FILE_UPLOAD, null, data);
         return JSON.parseObject(result, DifyFileResult.class);
     }
 
     @Override
     public Boolean feedbacks(String messageId, String rating, String user, String content) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/feedbacks", AppRoutes.MESSAGES.getUrl(), messageId),
                     HttpMethod.POST,
                     null,
@@ -91,37 +91,37 @@ public class BaseClientImpl implements IDifyBaseClient {
         data.put("user", user);
 
         JSONObject result = JSON.parseObject(
-                DifyHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
+                SimpleHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
         );
 
         return result.getString("text");
     }
 
     @Override
-    public DifyFile textToAudioByMessage(String user, String messageId) {
+    public AudioFile textToAudioByMessage(String user, String messageId) {
         return textToAudio(user, null, messageId);
     }
 
     @Override
-    public DifyFile textToAudio(String user, String text) {
+    public AudioFile textToAudio(String user, String text) {
         return textToAudio(user, text, null);
     }
 
     @Override
-    public DifyFile textToAudio(String user, String text, String messageId) {
+    public AudioFile textToAudio(String user, String text, String messageId) {
         Map<String, Object> data = new HashMap<>();
         data.put("message_id", messageId);
         data.put("text", text);
         data.put("user", user);
 
-        return DifyHttpClient.get(config).requestFile(AppRoutes.TEXT_TO_AUDIO, null, data);
+        return SimpleHttpClient.get(config).requestFile(AppRoutes.TEXT_TO_AUDIO, null, data);
     }
 
     @Override
     public String requestBlocking(DifyRoute route, Map<String, Object> query, Map<String, Object> params) {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.blocking);
-        return DifyHttpClient.get(config).requestJson(route, query, params);
+        return SimpleHttpClient.get(config).requestJson(route, query, params);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class BaseClientImpl implements IDifyBaseClient {
         // body请求对象中，强制覆盖 response_mode
         params.put("response_mode", ResponseMode.streaming);
         // 异步请求
-        return DifyHttpClient.get(config).requestJsonAsync(route, query, params, line -> {
+        return SimpleHttpClient.get(config).requestJsonAsync(route, query, params, line -> {
             final String FLAG = "data:";
 
             if (line.startsWith(FLAG)) {

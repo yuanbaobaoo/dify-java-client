@@ -2,15 +2,15 @@ package io.github.yuanbaobaoo.dify;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
+import io.github.yuanbaobaoo.dify.app.IAppBaseClient;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyException;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
 
-public class DifyClientTest {
-    IDifyBaseClient client = DifyClientBuilder
+public class DifyAppClientTest {
+    IAppBaseClient client = DifyClientBuilder.app()
             .base()
             .baseUrl("https://api.dify.ai/v1")
             .apiKey("app-")
