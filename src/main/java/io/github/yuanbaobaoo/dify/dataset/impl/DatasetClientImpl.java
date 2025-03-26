@@ -2,14 +2,14 @@ package io.github.yuanbaobaoo.dify.dataset.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
-import io.github.yuanbaobaoo.dify.utils.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DatasetClientImpl implements IDatasetClient {
-    private final DifyApiConfig server;
+    private final ApiConfig server;
 
     private final Map<String, DatasetHero> datasetCache = new ConcurrentHashMap<>();
     private final Map<String, DocumentHero> documentCache = new ConcurrentHashMap<>();
@@ -42,7 +42,7 @@ public class DatasetClientImpl implements IDatasetClient {
      * @param apiKey String
      */
     private DatasetClientImpl(String server, String apiKey) {
-        this.server = DifyApiConfig.builder().server(server).apiKey(apiKey).build();
+        this.server = ApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     /**
@@ -87,7 +87,7 @@ public class DatasetClientImpl implements IDatasetClient {
 
     @Override
     public DatasetHero create(ParamDataset data) {
-        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
 
         Dataset dataset = JSON.parseObject(result, Dataset.class);
         return DatasetHero.of(dataset, server);
@@ -95,7 +95,7 @@ public class DatasetClientImpl implements IDatasetClient {
 
     @Override
     public DifyPage<Dataset> list(int page, int limit) {
-        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
             put("page", page);
             put("limit", limit);
         }}, null);

@@ -1,7 +1,10 @@
 package io.github.yuanbaobaoo.dify;
 
-import io.github.yuanbaobaoo.dify.utils.DifyApiConfig;
-import io.github.yuanbaobaoo.dify.utils.DifyWebConfig;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import io.github.yuanbaobaoo.dify.types.WebConfig;
+import io.github.yuanbaobaoo.dify.utils.AppClientBuilder;
+import io.github.yuanbaobaoo.dify.utils.DatasetBuilder;
+import io.github.yuanbaobaoo.dify.utils.WebClientBuilder;
 
 /**
  * The Dify Api Client Builder.
@@ -12,16 +15,16 @@ public class DifyClientBuilder {
      * get a app client builder.
      * DifyAppClient主要用于调用 dify app 的 open api 接口
      */
-    public static DifyAppClientBuilder app() {
-        return DifyAppClientBuilder.builder();
+    public static AppClientBuilder app() {
+        return AppClientBuilder.builder();
     }
 
     /**
      * get a app client builder
      * @param config DifyApiConfig
      */
-    public static DifyAppClientBuilder app(DifyApiConfig config) {
-        return DifyAppClientBuilder.builder(config.getServer(), config.getApiKey());
+    public static AppClientBuilder app(ApiConfig config) {
+        return AppClientBuilder.builder(config.getServer(), config.getApiKey());
     }
 
     /**
@@ -29,8 +32,8 @@ public class DifyClientBuilder {
      * @param server Dify 服务地址
      * @param apiKey App Api Key
      */
-    public static DifyAppClientBuilder app(String server, String apiKey) {
-        return DifyAppClientBuilder.builder(server, apiKey);
+    public static AppClientBuilder app(String server, String apiKey) {
+        return AppClientBuilder.builder(server, apiKey);
     }
 
     /**
@@ -38,8 +41,8 @@ public class DifyClientBuilder {
      * DifyDatasetClient主要用于调用 dify 内部知识库 的 open api 接口
      * @return DifyDatasetBuilder
      */
-    public static DifyDatasetBuilder dataset() {
-        return DifyDatasetBuilder.builder();
+    public static DatasetBuilder dataset() {
+        return DatasetBuilder.builder();
     }
 
     /**
@@ -48,8 +51,8 @@ public class DifyClientBuilder {
      * @param server Dify 服务地址
      * @param apiKey 知识库API
      */
-    public static DifyDatasetBuilder dataset(String server, String apiKey) {
-        return DifyDatasetBuilder.builder(server, apiKey);
+    public static DatasetBuilder dataset(String server, String apiKey) {
+        return DatasetBuilder.builder(server, apiKey);
     }
 
     /**
@@ -57,16 +60,16 @@ public class DifyClientBuilder {
      * DifyDatasetClient主要用于调用 dify 内部知识库 的 open api 接口
      * @param apiConfig DifyApiConfig
      */
-    public static DifyDatasetBuilder dataset(DifyApiConfig apiConfig) {
-        return DifyDatasetBuilder.builder(apiConfig.getServer(), apiConfig.getApiKey());
+    public static DatasetBuilder dataset(ApiConfig apiConfig) {
+        return DatasetBuilder.builder(apiConfig.getServer(), apiConfig.getApiKey());
     }
 
     /**
      * get a web client builder
      * DifyWebClient是一种以API形式管理 Dify 各种功能的尝试. 例如创建应用、编辑应用等等
      */
-    public static DifyWebClientBuilder web() {
-        return DifyWebClientBuilder.builder();
+    public static WebClientBuilder web() {
+        return WebClientBuilder.builder();
     }
 
     /**
@@ -76,8 +79,8 @@ public class DifyClientBuilder {
      * @param userName 用户名
      * @param password 密码
      */
-    public static DifyWebClientBuilder web(String server, String userName, String password) {
-        return DifyWebClientBuilder.builder(server, userName, password);
+    public static WebClientBuilder web(String server, String userName, String password) {
+        return WebClientBuilder.builder(server, userName, password);
     }
 
     /**
@@ -85,8 +88,8 @@ public class DifyClientBuilder {
      * DifyWebClient是一种以API形式管理 Dify 各种功能的尝试. 例如创建应用、编辑应用等等
      * @param config DifyWebConfig
      */
-    public static DifyWebClientBuilder web(DifyWebConfig config) {
-        return DifyWebClientBuilder.builder(config.getServer(), config.getUserName(), config.getPassword());
+    public static WebClientBuilder web(WebConfig config) {
+        return WebClientBuilder.builder(config.getServer(), config.getUserName(), config.getPassword());
     }
 
 }

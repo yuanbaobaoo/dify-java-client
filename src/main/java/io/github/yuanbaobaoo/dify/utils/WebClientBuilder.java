@@ -1,13 +1,16 @@
-package io.github.yuanbaobaoo.dify;
+package io.github.yuanbaobaoo.dify.utils;
 
+import io.github.yuanbaobaoo.dify.types.DifyClientException;
+import io.github.yuanbaobaoo.dify.types.DifyException;
+import io.github.yuanbaobaoo.dify.types.WebConfig;
+import io.github.yuanbaobaoo.dify.web.WebAuthService;
 import io.github.yuanbaobaoo.dify.web.IWebConsoleClient;
 import io.github.yuanbaobaoo.dify.web.impl.WebClientImpl;
-import io.github.yuanbaobaoo.dify.web.types.DifyLoginResult;
 
 /**
  * Dify Web Client Builder
  */
-public class DifyWebClientBuilder {
+public class WebClientBuilder {
     private String server;
     private String userName;
     private String password;
@@ -15,8 +18,8 @@ public class DifyWebClientBuilder {
     /**
      * builder
      */
-    public static DifyWebClientBuilder builder() {
-        return new DifyWebClientBuilder();
+    public static WebClientBuilder builder() {
+        return new WebClientBuilder();
     }
 
     /**
@@ -25,14 +28,14 @@ public class DifyWebClientBuilder {
      * @param userName 用户名
      * @param password 账号密码
      */
-    public static DifyWebClientBuilder builder(String server, String userName, String password) {
-        return new DifyWebClientBuilder(server, userName, password);
+    public static WebClientBuilder builder(String server, String userName, String password) {
+        return new WebClientBuilder(server, userName, password);
     }
 
     /**
      * constructor
      */
-    private DifyWebClientBuilder() {
+    private WebClientBuilder() {
 
     }
 
@@ -42,7 +45,7 @@ public class DifyWebClientBuilder {
      * @param userName 用户名
      * @param password 账号密码
      */
-    private DifyWebClientBuilder(String server, String userName, String password) {
+    private WebClientBuilder(String server, String userName, String password) {
         this.server = server;
         this.userName = userName;
         this.password = password;
@@ -52,7 +55,7 @@ public class DifyWebClientBuilder {
      * dify server base url
      * @param baseUrl String
      */
-    public DifyWebClientBuilder baseUrl(String baseUrl) {
+    public WebClientBuilder baseUrl(String baseUrl) {
         this.server = baseUrl;
         return this;
     }
@@ -61,7 +64,7 @@ public class DifyWebClientBuilder {
      * dify login user name
      * @param userName String
      */
-    public DifyWebClientBuilder user(String userName) {
+    public WebClientBuilder user(String userName) {
         this.userName = userName;
         return this;
     }
@@ -70,7 +73,7 @@ public class DifyWebClientBuilder {
      * dify login password
      * @param password String
      */
-    public DifyWebClientBuilder password(String password) {
+    public WebClientBuilder password(String password) {
         this.password = password;
         return this;
     }
@@ -79,15 +82,19 @@ public class DifyWebClientBuilder {
      * build.
      * 创建IWebClient对象时，会默认执行登录
      */
-    public IWebConsoleClient build() {
+    public IWebConsoleClient connect() {
         if (server == null || userName == null || password == null) {
-            throw new RuntimeException("Dify Web Client Build Error: params is not defined");
+            throw new RuntimeException("Dify Web Client Connect Error: params is not defined");
         }
 
         try {
-            return new WebClientImpl(server, DifyLoginResult.builder().build());
+            WebConfig config = WebConfig.builder().server(server).userName(userName).password(password).build();
+            String token = WebAuthService.login(config);
+            return new WebClientImpl(server, token);
+        } catch (DifyClientException | DifyException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Dify Web Client Build Error: class is not defined", e);
+            throw new RuntimeException("Dify Web Client Connect Error: ", e);
         }
     }
 
