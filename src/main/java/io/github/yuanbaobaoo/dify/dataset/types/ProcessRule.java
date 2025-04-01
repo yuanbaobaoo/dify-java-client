@@ -38,7 +38,9 @@ public class ProcessRule {
         // 自动
         automatic ,
         // 自定义
-        custom
+        custom,
+        // 层级分段
+        hierarchical,
     }
 
 }
