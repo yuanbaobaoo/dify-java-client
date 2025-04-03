@@ -161,7 +161,7 @@ public class DatasetHero extends Dataset {
     public DocumentResult insertFile(File file, ParamDocument data, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider) {
         Map<String, Object> params = new HashMap<>();
         params.put("file", file);
-        params.put("data", data);
+        params.put("data", data.toMap());
         params.put("retrieval_model", retrievalModel);
         params.put("embedding_model", embeddingModel);
         params.put("embedding_model_provider", embeddingModelProvider);
