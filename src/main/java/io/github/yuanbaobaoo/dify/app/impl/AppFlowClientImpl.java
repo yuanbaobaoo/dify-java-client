@@ -2,8 +2,8 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.IDifyFlowClient;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
+import io.github.yuanbaobaoo.dify.app.IAppFlowClient;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyWorkFlowResult;
 import io.github.yuanbaobaoo.dify.app.types.WorkflowStatus;
@@ -17,14 +17,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
+public class AppFlowClientImpl extends AppBaseClientImpl implements IAppFlowClient {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public FlowClientImpl(String server, String apiKey) {
+    public AppFlowClientImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 
@@ -52,7 +52,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public JSONObject getWorkFlowStatus(String workFlowId) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     AppRoutes.WORKFLOW_RUN.getUrl() + "/" + workFlowId,
                     HttpMethod.GET,
                     null,
@@ -72,7 +72,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public Boolean stopWorkFlow(String taskId, String user) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(
+            String result = SimpleHttpClient.get(config).requestJson(
                     String.format("%s/%s/stop", AppRoutes.WORKFLOW_TASK.getUrl(), taskId),
                     HttpMethod.POST,
                     null,
@@ -95,7 +95,7 @@ public class FlowClientImpl extends BaseClientImpl implements IDifyFlowClient {
     @Override
     public JSONObject getWorkFlowLog(String keyword, WorkflowStatus status, Integer page, Integer limit) {
         try {
-            String result = DifyHttpClient.get(config).requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
+            String result = SimpleHttpClient.get(config).requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
                 put("keyword", keyword);
                 put("status", status.name());
                 put("page", page);
