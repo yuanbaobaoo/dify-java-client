@@ -7,10 +7,12 @@ import io.github.yuanbaobaoo.dify.routes.ConsoleRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.SimpleHttpClient;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.web.IWebConsoleClient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class WebClientImpl implements IWebConsoleClient {
@@ -39,6 +41,11 @@ public class WebClientImpl implements IWebConsoleClient {
         }});
 
         return JSON.parseObject(result, new TypeReference<DifyPage<JSONObject>>() {});
+    }
+
+    @Override
+    public JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body) {
+        return null;
     }
 
 }

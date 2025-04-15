@@ -1,6 +1,7 @@
 package io.github.yuanbaobaoo.dify.dataset.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
@@ -13,6 +14,7 @@ import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 
 import java.io.File;
@@ -86,11 +88,31 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
+    public List<Object> selectTextEmbedding() {
+        return List.of();
+    }
+
+    @Override
     public DatasetHero create(ParamDataset data) {
         String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
 
         Dataset dataset = JSON.parseObject(result, Dataset.class);
         return DatasetHero.of(dataset, server);
+    }
+
+    @Override
+    public void get(String datasetId) {
+
+    }
+
+    @Override
+    public void update(String datasetId, ParamDataset data) {
+
+    }
+
+    @Override
+    public void update(String datasetId, ParamDataset data, String embeddingModelProvider, String embeddingModel, String retrievalModel, String partialMemberList) {
+
     }
 
     @Override
@@ -206,6 +228,36 @@ public class DatasetClientImpl implements IDatasetClient {
     @Override
     public SegmentResult updateSegment(String datasetId, String documentId, Segment segment, boolean regenerate) {
         return ofDocument(true, datasetId, documentId).updateSegment(segment, regenerate);
+    }
+
+    @Override
+    public void insertSegmentChildChunks(String datasetId, String documentId, String segmentId, String content) {
+
+    }
+
+    @Override
+    public DifyPage<Object> querySegmentChildChunks(String datasetId, String documentId, String segmentId) {
+        return null;
+    }
+
+    @Override
+    public DifyPage<Object> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit, String keyword) {
+        return null;
+    }
+
+    @Override
+    public Boolean deleteSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId) {
+        return null;
+    }
+
+    @Override
+    public void updateSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId, String content) {
+
+    }
+
+    @Override
+    public JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body) {
+        return null;
     }
 
 }

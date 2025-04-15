@@ -1,5 +1,6 @@
 package io.github.yuanbaobaoo.dify.dataset;
 
+import com.alibaba.fastjson2.JSONObject;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
@@ -7,9 +8,11 @@ import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public interface IDatasetClient {
     /**
@@ -25,17 +28,53 @@ public interface IDatasetClient {
     DocumentHero ofDocument(String datasetId, String documentId);
 
     /**
-     * Create an Empty Knowledge Base. 创建空知识库
-     * @param data ParamDataset
+     * TODO 获取嵌入模型列表
      */
-    DatasetHero create(ParamDataset data) ;
+    List<Object> selectTextEmbedding();
 
     /**
      * 查询知识库列表
      * @param page 页码
      * @param limit 返回条数，默认 20，范围 1-100
      */
-    DifyPage<Dataset> list(int page, int limit) ;
+    DifyPage<Dataset> list(int page, int limit);
+
+    /**
+     * Create an Empty Knowledge Base. 创建空知识库
+     * @param data ParamDataset
+     */
+    DatasetHero create(ParamDataset data);
+
+    /**
+     * TODO 查看知识库详情
+     * @param datasetId 知识库ID
+     */
+    void get(String datasetId);
+
+    /**
+     * TODO 修改知识库详情
+     * @param datasetId 知识库ID
+     * @param data ParamDataset
+     */
+    void update(String datasetId, ParamDataset data);
+
+    /**
+     * TODO 修改知识库详情
+     * @param datasetId 知识库 ID
+     * @param data ParamDataset
+     * @param embeddingModelProvider 嵌入模型提供商（选填）, 必须先在系统内设定好接入的模型，对应的是provider字段
+     * @param embeddingModel 嵌入模型（选填）
+     * @param retrievalModel 检索模型（选填）
+     * @param partialMemberList 部分团队成员 ID 列表（选填）
+     */
+    void update(
+            String datasetId,
+            ParamDataset data,
+            String embeddingModelProvider,
+            String embeddingModel,
+            String retrievalModel,
+            String partialMemberList
+    );
 
     /**
      * 删除知识库
@@ -83,7 +122,14 @@ public interface IDatasetClient {
      * @param embeddingModel Embedding 模型名称
      * @param embeddingModelProvider Embedding 模型供应商
      */
-    DocumentResult insertDocByFile(String datasetId, File file, ParamDocument data, RetrievalModel retrievalModel, String embeddingModel, String embeddingModelProvider);
+    DocumentResult insertDocByFile(
+            String datasetId,
+            File file,
+            ParamDocument data,
+            RetrievalModel retrievalModel,
+            String embeddingModel,
+            String embeddingModelProvider
+    );
 
     /**
      * 获取文档嵌入状态（进度）
@@ -219,4 +265,65 @@ public interface IDatasetClient {
      */
     SegmentResult updateSegment(String datasetId, String documentId, Segment segment, boolean regenerate);
 
+    /**
+     * TODO 新增文档子分段
+     * @param datasetId 知识库 ID
+     * @param documentId 文档 ID
+     * @param segmentId 分段 ID
+     * @param content 子分段内容
+     */
+    void insertSegmentChildChunks(String datasetId, String documentId, String segmentId, String content);
+
+    /**
+     * TODO 查询文档子分段
+     * @param datasetId 知识库 ID
+     * @param documentId 文档 ID
+     * @param segmentId 分段 ID
+     */
+    DifyPage<Object> querySegmentChildChunks(String datasetId, String documentId, String segmentId);
+
+    /**
+     * TODO 查询文档子分段
+     * @param datasetId 知识库 ID
+     * @param documentId 文档 ID
+     * @param segmentId 分段 ID
+     * @param page 页码（选填，默认1）
+     * @param limit 每页数量（选填，默认20，最大100）
+     * @param keyword 搜索关键词（选填）
+     */
+    DifyPage<Object> querySegmentChildChunks(
+            String datasetId,
+            String documentId,
+            String segmentId,
+            Integer page,
+            Integer limit,
+            String keyword
+    );
+
+    /**
+     * TODO 删除文档子分段
+     * @param datasetId 知识库 ID
+     * @param documentId 文档 ID
+     * @param segmentId 分段 ID
+     * @param childChunkId 子分段 ID
+     */
+    Boolean deleteSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId);
+
+    /**
+     * TODO 更新文档子分段
+     * @param datasetId 知识库 ID
+     * @param documentId 文档 ID
+     * @param segmentId 分段 ID
+     * @param childChunkId 子分段 ID
+     * @param content 子分段内容
+     */
+    void updateSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId, String content);
+
+    /**
+     * TODO 请求自定义地址
+     * @param route DifyRoute
+     * @param params query params
+     * @param body body params
+     */
+    JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body);
 }
