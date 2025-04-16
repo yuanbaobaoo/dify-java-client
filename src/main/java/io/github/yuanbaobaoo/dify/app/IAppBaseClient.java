@@ -1,5 +1,6 @@
 package io.github.yuanbaobaoo.dify.app;
 
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.types.AudioFile;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
@@ -13,6 +14,11 @@ import java.util.function.Consumer;
  * 基础Dify客户端
  */
 public interface IAppBaseClient {
+    /**
+     * 获取一个Simple http client 对象
+     */
+    SimpleHttpClient httpClient();
+
     /**
      * 获取应用基础信息
      *

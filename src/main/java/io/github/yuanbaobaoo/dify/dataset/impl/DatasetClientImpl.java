@@ -3,6 +3,7 @@ package io.github.yuanbaobaoo.dify.dataset.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
+import io.github.yuanbaobaoo.dify.dataset.params.ParamUpdateDataset;
 import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
@@ -78,6 +79,11 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
+    public SimpleHttpClient httpClient() {
+        return SimpleHttpClient.get(server);
+    }
+
+    @Override
     public DatasetHero ofDataset(String datasetId) {
         return ofDataset(false, datasetId);
     }
@@ -88,8 +94,19 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
-    public List<Object> selectTextEmbedding() {
-        return List.of();
+    public List<JSONObject> selectTextEmbedding() {
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.MODELS_TEXT_EMBEDDING);
+        return JSON.parseObject(result).getJSONArray("data").toJavaList(JSONObject.class);
+    }
+
+    @Override
+    public DifyPage<Dataset> list(int page, int limit) {
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
+            put("page", page);
+            put("limit", limit);
+        }}, null);
+
+        return JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
     }
 
     @Override
@@ -101,28 +118,17 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
-    public void get(String datasetId) {
+    public DatasetHero get(String datasetId) {
+        DifyRoute r = DatasetRoutes.DATASETS_INFO.format(Map.of("datasetId", datasetId));
+        String result = SimpleHttpClient.get(server).requestJson(r);
 
+        Dataset dataset = JSON.parseObject(result, Dataset.class);
+        return DatasetHero.of(dataset, server);
     }
 
     @Override
-    public void update(String datasetId, ParamDataset data) {
-
-    }
-
-    @Override
-    public void update(String datasetId, ParamDataset data, String embeddingModelProvider, String embeddingModel, String retrievalModel, String partialMemberList) {
-
-    }
-
-    @Override
-    public DifyPage<Dataset> list(int page, int limit) {
-        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
-            put("page", page);
-            put("limit", limit);
-        }}, null);
-
-        return JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
+    public DatasetHero update(String datasetId, ParamUpdateDataset data) {
+        return ofDataset(true, datasetId).update(data);
     }
 
     @Override
@@ -231,33 +237,28 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
-    public void insertSegmentChildChunks(String datasetId, String documentId, String segmentId, String content) {
-
+    public SegmentChildChunk insertSegmentChildChunks(String datasetId, String documentId, String segmentId, String content) {
+        return ofDocument(true, datasetId, documentId).insertSegmentChildChunks(segmentId, content);
     }
 
     @Override
-    public DifyPage<Object> querySegmentChildChunks(String datasetId, String documentId, String segmentId) {
-        return null;
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit) {
+        return querySegmentChildChunks(datasetId, documentId, segmentId, page, limit, null);
     }
 
     @Override
-    public DifyPage<Object> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit, String keyword) {
-        return null;
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit, String keyword) {
+        return ofDocument(true, datasetId, documentId).querySegmentChildChunks(segmentId, page, limit, keyword);
     }
 
     @Override
     public Boolean deleteSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId) {
-        return null;
+        return ofDocument(true, datasetId, documentId).deleteSegmentChildChunks(segmentId, childChunkId);
     }
 
     @Override
-    public void updateSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId, String content) {
-
-    }
-
-    @Override
-    public JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body) {
-        return null;
+    public SegmentChildChunk updateSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId, String content) {
+        return ofDocument(true, datasetId, documentId).updateSegmentChildChunks(segmentId, childChunkId, content);
     }
 
 }

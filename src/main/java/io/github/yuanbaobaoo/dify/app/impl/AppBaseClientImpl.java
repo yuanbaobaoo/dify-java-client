@@ -35,6 +35,11 @@ public class AppBaseClientImpl implements IAppBaseClient {
     }
 
     @Override
+    public SimpleHttpClient httpClient() {
+        return SimpleHttpClient.get(config);
+    }
+
+    @Override
     public String getAppInfo()  {
         return SimpleHttpClient.get(config).requestJson(AppRoutes.INFO, null, null);
     }

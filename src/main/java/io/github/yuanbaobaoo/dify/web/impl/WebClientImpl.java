@@ -28,6 +28,11 @@ public class WebClientImpl implements IWebConsoleClient {
     }
 
     @Override
+    public SimpleHttpClient httpClient() {
+        return SimpleHttpClient.get(config);
+    }
+
+    @Override
     public String token() {
         return config.getApiKey();
     }
@@ -41,11 +46,6 @@ public class WebClientImpl implements IWebConsoleClient {
         }});
 
         return JSON.parseObject(result, new TypeReference<DifyPage<JSONObject>>() {});
-    }
-
-    @Override
-    public JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body) {
-        return null;
     }
 
 }
