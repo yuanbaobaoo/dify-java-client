@@ -1,185 +1,95 @@
 package io.github.yuanbaobaoo.dify;
 
-import io.github.yuanbaobaoo.dify.app.IDifyBaseClient;
-import io.github.yuanbaobaoo.dify.app.IDifyChatClient;
-import io.github.yuanbaobaoo.dify.app.IDifyCompletion;
-import io.github.yuanbaobaoo.dify.app.IDifyFlowClient;
-import io.github.yuanbaobaoo.dify.app.impl.BaseClientImpl;
-import io.github.yuanbaobaoo.dify.app.impl.ChatClientImpl;
-import io.github.yuanbaobaoo.dify.app.impl.CompletionImpl;
-import io.github.yuanbaobaoo.dify.app.impl.FlowClientImpl;
-import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
-import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
-import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
-import io.github.yuanbaobaoo.dify.dataset.impl.DatasetClientImpl;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import io.github.yuanbaobaoo.dify.types.WebConfig;
+import io.github.yuanbaobaoo.dify.utils.AppClientBuilder;
+import io.github.yuanbaobaoo.dify.utils.DatasetBuilder;
+import io.github.yuanbaobaoo.dify.utils.WebClientBuilder;
 
 /**
- * Dify Client builder
+ * The Dify Api Client Builder.
+ * @link <a href="https://github.com/yuanbaobaoo/dify-java-client">https://github.com/yuanbaobaoo/dify-java-client</a>
  */
 public class DifyClientBuilder {
     /**
-     * create dify base client
+     * get a app client builder.
+     * DifyAppClient主要用于调用 dify app 的 open api 接口
      */
-    public static Builder<IDifyBaseClient, BaseClientImpl> base() {
-        return new Builder<>(BaseClientImpl.class);
+    public static AppClientBuilder app() {
+        return AppClientBuilder.builder();
     }
 
     /**
-     * create dify chat client
+     * get a app client builder
+     * @param config DifyApiConfig
      */
-    public static Builder<IDifyChatClient, ChatClientImpl> chat() {
-        return new Builder<>(ChatClientImpl.class);
+    public static AppClientBuilder app(ApiConfig config) {
+        return AppClientBuilder.builder(config.getServer(), config.getApiKey());
     }
 
     /**
-     * create dify flow client
+     * get a app client builder
+     * @param server Dify 服务地址
+     * @param apiKey App Api Key
      */
-    public static Builder<IDifyFlowClient, FlowClientImpl> flow() {
-        return new Builder<>(FlowClientImpl.class);
+    public static AppClientBuilder app(String server, String apiKey) {
+        return AppClientBuilder.builder(server, apiKey);
     }
 
     /**
-     * create dify completion client
-     */
-    public static Builder<IDifyCompletion, CompletionImpl> completion() {
-        return new Builder<>(CompletionImpl.class);
-    }
-
-    /**
-     * create dify dataset client
+     * get a dataset client builder
+     * DifyDatasetClient主要用于调用 dify 内部知识库 的 open api 接口
+     * @return DifyDatasetBuilder
      */
     public static DatasetBuilder dataset() {
-        return new DatasetBuilder();
+        return DatasetBuilder.builder();
     }
 
     /**
-     * builder
-     * @param <T>
+     * get a dataset client builder
+     * DifyDatasetClient主要用于调用 dify 内部知识库 的 open api 接口
+     * @param server Dify 服务地址
+     * @param apiKey 知识库API
      */
-    public static class Builder<R, T extends R> {
-        private final Class<T> type;
-
-        private String baseUrl = "http://localhost:5001";
-        private String apiKey;
-
-        /**
-         * constructor
-         * @param type Class<T>
-         */
-        public Builder(Class<T> type) {
-            this.type = type;
-        }
-
-        /**
-         * config
-         * @param config DifyConfig
-         */
-        public Builder<R, T> config(DifyConfig config) {
-            this.baseUrl = config.getServer();
-            this.apiKey = config.getApiKey();
-            return this;
-        }
-
-        /**
-         * dify server base url
-         * @param baseUrl String
-         */
-        public Builder<R, T> baseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-            return this;
-        }
-
-        /**
-         * dify app api key
-         * @param apiKey String
-         */
-        public Builder<R, T> apiKey(String apiKey) {
-            this.apiKey = apiKey;
-            return this;
-        }
-
-        /**
-         * build
-         */
-        public R build() {
-            if (baseUrl == null || apiKey == null) {
-                throw new RuntimeException("Dify Client Build Error: params is not defined");
-            }
-
-            try {
-                return type.getConstructor(String.class, String.class).newInstance(baseUrl, apiKey);
-            } catch (Exception e) {
-                throw new RuntimeException("Dify Client Build Error: class is not defined", e);
-            }
-        }
+    public static DatasetBuilder dataset(String server, String apiKey) {
+        return DatasetBuilder.builder(server, apiKey);
     }
 
     /**
-     * DatasetBuilder
+     * get a dataset client builder
+     * DifyDatasetClient主要用于调用 dify 内部知识库 的 open api 接口
+     * @param apiConfig DifyApiConfig
      */
-    public static class DatasetBuilder {
-        private String baseUrl = "http://localhost:5001";
-        private String apiKey;
+    public static DatasetBuilder dataset(ApiConfig apiConfig) {
+        return DatasetBuilder.builder(apiConfig.getServer(), apiConfig.getApiKey());
+    }
 
-        /**
-         * config
-         * @param config DifyConfig
-         */
-        public DatasetBuilder config(DifyConfig config) {
-            this.baseUrl = config.getServer();
-            this.apiKey = config.getApiKey();
-            return this;
-        }
+    /**
+     * get a web client builder
+     * DifyWebClient是一种以API形式管理 Dify 各种功能的尝试. 例如创建应用、编辑应用等等
+     */
+    public static WebClientBuilder web() {
+        return WebClientBuilder.builder();
+    }
 
-        /**
-         * dify server base url
-         * @param baseUrl String
-         */
-        public DatasetBuilder baseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-            return this;
-        }
+    /**
+     * get a web client builder
+     * DifyWebClient是一种以API形式管理 Dify 各种功能的尝试. 例如创建应用、编辑应用等等
+     * @param server Dify 服务地址
+     * @param userName 用户名
+     * @param password 密码
+     */
+    public static WebClientBuilder web(String server, String userName, String password) {
+        return WebClientBuilder.builder(server, userName, password);
+    }
 
-        /**
-         * dify app api key
-         * @param apiKey String
-         */
-        public DatasetBuilder apiKey(String apiKey) {
-            this.apiKey = apiKey;
-            return this;
-        }
-
-        /**
-         * build
-         */
-        public IDatasetClient build() {
-            if (baseUrl == null || apiKey == null) {
-                throw new RuntimeException("Dify Client Build Error: params is not defined");
-            }
-
-            try {
-                return DatasetClientImpl.build(baseUrl, apiKey);
-            } catch (Exception e) {
-                throw new RuntimeException("Dify Client Build Error: class is not defined", e);
-            }
-        }
-
-        /**
-         * 快捷构建一个Dataset对象
-         * @param datasetId 知识库ID
-         */
-        public DatasetHero of(String datasetId) {
-            return DatasetHero.of(datasetId, DifyConfig.builder().server(baseUrl).apiKey(apiKey).build());
-        }
-
-        /**
-         * 快捷创建一个Document对象
-         * @param datasetId 知识库ID
-         * @param documentId 文档ID
-         */
-        public DocumentHero ofDocument(String datasetId, String documentId) {
-            return DocumentHero.of(datasetId, documentId, DifyConfig.builder().server(baseUrl).apiKey(apiKey).build());
-        }
+    /**
+     * get a web client builder.
+     * DifyWebClient是一种以API形式管理 Dify 各种功能的尝试. 例如创建应用、编辑应用等等
+     * @param config DifyWebConfig
+     */
+    public static WebClientBuilder web(WebConfig config) {
+        return WebClientBuilder.builder(config.getServer(), config.getUserName(), config.getPassword());
     }
 
 }

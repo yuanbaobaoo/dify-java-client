@@ -1,7 +1,10 @@
 package io.github.yuanbaobaoo.dify.app;
 
+import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
-import io.github.yuanbaobaoo.dify.types.DifyFile;
+import io.github.yuanbaobaoo.dify.types.AudioFile;
+import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
@@ -12,7 +15,12 @@ import java.util.function.Consumer;
 /**
  * 基础Dify客户端
  */
-public interface IDifyBaseClient {
+public interface IAppBaseClient {
+    /**
+     * 获取一个Simple http client 对象
+     */
+    SimpleHttpClient httpClient();
+
     /**
      * 获取应用基础信息
      *
@@ -68,7 +76,7 @@ public interface IDifyBaseClient {
      * @param user      用户标识，由开发者定义规则，需保证用户标识在应用内唯一
      * @param messageId Dify 生成的文本消息 message-id
      */
-    DifyFile textToAudioByMessage(String user, String messageId);
+    AudioFile textToAudioByMessage(String user, String messageId);
 
     /**
      * 文字转语音
@@ -76,7 +84,7 @@ public interface IDifyBaseClient {
      * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
      * @param text 语音生成内容。
      */
-    DifyFile textToAudio(String user, String text);
+    AudioFile textToAudio(String user, String text);
 
     /**
      * 文字转语音
@@ -86,7 +94,7 @@ public interface IDifyBaseClient {
      * @param messageId Dify 生成的文本消息，那么直接传递生成的message-id 即可，后台会通过 message_id 查找相应的内容直接合成语音信息。
      *                  如果同时传 message_id 和 text，优先使用 message_id。
      */
-    DifyFile textToAudio(String user, String text, String messageId);
+    AudioFile textToAudio(String user, String text, String messageId);
 
     /**
      * 发送同步接口请求
@@ -113,4 +121,47 @@ public interface IDifyBaseClient {
             Consumer<String> consumer
     );
 
+    /**
+     * 获取标注列表
+     * @param page 页码
+     * @param limit 每页数量
+     */
+    DifyPage<JSONObject> queryAnnotations(Integer page, Integer limit);
+
+    /**
+     * 创建标注
+     * @param question 问题
+     * @param answer 答案内容
+     */
+    JSONObject createAnnotation(String question, String answer);
+
+    /**
+     * 更新标注
+     * @param annotationId 标注ID
+     * @param question 问题
+     * @param answer 答案内容
+     */
+    JSONObject updateAnnotation(String annotationId, String question, String answer);
+
+    /**
+     * 删除标注
+     * @param annotationId 标注ID
+     */
+    Boolean deleteAnnotation(String annotationId);
+
+    /**
+     * 标注回复初始设置
+     * @param enable 动作，true 代表 'enable'，false 代表 'disable'
+     * @param embeddingModelProvider 指定的嵌入模型提供商, 必须先在系统内设定好接入的模型，对应的是provider字段
+     * @param embeddingModel 指定的嵌入模型，对应的是model字段
+     * @param scoreThreshold 相似度阈值，当相似度大于该阈值时，系统会自动回复，否则不回复
+     */
+    JSONObject setAnnotationReply(Boolean enable, String embeddingModelProvider, String embeddingModel, Double scoreThreshold);
+
+    /**
+     * 查询标注回复初始设置任务状态
+     * @param enable 动作，true 代表 'enable'，false 代表 'disable'，必须和标注回复初始设置接口的动作一致
+     * @param jobId 任务 ID，从标注回复初始设置接口返回的 job_id
+     */
+    JSONObject getAnnotationJobStatus(Boolean enable, String jobId);
 }

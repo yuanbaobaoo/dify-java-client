@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * 适用于对话应用的客户端
  * ChatBot、Agent、ChatFlow
  */
-public interface IDifyChatClient extends IDifyBaseClient {
+public interface IAppChatClient extends IAppBaseClient {
     /**
      * 发送对话消息（同步接收）
      *
@@ -82,5 +82,4 @@ public interface IDifyChatClient extends IDifyBaseClient {
      * @param name           会话名称
      */
     JSONObject renameConversation(String conversationId, String user, String name);
-
 }

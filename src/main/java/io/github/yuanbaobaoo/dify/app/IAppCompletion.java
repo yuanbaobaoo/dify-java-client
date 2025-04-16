@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * 适用于文本生成应用的客户端
  * ChatBot、Agent、ChatFlow
  */
-public interface IDifyCompletion extends IDifyBaseClient {
+public interface IAppCompletion extends IAppBaseClient {
     /**
      * 发送消息
      *
