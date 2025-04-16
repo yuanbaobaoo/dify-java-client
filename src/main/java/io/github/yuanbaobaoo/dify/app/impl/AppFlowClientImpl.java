@@ -38,81 +38,51 @@ public class AppFlowClientImpl extends AppBaseClientImpl implements IAppFlowClie
 
     @Override
     public JSONObject runBlocking(ParamMessage message) {
-        try {
-            String result = requestBlocking(AppRoutes.WORKFLOW_RUN, null, message.toMap());
-            return JSON.parseObject(result);
-        } catch (DifyException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("sendMessages", e);
-            throw new DifyException("[client] 消息发送异常", 500);
-        }
+        String result = requestBlocking(AppRoutes.WORKFLOW_RUN, null, message.toMap());
+        return JSON.parseObject(result);
     }
 
     @Override
     public JSONObject getWorkFlowStatus(String workFlowId) {
-        try {
-            String result = SimpleHttpClient.get(config).requestJson(
-                    AppRoutes.WORKFLOW_RUN.getUrl() + "/" + workFlowId,
-                    HttpMethod.GET,
-                    null,
-                    null
-            );
+        String result = SimpleHttpClient.get(config).requestJson(
+                AppRoutes.WORKFLOW_RUN.getUrl() + "/" + workFlowId,
+                HttpMethod.GET,
+                null,
+                null
+        );
 
-            return JSON.parseObject(result);
-        } catch (DifyException e) {
-            log.error("getWorkFlowStatus: {}", e.getOriginal());
-        } catch (Exception e) {
-            log.error("getWorkFlowStatus", e);
-        }
-
-        return null;
+        return JSON.parseObject(result);
     }
 
     @Override
     public Boolean stopWorkFlow(String taskId, String user) {
-        try {
-            String result = SimpleHttpClient.get(config).requestJson(
-                    String.format("%s/%s/stop", AppRoutes.WORKFLOW_TASK.getUrl(), taskId),
-                    HttpMethod.POST,
-                    null,
-                    new HashMap<>() {{
-                        put("user", user);
-                    }}
-            );
+        String result = SimpleHttpClient.get(config).requestJson(
+                String.format("%s/%s/stop", AppRoutes.WORKFLOW_TASK.getUrl(), taskId),
+                HttpMethod.POST,
+                null,
+                new HashMap<>() {{
+                    put("user", user);
+                }}
+        );
 
-            JSONObject json = JSON.parseObject(result);
-            return "success".equals(json.getString("result"));
-        } catch (DifyException e) {
-            log.error("stopWorkFlow: {}", e.getOriginal());
-        } catch (Exception e) {
-            log.error("stopWorkFlow", e);
-        }
-
-        return false;
+        JSONObject json = JSON.parseObject(result);
+        return "success".equals(json.getString("result"));
     }
 
     @Override
     public JSONObject getWorkFlowLog(String keyword, WorkflowStatus status, Integer page, Integer limit) {
-        try {
-            String result = SimpleHttpClient.get(config).requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
-                put("keyword", keyword);
-                put("status", status.name());
-                put("page", page);
-                put("limit", limit);
-            }}, null);
+        String result = SimpleHttpClient.get(config).requestJson(AppRoutes.WORKFLOW_LOGS, new HashMap<>() {{
+            put("keyword", keyword);
+            put("status", status.name());
+            put("page", page);
+            put("limit", limit);
+        }}, null);
 
-            if (result == null) {
-                return null;
-            }
-
-            return JSON.parseObject(result);
-        } catch (DifyException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("history", e);
-            throw new DifyException("[client] 获取workflow日志异常", 500);
+        if (result == null) {
+            return null;
         }
+
+        return JSON.parseObject(result);
     }
 
 }

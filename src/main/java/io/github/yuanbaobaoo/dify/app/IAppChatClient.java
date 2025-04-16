@@ -82,5 +82,4 @@ public interface IAppChatClient extends IAppBaseClient {
      * @param name           会话名称
      */
     JSONObject renameConversation(String conversationId, String user, String name);
-
 }

@@ -31,16 +31,9 @@ public class AppCompletionImpl extends AppBaseClientImpl implements IAppCompleti
 
     @Override
     public DifyChatResult sendMessages(ParamMessage message) {
-        try {
-            formatMessage(message);
-            String result = requestBlocking(AppRoutes.COMPLETION_MESSAGES, null, message.toMap());
-            return DifyChatResult.builder().event(DifyChatEvent.message).payload(JSON.parseObject(result)).build();
-        } catch (DifyException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("sendMessages", e);
-            throw new DifyException("[client] 消息发送异常", 500);
-        }
+        formatMessage(message);
+        String result = requestBlocking(AppRoutes.COMPLETION_MESSAGES, null, message.toMap());
+        return DifyChatResult.builder().event(DifyChatEvent.message).payload(JSON.parseObject(result)).build();
     }
 
     @Override
@@ -55,25 +48,17 @@ public class AppCompletionImpl extends AppBaseClientImpl implements IAppCompleti
 
     @Override
     public Boolean stopGenerate(String taskId, String user) {
-        try {
-            String result = SimpleHttpClient.get(config).requestJson(
-                    String.format("%s/%s/stop", AppRoutes.COMPLETION_MESSAGES.getUrl(), taskId),
-                    HttpMethod.POST,
-                    null,
-                    new HashMap<>() {{
-                        put("user", user);
-                    }}
-            );
+        String result = SimpleHttpClient.get(config).requestJson(
+                String.format("%s/%s/stop", AppRoutes.COMPLETION_MESSAGES.getUrl(), taskId),
+                HttpMethod.POST,
+                null,
+                new HashMap<>() {{
+                    put("user", user);
+                }}
+        );
 
-            JSONObject json = JSON.parseObject(result);
-            return "success".equals(json.getString("result"));
-        } catch (DifyException e) {
-            log.error("stopGenerate: {}", e.getOriginal());
-        } catch (Exception e) {
-            log.error("stopGenerate", e);
-        }
-
-        return false;
+        JSONObject json = JSON.parseObject(result);
+        return "success".equals(json.getString("result"));
     }
 
     /**
