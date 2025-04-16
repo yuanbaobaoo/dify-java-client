@@ -1,12 +1,15 @@
 package io.github.yuanbaobaoo.dify.web;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
-
-import java.util.Map;
 
 public interface IWebConsoleClient {
+    /**
+     * 获取一个Simple http client对象
+     */
+    SimpleHttpClient httpClient();
+
     /**
      * 获取登录的Access token
      */
@@ -20,11 +23,4 @@ public interface IWebConsoleClient {
      */
     DifyPage<JSONObject> queryApps(int page, int limit, String name);
 
-    /**
-     * TODO 请求自定义地址
-     * @param route DifyRoute
-     * @param params query params
-     * @param body body params
-     */
-    JSONObject request(DifyRoute route, Map<String, Object> params, Map<String, Object> body);
 }

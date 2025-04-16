@@ -3,6 +3,7 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
+import io.github.yuanbaobaoo.dify.dataset.params.ParamUpdateDataset;
 import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
@@ -65,29 +66,7 @@ public class DatasetHero extends Dataset {
      */
     private DatasetHero(String server, String apiKey, Dataset dataset) {
         this.config = ApiConfig.builder().server(server).apiKey(apiKey).build();
-
-        this.setId(dataset.getId());
-        this.setName(dataset.getName());
-        this.setDescription(dataset.getDescription());
-        this.setProvider(dataset.getProvider());
-        this.setPermission(dataset.getPermission());
-        this.setDataSourceType(dataset.getDataSourceType());
-        this.setIndexingTechnique(dataset.getIndexingTechnique());
-        this.setAppCount(dataset.getAppCount());
-        this.setDocumentCount(dataset.getDocumentCount());
-        this.setWordCount(dataset.getWordCount());
-        this.setCreatedBy(dataset.getCreatedBy());
-        this.setCreatedAt(dataset.getCreatedAt());
-        this.setUpdatedBy(dataset.getUpdatedBy());
-        this.setUpdatedAt(dataset.getUpdatedAt());
-        this.setEmbeddingModel(dataset.getEmbeddingModel());
-        this.setEmbeddingModelProvider(dataset.getEmbeddingModelProvider());
-        this.setEmbeddingAvailable(dataset.getEmbeddingAvailable());
-        this.setTags(dataset.getTags());
-        this.setDocForm(dataset.getDocForm());
-        this.setRetrievalModelDict(dataset.getRetrievalModelDict());
-        this.setExternalKnowledgeInfo(dataset.getExternalKnowledgeInfo());
-        this.setExternalRetrievalModel(dataset.getExternalRetrievalModel());
+        this.resetDataset(dataset);
     }
 
     /**
@@ -100,12 +79,28 @@ public class DatasetHero extends Dataset {
     }
 
     /**
-     * 删除数据库
+     * 更新知识库
+     * @param data ParamUpdateDataset
+     */
+    public DatasetHero update(ParamUpdateDataset data) {
+        DifyRoute route = DatasetRoutes.DATASETS_UPDATE.format(
+                Map.of("datasetId", getId())
+        );
+
+        String result = SimpleHttpClient.get(config).requestJson(route, null, data);
+        Dataset dataset = JSON.parseObject(result, Dataset.class);
+
+        this.resetDataset(dataset);
+        return this;
+    }
+
+    /**
+     * 删除知识库
      */
     public void delete() {
-        SimpleHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_DELETE.format(new HashMap<>() {{
-            put("datasetId", getId());
-        }}));
+        SimpleHttpClient.get(config).requestJson(DatasetRoutes.DATASETS_DELETE.format(
+                Map.of("datasetId", getId())
+        ));
     }
 
     /**
@@ -246,6 +241,35 @@ public class DatasetHero extends Dataset {
         }});
 
         return JSON.parseObject(result, RetrieveResult.class);
+    }
+
+    /**
+     * reset dataset field
+     * @param dataset Dataset
+     */
+    private void resetDataset(Dataset dataset) {
+        this.setId(dataset.getId());
+        this.setName(dataset.getName());
+        this.setDescription(dataset.getDescription());
+        this.setProvider(dataset.getProvider());
+        this.setPermission(dataset.getPermission());
+        this.setDataSourceType(dataset.getDataSourceType());
+        this.setIndexingTechnique(dataset.getIndexingTechnique());
+        this.setAppCount(dataset.getAppCount());
+        this.setDocumentCount(dataset.getDocumentCount());
+        this.setWordCount(dataset.getWordCount());
+        this.setCreatedBy(dataset.getCreatedBy());
+        this.setCreatedAt(dataset.getCreatedAt());
+        this.setUpdatedBy(dataset.getUpdatedBy());
+        this.setUpdatedAt(dataset.getUpdatedAt());
+        this.setEmbeddingModel(dataset.getEmbeddingModel());
+        this.setEmbeddingModelProvider(dataset.getEmbeddingModelProvider());
+        this.setEmbeddingAvailable(dataset.getEmbeddingAvailable());
+        this.setTags(dataset.getTags());
+        this.setDocForm(dataset.getDocForm());
+        this.setRetrievalModelDict(dataset.getRetrievalModelDict());
+        this.setExternalKnowledgeInfo(dataset.getExternalKnowledgeInfo());
+        this.setExternalRetrievalModel(dataset.getExternalRetrievalModel());
     }
 
 }
