@@ -36,25 +36,36 @@ implementation group: 'io.github.yuanbaobaoo', name: 'dify-java-client', version
 ```
 
 ## 快速开始 
-```DifyClientBuilder```： 用于创建各类客户端实例
+使用 ```DifyClientBuilder``` 创建各类客户端实例
 ```java
 /**
- * 支持 base()、chat()、flow()、completion()、dataset()，其对应返回类型也是不一致的
+ * 创建一个对话类型客户端对象，支持 base()、chat()、flow()、completion() 其对应返回类型也是不一致的
  */
-IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+IAppChatClient appClient = DifyClientBuilder.app().chat().apiKey("app-xxx").baseUrl("https://api.dify.ai").build();
+
+/**
+ * 创建一个知识库类型客户端对象
+ */
+IDatasetClient datasetClient = DifyClientBuilder.dataset().apiKey("app-xxx").baseUrl("https://api.dify.ai").build();
+
+/**
+ * 创建一个WebConsole类型客户端对象，用于模拟Dify控制台操作（试验特性）
+ */
+IWebConsoleClient webClient = DifyClientBuilder.web("${server}", "${userName}", "${password}").connect();
 ```
 
-## 对话类型 Client
-app客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应用，提供了会话相关的API，支持会话的流式返回。主要包含如下：
-- [```IDifyBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyBaseClient.java)
-- [```IDifyChatClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyChatClient.java)
-- [```IDifyFlowClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyFlowClient.java)
-- [```IDifyCompletion```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/app/IDifyCompletion.java)
+## 创建 App 类型的 Client
+在代码中，使用 ```DifyClientBuilder.app()``` 即可创建App类型的客户端对象。
+App客户端是指适用于 ChatBot、Agent、ChatFlow、Completion 类型的应用，提供了会话相关的API，支持会话的流式返回。主要包含如下：
+- [```IAppBaseClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/master/src/main/java/io/github/yuanbaobaoo/dify/app/IAppBaseClient.java)
+- [```IAppChatClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/master/src/main/java/io/github/yuanbaobaoo/dify/app/IAppChatClient.java)
+- [```IAppFlowClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/master/src/main/java/io/github/yuanbaobaoo/dify/app/IAppFlowClient.java)
+- [```IAppCompletion```](https://github.com/yuanbaobaoo/dify-java-client/blob/master/src/main/java/io/github/yuanbaobaoo/dify/app/IAppCompletion.java)
 
-### 1、IDifyBaseClient
-基础Client，提供Dify公共API，具体可查阅 ```IDifyBaseClient```
+### 1、IAppBaseClient
+基础Client，提供Dify公共API，具体可查阅 ```IAppBaseClient```
 ```java
-IDifyBaseClient client = DifyClientBuilder.base().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+IAppBaseClient client = DifyClientBuilder.app().base().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
 
 // 调用接口
 String metaInfo = client.getAppMetaInfo();
@@ -62,20 +73,19 @@ String metaInfo = client.getAppMetaInfo();
 DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ```
 
-### 2、IDifyChatClient
-适用于 ChatBot、Agent、ChatFlow 类型应用，继承自 ```IDifyBaseClient```，提供了会话相关的API：
+### 2、IAppChatClient
+适用于 ChatBot、Agent、ChatFlow 类型应用，继承自 ```IAppBaseClient```，提供了会话相关的API：
 ```java
-IDifyChatClient chatClient = DifyClientBuilder.chat().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+IAppChatClient client = DifyClientBuilder.app().chat().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
 
 // 创建消息
-ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(new HashMap<>() {{
-    put("test", "value");
-    put("file1", ParamFile.builder()
-            .type(ParamFile.FileType.audio)
-            .transferMethod(ParamFile.TransferMethod.remote_url)
-            .build()
-    );
-}}).build();
+ParamMessage m = ParamMessage.builder().query("你是谁").user("abc-123").inputs(Map.of(
+        "test", "value",
+        "file1", ParamFile.builder()
+                .type(ParamFile.FileType.audio)
+                .transferMethod(ParamFile.TransferMethod.remote_url)
+                .build()
+)).build();
 
 // 发送阻塞消息
 DifyChatResult result = chatClient.sendMessages(m);
@@ -86,16 +96,16 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-### 3、IDifyFlowClient
-适用于 WorkFlow 类型应用，继承自 ```IDifyBaseClient```，提供了工作流相关的API：
+### 3、IAppFlowClient
+适用于 WorkFlow 类型应用，继承自 ```IAppBaseClient```，提供了工作流相关的API：
 ```java
-IDifyFlowClient flowClient = DifyClientBuilder.flow().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+IAppFlowClient flowClient = DifyClientBuilder.app().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
 
 // 创建消息
-ParamMessage m = ParamMessage.builder().user("abc-123").inputs(new HashMap<>() {{
-    put("name", "元宝宝");
-    put("text", "Java为什么叫Java？");
-}}).build();
+ParamMessage m = ParamMessage.builder().user("abc-123").inputs(Map.of(
+        "name", "元宝宝",
+        "text", "Java为什么叫Java？"
+)).build();
 
 // 阻塞式运行工作流
 DifyChatResult result = flowClient.runBlocking(m);
@@ -106,10 +116,10 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 });
 ```
 
-### 4、IDifyCompletion
-适用于 Completion 类型应用，继承自 ```IDifyBaseClient```，提供了文本生成相关的API：
+### 4、IAppCompletion
+适用于 Completion 类型应用，继承自 ```IAppBaseClient```，提供了文本生成相关的API：
 ```java
-IDifyCompletion completion = DifyClientBuilder.completion().apiKey("app-xxxx").baseUrl("http://localhost:4000").build();
+IAppCompletion completion = DifyClientBuilder.completion().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
 
 // 创建消息
 ParamMessage m = ParamMessage.builder().query("Java为什么叫Java").user("abc-123").build();
@@ -123,15 +133,15 @@ CompletableFuture<Void> future = completion.sendMessagesAsync(m, (r) -> {
 });
 ```
 
-## 知识库 Client
+## 创建 知识库 类型的 Client
 当前项目提供了内部知识库Client 与 外部知识库相关类型定义，其中外部知识库并没有做具体实现。
 
 ### Dify内置知识库: IDifyDatasetClient
-具体API定义，请查阅 [```io.github.yuanbaobaoo.dify.client.dataset.IDifyDatasetClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/feature/knowledge-api/src/main/java/io/github/yuanbaobaoo/dify/dataset/IDatasetClient.java)
+具体API定义，请查阅 [```io.github.yuanbaobaoo.dify.dataset.IDifyDatasetClient```](https://github.com/yuanbaobaoo/dify-java-client/blob/master/src/main/java/io/github/yuanbaobaoo/dify/dataset/IDatasetClient.java)
 
 #### 参考案例
 ```java
-IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("http://localhost:4000").build();
+IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("https://api.dify.ai").build();
 
 // 声明参数
 ParamDataset dataset = ParamDataset.builder()
@@ -149,7 +159,7 @@ client.create(dataset);
 - 案例一：新增文档
 ```java
 // dify 配置
-DifyConfig config = DifyConfig.builder().server("http://localhost:4000").apiKey("dataset-xxxx").build();
+DifyConfig config = DifyConfig.builder().server("https://api.dify.ai").apiKey("dataset-xxxx").build();
 
 // 声明参数
 ParamDocument document = ParamDocument.builder()
@@ -236,7 +246,14 @@ class KnowledgeService implements IKnowledgeService {
 }
 ```
 
-### 异常处理
+## 请求自定义接口
+任意的Client对象，都拥有一个httpClient()方法，
+该方法会返回一个已经注入了 api key 和 server url 或者 login token属性的 SimpleHttpClient 对象，你可以使用该对象进行自定义接口请求。
+```java
+SimpleHttpClient http = client.httpClient();
+```
+
+## 异常处理
 - **DifyException**
 >默认情况下，当正常的请求返回了 http status >= 400 时，都会抛出一个异常对象 ```DifyException```。
 该对象接收了Dify返回的 ```status```、```code```、```message```、```params``` 这几个属性。
