@@ -2,15 +2,12 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import com.alibaba.fastjson2.TypeReference;
+import io.github.yuanbaobaoo.dify.types.*;
 import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.app.IAppBaseClient;
 import io.github.yuanbaobaoo.dify.app.types.DifyFileResult;
 import io.github.yuanbaobaoo.dify.routes.AppRoutes;
-import io.github.yuanbaobaoo.dify.types.AudioFile;
-import io.github.yuanbaobaoo.dify.types.HttpMethod;
-import io.github.yuanbaobaoo.dify.types.DifyException;
-import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.app.types.ResponseMode;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+
+import static java.awt.SystemColor.text;
 
 @Slf4j
 public class AppBaseClientImpl implements IAppBaseClient {
@@ -66,27 +65,19 @@ public class AppBaseClientImpl implements IAppBaseClient {
 
     @Override
     public Boolean feedbacks(String messageId, String rating, String user, String content) {
-        try {
-            String result = SimpleHttpClient.get(config).requestJson(
-                    String.format("%s/%s/feedbacks", AppRoutes.MESSAGES.getUrl(), messageId),
-                    HttpMethod.POST,
-                    null,
-                    new HashMap<>() {{
-                        put("rating", rating);
-                        put("user", user);
-                        put("content", content);
-                    }}
-            );
+        String result = SimpleHttpClient.get(config).requestJson(
+                String.format("%s/%s/feedbacks", AppRoutes.MESSAGES.getUrl(), messageId),
+                HttpMethod.POST,
+                null,
+                new HashMap<>() {{
+                    put("rating", rating);
+                    put("user", user);
+                    put("content", content);
+                }}
+        );
 
-            JSONObject json = JSON.parseObject(result);
-            return "success".equals(json.getString("result"));
-        } catch (DifyException e) {
-            log.error("feedbacks: {}", e.getOriginal());
-        } catch (Exception e) {
-            log.error("feedbacks", e);
-        }
-
-        return false;
+        JSONObject json = JSON.parseObject(result);
+        return "success".equals(json.getString("result"));
     }
 
     @Override
@@ -146,6 +137,78 @@ public class AppBaseClientImpl implements IAppBaseClient {
                 consumer.accept(line.substring(FLAG.length()).trim());
             }
         });
+    }
+
+    @Override
+    public DifyPage<JSONObject> queryAnnotations(Integer page, Integer limit) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", page);
+        params.put("limit", limit);
+
+        String result = SimpleHttpClient.get(config).requestJson(AppRoutes.ANNOTATION_GET, params);
+        return JSON.parseObject(result, new TypeReference<DifyPage<JSONObject>>() {});
+    }
+
+    @Override
+    public JSONObject createAnnotation(String question, String answer) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("question", question);
+        data.put("answer", answer);
+
+        String result = SimpleHttpClient.get(config).requestJson(AppRoutes.ANNOTATION_ADD, null, data);
+        return JSON.parseObject(result);
+    }
+
+    @Override
+    public JSONObject updateAnnotation(String annotationId, String question, String answer) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("question", question);
+        data.put("answer", answer);
+
+        DifyRoute route = AppRoutes.ANNOTATION_SET.format(Map.of(
+                "annotationId", annotationId
+        ));
+
+        String result = SimpleHttpClient.get(config).requestJson(route, null, data);
+        return JSON.parseObject(result);
+    }
+
+    @Override
+    public Boolean deleteAnnotation(String annotationId) {
+        DifyRoute route = AppRoutes.ANNOTATION_DEL.format(Map.of(
+                "annotationId", annotationId
+        ));
+
+        String result = SimpleHttpClient.get(config).requestJson(route);
+        JSONObject json = JSON.parseObject(result);
+
+        return "success".equals(json.getString("result"));
+    }
+
+    @Override
+    public JSONObject setAnnotationReply(Boolean enable, String embeddingModelProvider, String embeddingModel, Double scoreThreshold) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("embedding_model_provider", embeddingModelProvider);
+        data.put("embedding_model", embeddingModel);
+        data.put("score_threshold", scoreThreshold);
+
+        DifyRoute route = AppRoutes.ANNOTATION_REPLY_SET.format(Map.of(
+                "action", enable ? "enable" : "disable"
+        ));
+
+        String result = SimpleHttpClient.get(config).requestJson(route, null, data);
+        return JSON.parseObject(result);
+    }
+
+    @Override
+    public JSONObject getAnnotationJobStatus(Boolean enable, String jobId) {
+        DifyRoute route = AppRoutes.ANNOTATION_REPLY_SET.format(Map.of(
+                "action", enable ? "enable" : "disable",
+                "jobId", jobId
+        ));
+
+        String result = SimpleHttpClient.get(config).requestJson(route);
+        return JSON.parseObject(result);
     }
 
 }
