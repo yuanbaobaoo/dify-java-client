@@ -4,12 +4,30 @@ import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 
 public class DatasetRoutes {
-    /**
-     * Desc: Datasets
-     * Type: Dataset
-     */
-    public static final DifyRoute DATASETS = new DifyRoute("/datasets", HttpMethod.POST);
-    public static final DifyRoute DATASETS_DELETE = new DifyRoute("/datasets/${datasetId}", HttpMethod.DELETE);
+    public static final DifyRoute MODELS_TEXT_EMBEDDING = new DifyRoute(
+            "/workspaces/current/models/model-types/text-embedding",
+            HttpMethod.GET
+    );
+
+    public static final DifyRoute DATASETS = new DifyRoute(
+            "/datasets",
+            HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_INFO = new DifyRoute(
+            "/datasets/${datasetId}",
+            HttpMethod.GET
+    );
+
+    public static final DifyRoute DATASETS_UPDATE = new DifyRoute(
+            "/datasets/${datasetId}",
+            HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_DELETE = new DifyRoute(
+            "/datasets/${datasetId}",
+            HttpMethod.DELETE
+    );
 
     public static final DifyRoute DATASETS_RETRIEVE = new DifyRoute(
             "/datasets/${datasetId}/retrieve",
@@ -75,6 +93,26 @@ public class DatasetRoutes {
     public static final DifyRoute DATASETS_DOCS_SEGMENTS_UPDATE = new DifyRoute(
             "/datasets/${datasetId}/documents/${documentId}/segments/${segmentId}",
             HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_GET = new DifyRoute(
+            "/datasets/${datasetId}/documents/${documentId}/segments/${segmentId}/child_chunks",
+            HttpMethod.GET
+    );
+
+    public static final DifyRoute DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_ADD = new DifyRoute(
+            "/datasets/${datasetId}/documents/${documentId}/segments/${segmentId}/child_chunks",
+            HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_DEL = new DifyRoute(
+            "/datasets/${datasetId}/documents/${documentId}/segments/${segmentId}/child_chunks/${childChunkId}",
+            HttpMethod.POST
+    );
+
+    public static final DifyRoute DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_SET = new DifyRoute(
+            "/datasets/${datasetId}/documents/${documentId}/segments/${segmentId}/child_chunks/${childChunkId}",
+            HttpMethod.PATCH
     );
 
 }

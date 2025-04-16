@@ -2,8 +2,10 @@ package io.github.yuanbaobaoo.dify.dataset.heros;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyConfig;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
+import com.alibaba.fastjson2.TypeReference;
+import io.github.yuanbaobaoo.dify.dataset.entity.SegmentChildChunk;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.entity.DocFileInfo;
 import io.github.yuanbaobaoo.dify.dataset.entity.Document;
@@ -12,6 +14,7 @@ import io.github.yuanbaobaoo.dify.dataset.types.SegmentResult;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.DocumentResult;
 import io.github.yuanbaobaoo.dify.dataset.types.ProcessRule;
+import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.types.DifyRoute;
 
 import java.io.File;
@@ -20,7 +23,7 @@ import java.util.List;
 
 public class DocumentHero extends Document {
     private final String datasetId;
-    private final DifyConfig config;
+    private final ApiConfig config;
 
     /**
      * new DocumentHero
@@ -28,7 +31,7 @@ public class DocumentHero extends Document {
      * @param id document id
      * @param config DifyConfig
      */
-    public static DocumentHero of(String datasetId, String id, DifyConfig config) {
+    public static DocumentHero of(String datasetId, String id, ApiConfig config) {
         return new DocumentHero(datasetId, id, config);
     }
 
@@ -38,7 +41,7 @@ public class DocumentHero extends Document {
      * @param doc Document
      * @param config DifyConfig
      */
-    public static DocumentHero of(String datasetId, Document doc, DifyConfig config) {
+    public static DocumentHero of(String datasetId, Document doc, ApiConfig config) {
         return new DocumentHero(datasetId, doc, config);
     }
 
@@ -48,7 +51,7 @@ public class DocumentHero extends Document {
      * @param id Document id
      * @param config DifyConfig
      */
-    private DocumentHero(String datasetId, String id, DifyConfig config) {
+    private DocumentHero(String datasetId, String id, ApiConfig config) {
         this.config = config;
         this.datasetId = datasetId;
 
@@ -61,7 +64,7 @@ public class DocumentHero extends Document {
      * @param doc Document
      * @param config DifyConfig
      */
-    private DocumentHero(String datasetId, Document doc, DifyConfig config) {
+    private DocumentHero(String datasetId, Document doc, ApiConfig config) {
         this.config = config;
         this.datasetId = datasetId;
 
@@ -97,7 +100,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route, null, data);
+        String result = SimpleHttpClient.get(config).requestJson(route, null, data);
         return DocumentResult.parse(datasetId, result, config);
     }
 
@@ -123,7 +126,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestMultipart(route, null, new HashMap<>() {{
+        String result = SimpleHttpClient.get(config).requestMultipart(route, null, new HashMap<>() {{
             put("name", name);
             put("file", file);
             put("process_rule", rule);
@@ -141,7 +144,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route);
+        String result = SimpleHttpClient.get(config).requestJson(route);
         JSONObject json = JSON.parseObject(result);
 
         return "success".equals(json.getString("result"));
@@ -156,7 +159,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route);
+        String result = SimpleHttpClient.get(config).requestJson(route);
         return JSON.parseObject(result, DocFileInfo.class);
     }
 
@@ -186,7 +189,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route, new HashMap<>(){{
+        String result = SimpleHttpClient.get(config).requestJson(route, new HashMap<>(){{
             put("keyword", keyword);
             put("status", status);
         }}, null);
@@ -208,7 +211,7 @@ public class DocumentHero extends Document {
             put("documentId", getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
+        String result = SimpleHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
             put("segments", segments);
         }});
 
@@ -226,7 +229,7 @@ public class DocumentHero extends Document {
             put("segmentId", segmentId);
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route);
+        String result = SimpleHttpClient.get(config).requestJson(route);
         JSONObject json = JSON.parseObject(result);
 
         return "success".equals(json.getString("result"));
@@ -254,7 +257,7 @@ public class DocumentHero extends Document {
             put("segmentId", segment.getId());
         }});
 
-        String result = DifyHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
+        String result = SimpleHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
             put("segment", new HashMap<>() {{
                 put("content", segment.getContent());
                 put("answer", segment.getAnswer());
@@ -265,6 +268,100 @@ public class DocumentHero extends Document {
         }});
 
         return JSON.parseObject(result, SegmentResult.class);
+    }
+
+    /**
+     * 新增文档子分段
+     * @param segmentId 分段ID
+     * @param content 子分段内容
+     */
+    public SegmentChildChunk insertSegmentChildChunks(String segmentId, String content) {
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_ADD.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segmentId);
+        }});
+
+        String result = SimpleHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
+            put("content", content);
+        }});
+
+        JSONObject json = JSON.parseObject(result);
+        return json.getJSONObject("data").to(SegmentChildChunk.class);
+    }
+
+    /**
+     * 查询文档子分段
+     * @param segmentId 分段ID
+     * @param page 页码
+     * @param limit 每页数量
+     */
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String segmentId, Integer page, Integer limit) {
+        return querySegmentChildChunks(segmentId, page, limit, null);
+    }
+
+    /**
+     * 查询文档子分段
+     * @param segmentId 分段ID
+     * @param page 页码
+     * @param limit 每页数量
+     * @param keyword 搜索关键词（选填）
+     */
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String segmentId, Integer page, Integer limit, String keyword) {
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_GET.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segmentId);
+        }});
+
+        String result = SimpleHttpClient.get(config).requestJson(route, new HashMap<>() {{
+            put("page", page);
+            put("limit", limit);
+            put("keyword", keyword);
+        }});
+
+        return JSON.parseObject(result, new TypeReference<DifyPage<SegmentChildChunk>>() {});
+    }
+
+    /**
+     * 删除文档子分段
+     * @param segmentId 分段ID
+     * @param childChunkId 子分段ID
+     */
+    public Boolean deleteSegmentChildChunks(String segmentId, String childChunkId) {
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_DEL.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segmentId);
+            put("childChunkId", childChunkId);
+        }});
+
+        String result = SimpleHttpClient.get(config).requestJson(route);
+        JSONObject json = JSON.parseObject(result);
+
+        return "success".equals(json.getString("result"));
+    }
+
+    /**
+     * 更新文档子分段
+     * @param segmentId 分段ID
+     * @param childChunkId 子分段ID
+     * @param content 子分段内容
+     */
+    public SegmentChildChunk updateSegmentChildChunks(String segmentId, String childChunkId, String content) {
+        DifyRoute route = DatasetRoutes.DATASETS_DOCS_SEGMENTS_CHILD_CHUNKS_SET.format(new HashMap<>() {{
+            put("datasetId", datasetId);
+            put("documentId", getId());
+            put("segmentId", segmentId);
+            put("childChunkId", childChunkId);
+        }});
+
+        String result = SimpleHttpClient.get(config).requestJson(route, null, new HashMap<>(){{
+            put("content", content);
+        }});
+
+        JSONObject json = JSON.parseObject(result);
+        return json.getJSONObject("data").to(SegmentChildChunk.class);
     }
 
 }

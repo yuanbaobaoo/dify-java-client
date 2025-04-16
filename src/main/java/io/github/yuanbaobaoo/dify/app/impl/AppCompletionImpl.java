@@ -2,8 +2,8 @@ package io.github.yuanbaobaoo.dify.app.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
-import io.github.yuanbaobaoo.dify.app.IDifyCompletion;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
+import io.github.yuanbaobaoo.dify.app.IAppCompletion;
 import io.github.yuanbaobaoo.dify.app.params.ParamMessage;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatEvent;
 import io.github.yuanbaobaoo.dify.app.types.DifyChatResult;
@@ -18,29 +18,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
-public class CompletionImpl extends BaseClientImpl implements IDifyCompletion {
+public class AppCompletionImpl extends AppBaseClientImpl implements IAppCompletion {
     /**
      * constructor
      *
      * @param server Dify Server URL
      * @param apiKey The App Api Key
      */
-    public CompletionImpl(String server, String apiKey) {
+    public AppCompletionImpl(String server, String apiKey) {
         super(server, apiKey);
     }
 
     @Override
     public DifyChatResult sendMessages(ParamMessage message) {
-        try {
-            formatMessage(message);
-            String result = requestBlocking(AppRoutes.COMPLETION_MESSAGES, null, message.toMap());
-            return DifyChatResult.builder().event(DifyChatEvent.message).payload(JSON.parseObject(result)).build();
-        } catch (DifyException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("sendMessages", e);
-            throw new DifyException("[client] 消息发送异常", 500);
-        }
+        formatMessage(message);
+        String result = requestBlocking(AppRoutes.COMPLETION_MESSAGES, null, message.toMap());
+        return DifyChatResult.builder().event(DifyChatEvent.message).payload(JSON.parseObject(result)).build();
     }
 
     @Override
@@ -55,25 +48,17 @@ public class CompletionImpl extends BaseClientImpl implements IDifyCompletion {
 
     @Override
     public Boolean stopGenerate(String taskId, String user) {
-        try {
-            String result = DifyHttpClient.get(config).requestJson(
-                    String.format("%s/%s/stop", AppRoutes.COMPLETION_MESSAGES.getUrl(), taskId),
-                    HttpMethod.POST,
-                    null,
-                    new HashMap<>() {{
-                        put("user", user);
-                    }}
-            );
+        String result = SimpleHttpClient.get(config).requestJson(
+                String.format("%s/%s/stop", AppRoutes.COMPLETION_MESSAGES.getUrl(), taskId),
+                HttpMethod.POST,
+                null,
+                new HashMap<>() {{
+                    put("user", user);
+                }}
+        );
 
-            JSONObject json = JSON.parseObject(result);
-            return "success".equals(json.getString("result"));
-        } catch (DifyException e) {
-            log.error("stopGenerate: {}", e.getOriginal());
-        } catch (Exception e) {
-            log.error("stopGenerate", e);
-        }
-
-        return false;
+        JSONObject json = JSON.parseObject(result);
+        return "success".equals(json.getString("result"));
     }
 
     /**

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class DifyFile {
+public class AudioFile {
     /**
      * 返回的文件Content-Type
      */

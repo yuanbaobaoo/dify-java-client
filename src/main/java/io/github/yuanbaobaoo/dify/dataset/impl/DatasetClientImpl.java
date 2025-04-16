@@ -1,18 +1,21 @@
 package io.github.yuanbaobaoo.dify.dataset.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
-import io.github.yuanbaobaoo.dify.DifyConfig;
+import io.github.yuanbaobaoo.dify.dataset.params.ParamUpdateDataset;
+import io.github.yuanbaobaoo.dify.types.ApiConfig;
 import io.github.yuanbaobaoo.dify.dataset.IDatasetClient;
 import io.github.yuanbaobaoo.dify.dataset.entity.*;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDocument;
 import io.github.yuanbaobaoo.dify.dataset.types.*;
 import io.github.yuanbaobaoo.dify.types.DifyPage;
 import io.github.yuanbaobaoo.dify.dataset.params.ParamDataset;
-import io.github.yuanbaobaoo.dify.DifyHttpClient;
+import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.routes.DatasetRoutes;
 import io.github.yuanbaobaoo.dify.dataset.heros.DatasetHero;
 import io.github.yuanbaobaoo.dify.dataset.heros.DocumentHero;
+import io.github.yuanbaobaoo.dify.types.DifyRoute;
 import io.github.yuanbaobaoo.dify.types.HttpMethod;
 
 import java.io.File;
@@ -22,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DatasetClientImpl implements IDatasetClient {
-    private final DifyConfig server;
+    private final ApiConfig server;
 
     private final Map<String, DatasetHero> datasetCache = new ConcurrentHashMap<>();
     private final Map<String, DocumentHero> documentCache = new ConcurrentHashMap<>();
@@ -42,7 +45,7 @@ public class DatasetClientImpl implements IDatasetClient {
      * @param apiKey String
      */
     private DatasetClientImpl(String server, String apiKey) {
-        this.server = DifyConfig.builder().server(server).apiKey(apiKey).build();
+        this.server = ApiConfig.builder().server(server).apiKey(apiKey).build();
     }
 
     /**
@@ -76,6 +79,11 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
+    public SimpleHttpClient httpClient() {
+        return SimpleHttpClient.get(server);
+    }
+
+    @Override
     public DatasetHero ofDataset(String datasetId) {
         return ofDataset(false, datasetId);
     }
@@ -86,21 +94,41 @@ public class DatasetClientImpl implements IDatasetClient {
     }
 
     @Override
+    public List<JSONObject> selectTextEmbedding() {
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.MODELS_TEXT_EMBEDDING);
+        return JSON.parseObject(result).getJSONArray("data").toJavaList(JSONObject.class);
+    }
+
+    @Override
+    public DifyPage<Dataset> list(int page, int limit) {
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
+            put("page", page);
+            put("limit", limit);
+        }}, null);
+
+        return JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
+    }
+
+    @Override
     public DatasetHero create(ParamDataset data) {
-        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
+        String result = SimpleHttpClient.get(server).requestJson(DatasetRoutes.DATASETS, null, data);
 
         Dataset dataset = JSON.parseObject(result, Dataset.class);
         return DatasetHero.of(dataset, server);
     }
 
     @Override
-    public DifyPage<Dataset> list(int page, int limit) {
-        String result = DifyHttpClient.get(server).requestJson(DatasetRoutes.DATASETS.getUrl(), HttpMethod.GET, new HashMap<>() {{
-            put("page", page);
-            put("limit", limit);
-        }}, null);
+    public DatasetHero get(String datasetId) {
+        DifyRoute r = DatasetRoutes.DATASETS_INFO.format(Map.of("datasetId", datasetId));
+        String result = SimpleHttpClient.get(server).requestJson(r);
 
-        return JSON.parseObject(result, new TypeReference<DifyPage<Dataset>>() {});
+        Dataset dataset = JSON.parseObject(result, Dataset.class);
+        return DatasetHero.of(dataset, server);
+    }
+
+    @Override
+    public DatasetHero update(String datasetId, ParamUpdateDataset data) {
+        return ofDataset(true, datasetId).update(data);
     }
 
     @Override
@@ -206,6 +234,31 @@ public class DatasetClientImpl implements IDatasetClient {
     @Override
     public SegmentResult updateSegment(String datasetId, String documentId, Segment segment, boolean regenerate) {
         return ofDocument(true, datasetId, documentId).updateSegment(segment, regenerate);
+    }
+
+    @Override
+    public SegmentChildChunk insertSegmentChildChunks(String datasetId, String documentId, String segmentId, String content) {
+        return ofDocument(true, datasetId, documentId).insertSegmentChildChunks(segmentId, content);
+    }
+
+    @Override
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit) {
+        return querySegmentChildChunks(datasetId, documentId, segmentId, page, limit, null);
+    }
+
+    @Override
+    public DifyPage<SegmentChildChunk> querySegmentChildChunks(String datasetId, String documentId, String segmentId, Integer page, Integer limit, String keyword) {
+        return ofDocument(true, datasetId, documentId).querySegmentChildChunks(segmentId, page, limit, keyword);
+    }
+
+    @Override
+    public Boolean deleteSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId) {
+        return ofDocument(true, datasetId, documentId).deleteSegmentChildChunks(segmentId, childChunkId);
+    }
+
+    @Override
+    public SegmentChildChunk updateSegmentChildChunks(String datasetId, String documentId, String segmentId, String childChunkId, String content) {
+        return ofDocument(true, datasetId, documentId).updateSegmentChildChunks(segmentId, childChunkId, content);
     }
 
 }
