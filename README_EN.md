@@ -41,12 +41,12 @@ Create client instances using ```DifyClientBuilder```
 /**
  * Create a chat-type client for ChatBot/Agent/ChatFlow/Completion apps
  */
-IAppChatClient appClient = DifyClientBuilder.app().chat().apiKey("app-xxx").baseUrl("https://api.dify.ai").build();
+IAppChatClient appClient = DifyClientBuilder.app().chat().apiKey("app-xxx").baseUrl("https://api.dify.ai/v1").build();
 
 /**
  * Create a dataset client
  */
-IDatasetClient datasetClient = DifyClientBuilder.dataset().apiKey("app-xxx").baseUrl("https://api.dify.ai").build();
+IDatasetClient datasetClient = DifyClientBuilder.dataset().apiKey("app-xxx").baseUrl("https://api.dify.ai/v1").build();
 
 /**
  * Create a WebConsole client (experimental)
@@ -65,7 +65,7 @@ It provides session related APIs and supports streaming return of sessions. It m
 ### 1、IAppBaseClient
 Base client providing common Dify APIs:
 ```java
-IAppBaseClient client = DifyClientBuilder.app().base().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
+IAppBaseClient client = DifyClientBuilder.app().base().apiKey("app-xxxx").baseUrl("https://api.dify.ai/v1").build();
 
 // Call preset API
 String metaInfo = client.getAppMetaInfo();
@@ -76,7 +76,7 @@ DifyFileResult result = client.uploadFile(new File("pom.xml"), "abc-123");
 ### 2、IAppChatClient
 For ChatBot/Agent/ChatFlow apps (extends IAppBaseClient):
 ```java
-IAppChatClient client = DifyClientBuilder.app().chat().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
+IAppChatClient client = DifyClientBuilder.app().chat().apiKey("app-xxxx").baseUrl("https://api.dify.ai/v1").build();
 
 // create message
 ParamMessage m = ParamMessage.builder().query("Who are you").user("abc-123").inputs(new HashMap<>() {{
@@ -100,7 +100,7 @@ CompletableFuture<Void> future = client.sendMessagesAsync(m, (r) -> {
 ### 3、IAppFlowClient
 For WorkFlow apps (extends IAppBaseClient):
 ```java
-IAppFlowClient flowClient = DifyClientBuilder.app().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
+IAppFlowClient flowClient = DifyClientBuilder.app().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai/v1").build();
 
 // create message
 ParamMessage m = ParamMessage.builder().user("abc-123").inputs(new HashMap<>() {{
@@ -120,7 +120,7 @@ CompletableFuture<Void> future = client.runStreaming(m, (r) -> {
 ### 4、IAppCompletion
 scope = Completion, extends ```IDifyBaseClient```, provides completion APIs
 ```java
-IAppCompletion completion = DifyClientBuilder.completion().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai").build();
+IAppCompletion completion = DifyClientBuilder.completion().flow().apiKey("app-xxxx").baseUrl("https://api.dify.ai/v1").build();
 
 // create message
 ParamMessage m = ParamMessage.builder().query("Java为什么叫Java").user("abc-123").build();
@@ -143,7 +143,7 @@ For specific API definitions, please refer to [```io.github.yuanbaobaoo.dify.cli
 
 #### Examples
 ```java
-IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("https://api.dify.ai").build();
+IDatasetClient client = DifyClientBuilder.dataset().apiKey("dataset-xxxx").baseUrl("https://api.dify.ai/v1").build();
 
 // create params
 ParamDataset dataset = ParamDataset.builder()
@@ -161,7 +161,7 @@ it also provides Hero class to support the operation of the knowledge base.Which
 - Case 1: add document
 ```java
 // dify config
-DifyConfig config = DifyConfig.builder().server("http://localhost:4000").apiKey("dataset-xxxx").build();
+DifyConfig config = DifyConfig.builder().server("https://api.dify.ai/v1").apiKey("dataset-xxxx").build();
 
 // create params
 ParamDocument document = ParamDocument.builder()
@@ -190,7 +190,7 @@ dataset.insertTxt(document);
 - Case 2: update document
 ```java
 // dify config
-DifyConfig config = DifyConfig.builder().server("http://localhost:4000").apiKey("dataset-xxxx").build();
+DifyConfig config = DifyConfig.builder().server("https://api.dify.ai/v1").apiKey("dataset-xxxx").build();
 
 // create params
 ParamDocument document = ParamDocument.builder()
