@@ -82,4 +82,14 @@ public interface IAppChatClient extends IAppBaseClient {
      * @param name           会话名称
      */
     JSONObject renameConversation(String conversationId, String user, String name);
+
+    /**
+     * 会话重命名
+     *
+     * @param conversationId 会话ID
+     * @param user           用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
+     * @param name           会话名称
+     * @param autoGenerate   是否自动生成标题
+     */
+    JSONObject renameConversation(String conversationId, String user, String name, boolean autoGenerate);
 }

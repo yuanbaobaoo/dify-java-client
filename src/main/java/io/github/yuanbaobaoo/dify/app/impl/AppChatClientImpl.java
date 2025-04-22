@@ -127,7 +127,12 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
     }
 
     @Override
-    public JSONObject renameConversation(String conversationId, String user,  String name) {
+    public JSONObject renameConversation(String conversationId, String user, String name) {
+        return renameConversation(conversationId, user, name, false);
+    }
+
+    @Override
+    public JSONObject renameConversation(String conversationId, String user, String name, boolean autoGenerate) {
         String result = SimpleHttpClient.get(config).requestJson(
                 String.format("%s/%s/name", AppRoutes.CHAT_CONVERSATIONS.getUrl(), conversationId),
                 HttpMethod.POST,
@@ -135,7 +140,7 @@ public class AppChatClientImpl extends AppBaseClientImpl implements IAppChatClie
                 new HashMap<>() {{
                     put("user", user);
                     put("name", name);
-                    put("auto_generate", false);
+                    put("auto_generate", autoGenerate);
                 }}
         );
 
