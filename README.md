@@ -3,11 +3,13 @@ dify-java-client
 
 <p style="text-align: left">
     <a href="https://github.com/yuanbaobaoo/dify-java-client" target="_blank">
-        <img alt="maven-central" src="https://img.shields.io/badge/github-green" /> 
+        <img alt="maven-central" src="https://img.shields.io/badge/github-🤪-green" /> 
     </a>
+    &nbsp;
     <a href="https://openjdk.org/projects/jdk/17" target="_blank">
         <img alt="maven-central" src="https://img.shields.io/badge/Java-17-blue" /> 
     </a>
+    &nbsp;
     <a href="https://central.sonatype.com/artifact/io.github.yuanbaobaoo/dify-java-client" target="_blank">
         <img alt="maven-central" src="https://img.shields.io/badge/maven--central-1.4.1-green" /> 
     </a>
