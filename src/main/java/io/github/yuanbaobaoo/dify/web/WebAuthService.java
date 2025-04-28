@@ -7,6 +7,7 @@ import io.github.yuanbaobaoo.dify.routes.ConsoleRoutes;
 import io.github.yuanbaobaoo.dify.types.DifyClientException;
 import io.github.yuanbaobaoo.dify.SimpleHttpClient;
 import io.github.yuanbaobaoo.dify.types.WebConfig;
+import io.github.yuanbaobaoo.dify.web.entity.TokenList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,19 +23,11 @@ public class WebAuthService {
         private String result;
     }
 
-    @Getter
-    @Setter
-    @JSONType(naming = PropertyNamingStrategy.SnakeCase)
-    private static class TokenList {
-        private String accessToken;
-        private String refreshToken;
-    }
-
     /**
      * 登录
      * @param config DifyWebConfig
      */
-    public static String login(WebConfig config) {
+    public static TokenList login(WebConfig config) {
         SimpleHttpClient client = SimpleHttpClient.newHttpClient(config.getServer());
 
         String result = client.requestJson(ConsoleRoutes.LOGIN, null, new HashMap<>() {{
@@ -47,7 +40,7 @@ public class WebAuthService {
         LoginResult loginResult = JSON.parseObject(result, LoginResult.class);
 
         if ("success".equals(loginResult.getResult())) {
-            return loginResult.getData().getAccessToken();
+            return loginResult.getData();
         }
 
         throw new DifyClientException("登录失败: " + result);
