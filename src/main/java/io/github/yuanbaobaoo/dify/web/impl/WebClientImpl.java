@@ -52,8 +52,7 @@ public class WebClientImpl implements IWebConsoleClient {
             put("name", name);
         }});
 
-        return JSON.parseObject(result, new TypeReference<DifyPage<JSONObject>>() {
-        });
+        return JSON.parseObject(result, new TypeReference<DifyPage<JSONObject>>() {});
     }
 
 }
