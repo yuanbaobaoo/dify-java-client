@@ -17,4 +17,9 @@ public class ApiConfig {
      * Api Key
      */
     private String apiKey;
+
+    /**
+     * refreshToken
+     */
+    private String refreshToken;
 }

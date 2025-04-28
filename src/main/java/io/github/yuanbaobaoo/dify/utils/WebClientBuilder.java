@@ -5,6 +5,7 @@ import io.github.yuanbaobaoo.dify.types.DifyException;
 import io.github.yuanbaobaoo.dify.types.WebConfig;
 import io.github.yuanbaobaoo.dify.web.WebAuthService;
 import io.github.yuanbaobaoo.dify.web.IWebConsoleClient;
+import io.github.yuanbaobaoo.dify.web.entity.TokenList;
 import io.github.yuanbaobaoo.dify.web.impl.WebClientImpl;
 
 /**
@@ -89,8 +90,8 @@ public class WebClientBuilder {
 
         try {
             WebConfig config = WebConfig.builder().server(server).userName(userName).password(password).build();
-            String token = WebAuthService.login(config);
-            return new WebClientImpl(server, token);
+            TokenList tokenList = WebAuthService.login(config);
+            return new WebClientImpl(server, tokenList);
         } catch (DifyClientException | DifyException e) {
             throw e;
         } catch (Exception e) {
