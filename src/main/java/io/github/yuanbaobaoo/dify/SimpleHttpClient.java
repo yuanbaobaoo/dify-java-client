@@ -248,7 +248,20 @@ public class SimpleHttpClient {
      * @return String
      */
     public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params) {
-        return requestMultipart(route.getUrl(), route.getMethod(), query, params);
+        return requestMultipart(route.getUrl(), route.getMethod(), query, params, null);
+    }
+
+    /**
+     * request by multipart/form-data content-type
+     *
+     * @param route  DifyRoute
+     * @param query  Query 查询参数
+     * @param params Body 参数，文件流需自行在params中传入
+     * @param fileType 如果该参数不为空，那么params中所有File或者Path类型的对象的ContentType将设置为该值
+     * @return String
+     */
+    public String requestMultipart(DifyRoute route, Map<String, Object> query, Map<String, Object> params, String fileType) {
+        return requestMultipart(route.getUrl(), route.getMethod(), query, params, fileType);
     }
 
     /**
@@ -258,9 +271,10 @@ public class SimpleHttpClient {
      * @param method HTTP请求方法
      * @param query  Query 查询参数
      * @param params Body 参数，文件流需自行在params中传入
+     * @param fileType 如果该参数不为空，那么params中所有File或者Path类型的对象的ContentType将设置为该值
      * @return String
      */
-    public String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params) {
+    public String requestMultipart(String url, HttpMethod method, Map<String, Object> query, Map<String, Object> params, String fileType) {
         try {
             HttpRequest.Builder builder = buildRequest(url, query);
 
@@ -270,7 +284,7 @@ public class SimpleHttpClient {
 
             String boundary = "-----------" + UUID.randomUUID().toString().replaceAll("-", "");
             builder.header("Content-Type", "multipart/form-data; boundary=" + boundary);
-            builder.method(method.name(), convertMapToMultipart(boundary, params));
+            builder.method(method.name(), convertMapToMultipart(boundary, params, fileType));
             HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
 
             // 所有非200响应都被视为dify平台的错误响应，统一返回异常对象
@@ -331,7 +345,7 @@ public class SimpleHttpClient {
      * 将 Map 转换为 multipart/form-data 格式的 BodyPublisher
      * 支持类型：String（文本）、Path/File（文件）
      */
-    private HttpRequest.BodyPublisher convertMapToMultipart(String boundary, Map<String, Object> data) throws IOException {
+    private HttpRequest.BodyPublisher convertMapToMultipart(String boundary, Map<String, Object> data, String fileType) throws IOException {
         var parts = new ArrayList<HttpRequest.BodyPublisher>();
 
         for (Map.Entry<String, Object> entry : data.entrySet()) {
@@ -347,12 +361,24 @@ public class SimpleHttpClient {
                 Path filePath = (value instanceof Path) ? (Path) value : ((File) value).toPath();
                 String fileName = filePath.getFileName().toString();
                 byte[] fileBytes = Files.readAllBytes(filePath);
-                String mimeType = Files.probeContentType(filePath);
+                String contentType = null;
+
+                if (fileType != null) {
+                    contentType = fileType;
+                } else {
+                    String mimeType = Files.probeContentType(filePath);
+
+                    int index = fileName.lastIndexOf('.');
+                    String ext = (index == -1 || index == fileName.length() - 1) ? "" : fileName.substring(index + 1);
+
+                    String[] type = mimeType.split("/");
+                    contentType = String.format("%s/%s", type[0], ext);
+                }
 
                 parts.add(HttpRequest.BodyPublishers.ofString(
                         "--" + boundary + "\r\n" +
                                 "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n" +
-                                "Content-Type: " + (mimeType != null ? mimeType : "application/octet-stream") + "\r\n\r\n"
+                                "Content-Type: " + contentType + "\r\n\r\n"
                 ));
 
                 parts.add(HttpRequest.BodyPublishers.ofByteArray(fileBytes));
