@@ -71,6 +71,16 @@ public interface IAppBaseClient {
     String audioToText(File file, String user);
 
     /**
+     * 语音转文字
+     *
+     * @param file 语音文件。 支持格式：['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm'] 文件
+     *             大小限制：15MB
+     * @param user 用户标识，由开发者定义规则，需保证用户标识在应用内唯一。
+     * @param fileType 如果该参数不为空，那么file对象的ContentType将设置为该值。
+     */
+    String audioToText(File file, String user, String fileType);
+
+    /**
      * 文字转语音
      *
      * @param user      用户标识，由开发者定义规则，需保证用户标识在应用内唯一

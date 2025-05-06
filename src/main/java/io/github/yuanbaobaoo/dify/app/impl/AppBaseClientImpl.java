@@ -82,12 +82,17 @@ public class AppBaseClientImpl implements IAppBaseClient {
 
     @Override
     public String audioToText(File file, String user) {
+        return audioToText(file, user, null);
+    }
+
+    @Override
+    public String audioToText(File file, String user, String fileType) {
         Map<String, Object> data = new HashMap<>();
         data.put("file", file);
         data.put("user", user);
 
         JSONObject result = JSON.parseObject(
-                SimpleHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data)
+                SimpleHttpClient.get(config).requestMultipart(AppRoutes.AUDIO_TO_TEXT, null, data, fileType)
         );
 
         return result.getString("text");
