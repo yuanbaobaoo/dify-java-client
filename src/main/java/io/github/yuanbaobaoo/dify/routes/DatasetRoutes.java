@@ -21,7 +21,7 @@ public class DatasetRoutes {
 
     public static final DifyRoute DATASETS_UPDATE = new DifyRoute(
             "/datasets/${datasetId}",
-            HttpMethod.POST
+            HttpMethod.PATCH
     );
 
     public static final DifyRoute DATASETS_DELETE = new DifyRoute(
