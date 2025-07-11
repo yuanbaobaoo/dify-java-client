@@ -3,6 +3,7 @@ package io.github.yuanbaobaoo.dify;
 import com.alibaba.fastjson2.JSON;
 import io.github.yuanbaobaoo.dify.types.*;
 import io.github.yuanbaobaoo.dify.types.ApiConfig;
+import org.apache.tika.Tika;
 
 import java.io.File;
 import java.io.IOException;
@@ -347,6 +348,7 @@ public class SimpleHttpClient {
      */
     private HttpRequest.BodyPublisher convertMapToMultipart(String boundary, Map<String, Object> data, String fileType) throws IOException {
         var parts = new ArrayList<HttpRequest.BodyPublisher>();
+        Tika tika = new Tika();
 
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             String key = entry.getKey();
@@ -361,24 +363,11 @@ public class SimpleHttpClient {
                 Path filePath = (value instanceof Path) ? (Path) value : ((File) value).toPath();
                 String fileName = filePath.getFileName().toString();
                 byte[] fileBytes = Files.readAllBytes(filePath);
-                String contentType = null;
-
-                if (fileType != null) {
-                    contentType = fileType;
-                } else {
-                    String mimeType = Files.probeContentType(filePath);
-
-                    int index = fileName.lastIndexOf('.');
-                    String ext = (index == -1 || index == fileName.length() - 1) ? "" : fileName.substring(index + 1);
-
-                    String[] type = mimeType.split("/");
-                    contentType = String.format("%s/%s", type[0], ext);
-                }
 
                 parts.add(HttpRequest.BodyPublishers.ofString(
                         "--" + boundary + "\r\n" +
                                 "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n" +
-                                "Content-Type: " + contentType + "\r\n\r\n"
+                                "Content-Type: " +  tika.detect(filePath) + "\r\n\r\n"
                 ));
 
                 parts.add(HttpRequest.BodyPublishers.ofByteArray(fileBytes));
